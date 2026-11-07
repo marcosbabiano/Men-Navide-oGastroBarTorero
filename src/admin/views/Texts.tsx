@@ -1,16 +1,26 @@
-import type { ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
+import { useHashRoute } from '../router.ts';
 import type { Draft } from 'immer';
 import type { SiteContent } from '../../../shared/schema.ts';
 import { newId } from '../../../shared/ids.ts';
 import { useStore } from '../store.tsx';
-import { PageHeader, SortableList, TextArea, TextField, Toggle, useConfirm } from '../ui.tsx';
+import { PageHeader, SortableList, TextArea, TextField, useConfirm } from '../ui.tsx';
 import { ImagePicker } from '../media.tsx';
 
 type Texts = SiteContent['texts'];
 
 function Group({ title, children, open = false, id }: { title: string; children: ReactNode; open?: boolean; id: string }) {
+  const { query } = useHashRoute();
+  const target = query.get('s') === id.replace(/^g-/, '');
+  const ref = useRef<HTMLDetailsElement>(null);
+  useEffect(() => {
+    if (target && ref.current) {
+      ref.current.open = true;
+      ref.current.scrollIntoView({ block: 'start' });
+    }
+  }, [target]);
   return (
-    <details className="group" open={open} id={id}>
+    <details className="group" open={open || target} id={id} ref={ref}>
       <summary className="group__summary">
         <span>{title}</span>
         <span className="group__chev" aria-hidden="true">
@@ -123,7 +133,9 @@ export function TextsView() {
       </Group>
 
       <Group title="Comparativa" id="g-compare">
-        <Toggle label="Mostrar la comparativa" checked={t.compare.enabled} onChange={(v) => set((x) => void (x.compare.enabled = v))} hint="Se genera automáticamente con el contenido real de los menús publicados (necesita al menos dos)." />
+        <p className="muted small">
+          Se genera automáticamente con los menús publicados (necesita al menos dos). Para mostrarla u ocultarla usa <a href="#/secciones">Secciones</a>.
+        </p>
         {F('Antetítulo', 'compare.eyebrow', t.compare.eyebrow, (x, v) => void (x.compare.eyebrow = v), 60)}
         {F('Título', 'compare.title', t.compare.title, (x, v) => void (x.compare.title = v), 120)}
         {F('Introducción', 'compare.intro', t.compare.intro, (x, v) => void (x.compare.intro = v), 300, true)}

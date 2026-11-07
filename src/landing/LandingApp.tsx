@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { PublicPayload } from '../../shared/public.ts';
 import { themeToCssVars } from '../../shared/theme.ts';
 import { ContentProvider, useContent } from './ContentContext.tsx';
@@ -17,6 +17,9 @@ import { MobileBar } from './sections/MobileBar.tsx';
 import { PreviewBanner } from './sections/PreviewBanner.tsx';
 import { Inactive } from './sections/Inactive.tsx';
 import { Star } from './components/Ornament.tsx';
+import { CustomBlock } from './sections/CustomBlock.tsx';
+import { sectionAnchor } from '../../shared/layout.ts';
+import type { LayoutSection } from '../../shared/schema.ts';
 
 const INTRO_KEY = 'torero:intro-visto';
 const INTRO_TTL_MS = 1000 * 60 * 60 * 24 * 7;
@@ -40,6 +43,7 @@ function markIntroSeen() {
 function Page({ preview }: { preview?: { includeDrafts: boolean; onToggle: () => void } }) {
   const { content, t } = useContent();
   const main = useRef<HTMLDivElement>(null);
+  const announcement = content.campaign.announcement;
   const showIntro = useMemo(
     () => content.campaign.active && content.campaign.introEnabled && !preview && prefersMotion() && !introAlreadySeen(),
     [content.campaign.active, content.campaign.introEnabled, preview],
@@ -67,16 +71,46 @@ function Page({ preview }: { preview?: { includeDrafts: boolean; onToggle: () =>
   }, [content]);
 
   const n = content.texts.nav;
+  const sections = content.layout.sections.filter((s) => s.visible);
   const links: NavLink[] = [
-    { href: '#la-navidad', label: n.story },
-    { href: '#menus', label: n.menus },
-    ...(content.texts.compare.enabled && content.menus.length > 1 ? [{ href: '#comparar', label: n.compare }] : []),
-    { href: '#reservar', label: n.howTo },
-    { href: '#preguntas', label: n.faq },
+    ...sections
+      .filter((s) => s.navLabel.trim() && !(s.type === 'compare' && content.menus.length < 2))
+      .map((s) => ({ href: `#${sectionAnchor(s)}`, label: s.navLabel })),
     { href: '#contacto', label: n.contact },
   ];
 
-  const announcement = content.campaign.announcement;
+  const renderSection = (s: LayoutSection) => {
+    switch (s.type) {
+      case 'hero':
+        return (
+          <Fragment key={s.id}>
+            <Hero play={heroPlay} />
+            {announcement.enabled && announcement.text && (
+              <div className="announce" role="note">
+                <Star size={12} /> <span>{t(announcement.text)}</span>
+              </div>
+            )}
+          </Fragment>
+        );
+      case 'story':
+        return <Story key={s.id} />;
+      case 'menus':
+        return <Menus key={s.id} />;
+      case 'compare':
+        return <Compare key={s.id} />;
+      case 'celebration':
+        return <Celebration key={s.id} />;
+      case 'howTo':
+        return <HowTo key={s.id} />;
+      case 'faq':
+        return <Faq key={s.id} />;
+      case 'about':
+        return <About key={s.id} />;
+      default:
+        return <CustomBlock key={s.id} section={s} />;
+    }
+  };
+
 
   return (
     <>
@@ -89,21 +123,7 @@ function Page({ preview }: { preview?: { includeDrafts: boolean; onToggle: () =>
       <div className="grain" aria-hidden="true" />
       <main id="contenido" ref={main} tabIndex={-1}>
         {content.campaign.active ? (
-          <>
-            <Hero play={heroPlay} />
-            {announcement.enabled && announcement.text && (
-              <div className="announce" role="note">
-                <Star size={12} /> <span>{t(announcement.text)}</span>
-              </div>
-            )}
-            <Story />
-            <Menus />
-            <Compare />
-            <Celebration />
-            <HowTo />
-            <Faq />
-            <About />
-          </>
+          sections.map(renderSection)
         ) : (
           <Inactive />
         )}

@@ -9,5 +9,4 @@ playwright-report
 .env
 .env.*
 !.env.example
-/gastrobar-torero-navidad-2026.zip
 .DS_Store

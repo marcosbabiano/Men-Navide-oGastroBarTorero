@@ -3,7 +3,7 @@ import { useContent } from '../ContentContext.tsx';
 import { Picture } from '../components/Picture.tsx';
 import { BookLink } from '../components/BookLink.tsx';
 import { ArrowDown } from '../components/Icons.tsx';
-import { Star } from '../components/Ornament.tsx';
+import { DecorArt, Star } from '../components/Ornament.tsx';
 import { gsap, prefersMotion, SplitText } from '../anim/choreography.ts';
 
 const DUST = Array.from({ length: 16 }, (_, i) => i);
@@ -48,7 +48,8 @@ export function Hero({ play }: { play: boolean }) {
         .from('.hero__subtitle', { y: 24, opacity: 0, duration: 1.1 }, 0.95)
         .from('.hero__ctas > *', { y: 24, opacity: 0, duration: 1, stagger: 0.1 }, 1.1)
         .from('.hero__side, .hero__scroll', { opacity: 0, duration: 1.2, stagger: 0.1 }, 1.35)
-        .from('.hero__star', { scale: 0, rotate: -120, duration: 1.2, ease: 'back.out(1.6)' }, 1.2);
+        .from('.hero__star', { scale: 0, rotate: -120, duration: 1.2, ease: 'back.out(1.6)' }, 1.2)
+        .from('.hero__accent', { opacity: 0, y: 40, scale: 0.94, duration: 2, ease: 'power3.out' }, 0.6);
       tlRef.current = tl;
 
       // Al hacer scroll: el contenido sube y se desvanece; la imagen se desplaza más despacio.
@@ -103,6 +104,7 @@ export function Hero({ play }: { play: boolean }) {
           <span key={i} style={{ '--i': i } as CSSProperties} />
         ))}
       </div>
+      <DecorArt slot="heroAccent" className="hero__accent" />
       <div className="hero__frame" aria-hidden="true">
         <span className="hero__frame-line hero__frame-line--t" />
         <span className="hero__frame-line hero__frame-line--r" />

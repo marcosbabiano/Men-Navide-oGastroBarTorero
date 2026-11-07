@@ -17,6 +17,10 @@
  *    POST   /api/admin/media              Subir imagen (multipart).
  *    PATCH  /api/admin/media/:id          Editar texto alternativo / carpeta.
  *    DELETE /api/admin/media/:id          Eliminar imagen (si no está en uso).
+ *    GET    /api/admin/designs            Diseños del Estudio Creativo (resumen + miniatura).
+ *    GET    /api/admin/designs/:id        Diseño completo.
+ *    PUT    /api/admin/designs/:id        Crear o guardar { design, thumb }.
+ *    DELETE /api/admin/designs/:id        Eliminar diseño.
  *
  *  SEO:
  *    GET /sitemap.xml · GET /robots.txt
@@ -29,6 +33,7 @@ import { ApiError, errorResponse, json, methodNotAllowed, noStore, readJson } fr
 import { type AuthResolver, requireAdmin } from './auth.ts';
 import { ContentRepo, type KV } from './repo.ts';
 import { type BinaryKV, blobKey, findUsages, parseUpload, serveMedia, storeUpload } from './media.ts';
+import { DesignRepo } from './designs.ts';
 
 export const CONTENT_CACHE_TAG = 'torero-content';
 
@@ -74,6 +79,7 @@ export function createPublicHandler(deps: ApiDeps) {
 
 export function createAdminHandler(deps: ApiDeps) {
   const repo = new ContentRepo(deps.content, deps.now);
+  const designs = new DesignRepo(deps.content);
 
   const knownAssets = async (): Promise<MediaAsset[]> => [...SEED_MEDIA, ...(await repo.readMediaIndex())];
 
@@ -186,6 +192,24 @@ export function createAdminHandler(deps: ApiDeps) {
         return json(201, { asset: parsed.asset }, noStore());
       }
 
+      if (path === '/designs') {
+        if (method !== 'GET') throw methodNotAllowed(['GET']);
+        return json(200, { designs: await designs.list() }, noStore());
+      }
+      const dm = /^\/designs\/([a-z0-9-]+)$/.exec(path);
+      if (dm) {
+        if (method === 'GET') return json(200, { design: await designs.get(dm[1]) }, noStore());
+        if (method === 'PUT') {
+          const body = await readJson<{ design?: unknown; thumb?: unknown }>(req, 900_000);
+          return json(200, { summary: await designs.save(dm[1], body) }, noStore());
+        }
+        if (method === 'DELETE') {
+          await designs.remove(dm[1]);
+          return json(200, { deleted: dm[1] }, noStore());
+        }
+        throw methodNotAllowed(['GET', 'PUT', 'DELETE']);
+      }
+
       const mm = /^\/media\/([a-z0-9-]+)$/.exec(path);
       if (mm) {
         const id = mm[1];
@@ -217,6 +241,8 @@ export function createAdminHandler(deps: ApiDeps) {
             { label: 'borrador', content: draft.content },
             { label: 'web publicada', content: published?.content },
           ]);
+          const inDesigns = await designs.usingAsset(id);
+          if (inDesigns.length) usages.push(`Estudio: ${inDesigns.slice(0, 3).join(', ')}`);
           if (usages.length) {
             throw new ApiError(409, 'in_use', `La imagen está en uso (${usages.join(' y ')}). Sustitúyela antes de eliminarla.`, usages);
           }

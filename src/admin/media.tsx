@@ -147,7 +147,7 @@ export function UploadBox({
   );
 }
 
-function MediaDialog({
+export function MediaDialog({
   open,
   onClose,
   onSelect,

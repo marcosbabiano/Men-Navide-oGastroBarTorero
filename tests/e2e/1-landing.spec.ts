@@ -112,9 +112,14 @@ test.describe('Landing', () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
     const bar = page.locator('.mbar');
+    await expect(page.locator('#menus')).toBeAttached();
     await expect(bar).not.toHaveClass(/is-visible/);
-    await page.evaluate(() => window.scrollTo(0, 1600));
-    await expect(bar).toHaveClass(/is-visible/);
+    await expect
+      .poll(async () => {
+        await page.evaluate(() => window.scrollTo(0, 1600));
+        return bar.getAttribute('class');
+      })
+      .toMatch(/is-visible/);
     await expect(bar).toContainText('36 €');
   });
 

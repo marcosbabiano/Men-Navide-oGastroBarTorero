@@ -16,6 +16,7 @@ import { siteContentSchema, formatIssues } from '../shared/schema.ts';
 import { createSeedContent } from '../shared/seed.ts';
 import { publishBlockers } from '../shared/completeness.ts';
 import { SEED_MEDIA } from '../shared/media-catalog.ts';
+import { migrateContent } from '../shared/layout.ts';
 import { ApiError } from './http.ts';
 
 /** Subconjunto de la API de `Store` de @netlify/blobs que usamos (facilita las pruebas). */
@@ -85,7 +86,7 @@ export class ContentRepo {
 
   async readPublished(): Promise<PublishedDoc | null> {
     const doc = (await this.kv.get(KEYS.published, STRONG)) as PublishedDoc | null;
-    return doc ?? null;
+    return doc ? { ...doc, content: migrateContent(doc.content) } : null;
   }
 
   /** Lectura para la web pública: publicada o, si aún no existe, el contenido inicial. */
@@ -98,7 +99,8 @@ export class ContentRepo {
   private async readDraftRaw(): Promise<{ doc: StoredDoc; etag?: string } | null> {
     const res = await this.kv.getWithMetadata(KEYS.draft, STRONG);
     if (!res || !res.data) return null;
-    return { doc: res.data as StoredDoc, etag: res.etag };
+    const doc = res.data as StoredDoc;
+    return { doc: { ...doc, content: migrateContent(doc.content) }, etag: res.etag };
   }
 
   /** Devuelve el borrador, creándolo (sin sobrescribir nunca nada) si no existe. */
@@ -214,7 +216,7 @@ export class ContentRepo {
     }
     const doc = (await this.kv.get(key, STRONG)) as PublishedDoc | null;
     if (!doc) throw new ApiError(404, 'not_found', 'Esa versión ya no existe.');
-    return this.saveDraft(doc.content, baseRevision, `${user} (restaurado)`);
+    return this.saveDraft(migrateContent(doc.content), baseRevision, `${user} (restaurado)`);
   }
 
   async readMediaIndex(): Promise<MediaAsset[]> {

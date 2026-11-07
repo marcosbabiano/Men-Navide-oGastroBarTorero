@@ -120,6 +120,51 @@ export const menuSchema = z.object({
   adminNotes: safeText(1500),
 });
 
+/* ---------------- Estructura de la landing (gestor de secciones) ---------------- */
+
+/** Enlace de botón: vacío = plataforma de reservas; también https, #ancla, tel: y mailto:. */
+export const ctaHref = z
+  .string()
+  .max(600)
+  .refine(
+    (v) => v === '' || isHttpUrl(v, true) || /^#[a-z0-9-]{1,60}$/.test(v) || /^tel:\+?[0-9 ]{6,20}$/.test(v) || /^mailto:[^\s@]+@[^\s@]+$/.test(v),
+    'Enlace no válido: deja vacío para reservas, o usa https://…, #seccion, tel: o mailto:',
+  );
+
+export const BLOCK_TEMPLATES = ['image-text', 'text-image', 'fullbleed', 'gallery', 'quote', 'divider', 'cta', 'info'] as const;
+export type BlockTemplate = (typeof BLOCK_TEMPLATES)[number];
+export const BLOCK_TONES = ['dark', 'light', 'burgundy'] as const;
+
+export const customBlockSchema = z.object({
+  template: z.enum(BLOCK_TEMPLATES),
+  tone: z.enum(BLOCK_TONES),
+  eyebrow: safeText(60),
+  title: safeText(160),
+  subtitle: safeText(240),
+  body: safeText(1500),
+  images: z.array(imageRefSchema).max(8),
+  cta: z.object({ label: safeText(40), href: ctaHref }),
+});
+export type CustomBlock = z.infer<typeof customBlockSchema>;
+
+export const BUILTIN_SECTIONS = ['hero', 'story', 'menus', 'compare', 'celebration', 'howTo', 'faq', 'about'] as const;
+export type BuiltinSection = (typeof BUILTIN_SECTIONS)[number];
+export const SECTION_TYPES = [...BUILTIN_SECTIONS, 'custom'] as const;
+export type SectionType = (typeof SECTION_TYPES)[number];
+
+export const layoutSectionSchema = z
+  .object({
+    id: idSchema,
+    type: z.enum(SECTION_TYPES),
+    visible: z.boolean(),
+    /** Nombre en el panel y, si navLabel está vacío, no aparece en la navegación. */
+    label: safeText(60),
+    navLabel: safeText(30),
+    block: customBlockSchema.nullable(),
+  })
+  .refine((s) => (s.type === 'custom') === !!s.block, 'Los bloques personalizados necesitan contenido');
+export type LayoutSection = z.infer<typeof layoutSectionSchema>;
+
 const faqItemSchema = z.object({ id: idSchema, question: safeText(200), answer: safeText(1200) });
 const stepSchema = z.object({ id: idSchema, title: safeText(80), text: safeText(400) });
 
@@ -153,6 +198,12 @@ export const siteContentSchema = z.object({
     theme: themeSchema,
     logo: imageRefSchema.nullable(),
     favicon: imageRefSchema.nullable(),
+    /** Ornamentos de marca (ilustraciones con transparencia). Vacíos = no se muestran. */
+    decor: z.object({
+      heroAccent: imageRefSchema.nullable(),
+      divider: imageRefSchema.nullable(),
+      branch: imageRefSchema.nullable(),
+    }),
   }),
   seo: z.object({
     title: safeText(70),
@@ -204,7 +255,6 @@ export const siteContentSchema = z.object({
       emptyMessage: safeText(200),
     }),
     compare: z.object({
-      enabled: z.boolean(),
       eyebrow: safeText(60),
       title: safeText(120),
       intro: safeText(300),
@@ -270,6 +320,18 @@ export const siteContentSchema = z.object({
     }),
   }),
   menus: z.array(menuSchema).max(30),
+  layout: z
+    .object({ sections: z.array(layoutSectionSchema).max(40) })
+    .superRefine((l, ctx) => {
+      const ids = new Set<string>();
+      for (const [i, s] of l.sections.entries()) {
+        if (ids.has(s.id)) ctx.addIssue({ code: 'custom', message: `Sección duplicada (${s.id})`, path: ['sections', i, 'id'] });
+        ids.add(s.id);
+      }
+      for (const t of BUILTIN_SECTIONS) {
+        if (l.sections.filter((s) => s.type === t).length > 1) ctx.addIssue({ code: 'custom', message: `La sección «${t}» está repetida`, path: ['sections'] });
+      }
+    }),
 });
 
 export type SiteContent = z.infer<typeof siteContentSchema>;
@@ -303,7 +365,7 @@ export const mediaAssetSchema = z.object({
 });
 export type MediaAsset = z.infer<typeof mediaAssetSchema>;
 
-export const MEDIA_FOLDERS = ['portada', 'platos', 'ambiente', 'marca', 'texturas', 'otros'] as const;
+export const MEDIA_FOLDERS = ['portada', 'platos', 'ambiente', 'ilustraciones', 'ornamentos', 'marca', 'texturas', 'otros'] as const;
 
 /** Convierte los errores de Zod en una lista legible para el panel. */
 export function formatIssues(error: z.ZodError): { path: string; message: string }[] {

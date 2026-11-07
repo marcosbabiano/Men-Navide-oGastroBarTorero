@@ -5,12 +5,13 @@
  */
 import type { Menu, SiteContent } from './schema.ts';
 import { collectImageRefs, visibleMenus } from './public.ts';
+import { BUILTIN_INFO } from './layout.ts';
 
 export type IssueLevel = 'blocker' | 'warning' | 'info';
 
 export interface ContentIssue {
   level: IssueLevel;
-  area: 'menus' | 'establecimiento' | 'campana' | 'textos' | 'multimedia';
+  area: 'menus' | 'establecimiento' | 'campana' | 'textos' | 'multimedia' | 'secciones';
   menuId?: string;
   message: string;
 }
@@ -70,6 +71,20 @@ export function contentIssues(content: SiteContent, knownAssetIds?: Set<string>)
   for (const m of content.menus) {
     if (ids.has(m.id)) out.push({ level: 'blocker', area: 'menus', message: `Hay dos menús con el mismo identificador (${m.id}).` });
     ids.add(m.id);
+  }
+
+  for (const [type, info] of Object.entries(BUILTIN_INFO)) {
+    const entry = content.layout.sections.find((s) => s.type === type);
+    if (info.protection !== 'none' && !entry)
+      out.push({ level: 'blocker', area: 'secciones', message: `Falta la sección esencial «${info.label}». Restáurala en Secciones.` });
+    if (info.protection === 'locked' && entry && !entry.visible)
+      out.push({ level: 'blocker', area: 'secciones', message: `La sección «${info.label}» es esencial y debe estar visible.` });
+  }
+  if (!content.layout.sections.some((s) => s.visible && s.type === 'howTo'))
+    out.push({ level: 'warning', area: 'secciones', message: 'El proceso de reservas está oculto: los botones de reserva siguen funcionando.' });
+  for (const s of content.layout.sections) {
+    if (s.type === 'custom' && s.visible && s.block && !s.block.title.trim() && !s.block.body.trim() && !s.block.images.length && s.block.template !== 'divider')
+      out.push({ level: 'warning', area: 'secciones', message: `El bloque «${s.label}» está vacío.` });
   }
 
   const b = content.business;

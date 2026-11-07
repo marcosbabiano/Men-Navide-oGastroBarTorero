@@ -1,6 +1,7 @@
 import { HttpError, parseError } from '../lib/api.ts';
 import type { MediaAsset, SiteContent } from '../../shared/schema.ts';
 import type { ContentIssue } from '../../shared/completeness.ts';
+import type { Design, DesignSummary } from '../../shared/studio.ts';
 
 export { HttpError };
 
@@ -70,5 +71,10 @@ export const adminApi = {
   upload: (form: FormData) => call<{ asset: MediaAsset }>('/media', { method: 'POST', body: form }),
   patchMedia: (id: string, patch: { alt?: string; folder?: string }) =>
     call<{ asset: MediaAsset }>(`/media/${encodeURIComponent(id)}`, { method: 'PATCH', body: JSON.stringify(patch) }),
+  designs: () => call<{ designs: DesignSummary[] }>('/designs'),
+  design: (id: string) => call<{ design: Design }>(`/designs/${encodeURIComponent(id)}`),
+  saveDesign: (design: Design, thumb: string) =>
+    call<{ summary: DesignSummary }>(`/designs/${encodeURIComponent(design.id)}`, { method: 'PUT', body: JSON.stringify({ design, thumb }) }),
+  deleteDesign: (id: string) => call<{ deleted: string }>(`/designs/${encodeURIComponent(id)}`, { method: 'DELETE' }),
   deleteMedia: (id: string) => call<{ deleted: string }>(`/media/${encodeURIComponent(id)}`, { method: 'DELETE' }),
 };

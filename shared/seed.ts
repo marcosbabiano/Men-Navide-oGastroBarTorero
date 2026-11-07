@@ -12,6 +12,7 @@
  */
 import type { Menu, SiteContent } from './schema.ts';
 import { DEFAULT_THEME } from './theme.ts';
+import { defaultLayout } from './layout.ts';
 
 export const DEFAULT_BOOKING_URL = 'https://booking.qamarero.com/new-reservation/bar-torero';
 
@@ -150,7 +151,7 @@ const menuDistincion: Menu = {
 const DAYS = [0, 1, 2, 3, 4, 5, 6];
 
 export function createSeedContent(): SiteContent {
-  return {
+  const base: Omit<SiteContent, 'layout'> = {
     schemaVersion: 1,
     campaign: {
       name: 'Navidad',
@@ -164,6 +165,7 @@ export function createSeedContent(): SiteContent {
       theme: { ...DEFAULT_THEME },
       logo: null,
       favicon: null,
+      decor: { heroAccent: null, divider: null, branch: null },
     },
     seo: {
       title: 'Menús de Navidad 2026 · GastroBar Torero',
@@ -228,7 +230,6 @@ export function createSeedContent(): SiteContent {
         emptyMessage: 'Muy pronto publicaremos nuestros menús de Navidad. Mientras tanto, puedes llamarnos para cualquier consulta.',
       },
       compare: {
-        enabled: true,
         eyebrow: 'Comparativa',
         title: 'Los menús, frente a frente',
         intro: 'Todo lo que incluye cada menú, de un vistazo, para que elegir sea fácil.',
@@ -359,4 +360,5 @@ export function createSeedContent(): SiteContent {
     },
     menus: [menuEsencia, menuDistincion],
   };
+  return { ...base, layout: defaultLayout(base) };
 }

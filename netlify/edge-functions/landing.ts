@@ -8,6 +8,7 @@ import { getStore } from '@netlify/blobs';
 import { buildPublicPayload } from '../../shared/public.ts';
 import { injectIntoHtml } from '../../shared/head.ts';
 import { createSeedContent } from '../../shared/seed.ts';
+import { migrateContent } from '../../shared/layout.ts';
 import type { SiteContent, MediaAsset } from '../../shared/schema.ts';
 
 export default async (req: Request, context: Context) => {
@@ -23,7 +24,7 @@ export default async (req: Request, context: Context) => {
       store.get('content/published', { type: 'json' }) as Promise<{ content: SiteContent; publishedAt: string } | null>,
       store.get('media/index', { type: 'json' }) as Promise<{ assets: MediaAsset[] } | null>,
     ]);
-    const content = published?.content ?? createSeedContent();
+    const content = published ? migrateContent(published.content) : createSeedContent();
     const payload = buildPublicPayload(content, index?.assets ?? [], published?.publishedAt ?? null);
     const out = injectIntoHtml(html, payload, new URL(req.url).origin);
     headers.set('Cache-Control', 'public, max-age=0, must-revalidate');

@@ -33,13 +33,13 @@ function toBlob(canvas: HTMLCanvasElement, type: string, quality: number): Promi
   );
 }
 
-async function encode(canvas: HTMLCanvasElement, prefer: 'webp' | 'jpeg' | 'png'): Promise<Blob> {
+async function encode(canvas: HTMLCanvasElement, prefer: 'webp' | 'jpeg' | 'png', keepAlpha = false): Promise<Blob> {
   if (prefer === 'png') return toBlob(canvas, 'image/png', 1);
   let quality = 0.84;
   for (let i = 0; i < 5; i++) {
     let blob = prefer === 'webp' ? await toBlob(canvas, 'image/webp', quality) : await toBlob(canvas, 'image/jpeg', quality);
-    // Safari antiguo devuelve PNG si no sabe codificar WebP: se usa JPEG.
-    if (prefer === 'webp' && blob.type !== 'image/webp') blob = await toBlob(canvas, 'image/jpeg', quality);
+    // Safari antiguo devuelve PNG si no sabe codificar WebP: JPEG, o PNG si hay que conservar la transparencia.
+    if (prefer === 'webp' && blob.type !== 'image/webp') blob = keepAlpha ? await toBlob(canvas, 'image/png', 1) : await toBlob(canvas, 'image/jpeg', quality);
     if (blob.size <= MAX_OUTPUT_BYTES) return blob;
     quality -= 0.12;
   }
@@ -86,8 +86,9 @@ export async function processImage(file: File, mode: 'photo' | 'social' | 'icon'
     }
     const big = fit(bitmap.width, bitmap.height, 2000);
     const sm = fit(bitmap.width, bitmap.height, 800);
-    const full = await encode(draw(bitmap, big.w, big.h), 'webp');
-    const small = await encode(draw(bitmap, sm.w, sm.h), 'webp');
+    const keepAlpha = file.type === 'image/png' || file.type === 'image/webp' || file.type === 'image/avif';
+    const full = await encode(draw(bitmap, big.w, big.h), 'webp', keepAlpha);
+    const small = await encode(draw(bitmap, sm.w, sm.h), 'webp', keepAlpha);
     return { full, small, width: big.w, height: big.h, type: full.type };
   } finally {
     bitmap.close();

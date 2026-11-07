@@ -43,6 +43,7 @@ export function toPublicContent(content: SiteContent, opts: { includeDrafts?: bo
   return {
     ...content,
     menus: visibleMenus(content.menus, opts.includeDrafts).map(sanitizeMenu),
+    layout: { sections: content.layout.sections.filter((s) => s.visible) },
     business: {
       ...content.business,
       hours: hours.verified
@@ -62,6 +63,10 @@ export function collectImageRefs(content: SiteContent): ImageRef[] {
     ...content.texts.story.images,
     ...content.texts.celebration.images,
     content.texts.about.image,
+    content.campaign.decor.heroAccent,
+    content.campaign.decor.divider,
+    content.campaign.decor.branch,
+    ...content.layout.sections.flatMap((s) => s.block?.images ?? []),
   ];
   for (const m of content.menus) refs.push(m.image, ...m.gallery);
   return refs.filter((r): r is ImageRef => !!r);

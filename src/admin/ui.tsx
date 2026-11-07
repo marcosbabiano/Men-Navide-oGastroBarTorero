@@ -238,12 +238,14 @@ export function Toggle({
   onChange,
   hint,
   tone = 'default',
+  disabled = false,
 }: {
   label: string;
   checked: boolean;
   onChange: (v: boolean) => void;
   hint?: ReactNode;
   tone?: 'default' | 'warn';
+  disabled?: boolean;
 }) {
   const id = useId();
   return (
@@ -254,6 +256,7 @@ export function Toggle({
         aria-checked={checked}
         id={id}
         className="toggle__switch"
+        disabled={disabled}
         onClick={() => onChange(!checked)}
         aria-describedby={hint ? `${id}-h` : undefined}
       >

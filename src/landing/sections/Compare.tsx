@@ -12,7 +12,7 @@ export function Compare() {
   const c = content.texts.compare;
   const menus = content.menus;
   const rows = useMemo(() => buildComparison(menus), [menus]);
-  if (!c.enabled || menus.length < 2) return null;
+  if (menus.length < 2) return null;
   const hasCommon = rows.some((r) => r.cells.some((cell) => cell.items.some((i) => i.common)));
   const cols = { '--cols': menus.length } as CSSProperties;
 

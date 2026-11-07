@@ -1,6 +1,6 @@
 import { useContent } from '../ContentContext.tsx';
 import { Picture } from '../components/Picture.tsx';
-import { Star } from '../components/Ornament.tsx';
+import { DecorArt, Star } from '../components/Ornament.tsx';
 
 export function Story() {
   const { content, t } = useContent();
@@ -9,6 +9,7 @@ export function Story() {
   return (
     <section className="story" id="la-navidad" aria-labelledby="story-title">
       <div className="story__grain" aria-hidden="true" />
+      <DecorArt slot="branch" className="decor--branch-story" />
       <div className="container story__grid">
         <div className="story__head">
           <p className="eyebrow eyebrow--ink" data-anim="fade-up">

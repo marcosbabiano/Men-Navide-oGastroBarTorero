@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type FormEvent, type ReactNode } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useState, type FormEvent, type ReactNode } from 'react';
 import { acceptInvite, getUser, handleAuthCallback, login, logout, requestPasswordRecovery, updateUser } from '@netlify/identity';
 import { adminApi, HttpError, type AdminState } from './api.ts';
 import { ConfirmProvider, ToastProvider, useConfirm, useToast } from './ui.tsx';
@@ -12,6 +12,10 @@ import { BusinessView } from './views/Business.tsx';
 import { MediaView } from './views/Media.tsx';
 import { CampaignView } from './views/Campaign.tsx';
 import { PublishView } from './views/Publish.tsx';
+import { BlockEditor, SectionsView } from './views/Sections.tsx';
+
+// El Estudio Creativo (Konva) se descarga solo al abrirlo.
+const StudioRoutes = lazy(() => import('./studio/StudioHome.tsx'));
 
 type Gate =
   | { kind: 'checking' }
@@ -150,11 +154,13 @@ function LoginForm({ onLoggedIn, message }: { onLoggedIn: () => void; message?: 
 
 const NAV = [
   { href: '#/inicio', key: 'inicio', label: 'Inicio', icon: '◈' },
+  { href: '#/secciones', key: 'secciones', label: 'Secciones', icon: '☰' },
   { href: '#/menus', key: 'menus', label: 'Menús', icon: '❦' },
   { href: '#/textos', key: 'textos', label: 'Textos', icon: '¶' },
   { href: '#/establecimiento', key: 'establecimiento', label: 'Local', icon: '⌂' },
   { href: '#/multimedia', key: 'multimedia', label: 'Imágenes', icon: '▣' },
   { href: '#/campana', key: 'campana', label: 'Campaña', icon: '✦' },
+  { href: '#/estudio', key: 'estudio', label: 'Estudio', icon: '✎' },
   { href: '#/publicar', key: 'publicar', label: 'Publicar', icon: '↑' },
 ];
 
@@ -198,6 +204,9 @@ function Shell({ onLogout, reauth, onReauthed }: { onLogout: () => void; reauth:
     case 'menus':
       view = route.path[1] ? <MenuEditor id={route.path[1]} /> : <MenusList query={route.query} />;
       break;
+    case 'secciones':
+      view = route.path[1] ? <BlockEditor id={route.path[1]} /> : <SectionsView />;
+      break;
     case 'textos':
       view = <TextsView />;
       break;
@@ -209,6 +218,13 @@ function Shell({ onLogout, reauth, onReauthed }: { onLogout: () => void; reauth:
       break;
     case 'campana':
       view = <CampaignView />;
+      break;
+    case 'estudio':
+      view = (
+        <Suspense fallback={<p className="muted">Cargando el Estudio Creativo…</p>}>
+          <StudioRoutes path={route.path} query={route.query} />
+        </Suspense>
+      );
       break;
     case 'publicar':
       view = <PublishView onPreview={openPreview} />;
@@ -309,7 +325,7 @@ function Shell({ onLogout, reauth, onReauthed }: { onLogout: () => void; reauth:
             </button>
           </div>
         )}
-        <main id="admin-main" className="content" tabIndex={-1}>
+        <main id="admin-main" className={`content ${section === 'estudio' && route.path[1] ? 'content--wide' : ''}`} tabIndex={-1}>
           {view}
         </main>
       </div>

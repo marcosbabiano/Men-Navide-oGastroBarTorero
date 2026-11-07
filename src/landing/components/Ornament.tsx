@@ -1,3 +1,6 @@
+import { useContent } from '../ContentContext.tsx';
+import { Picture } from './Picture.tsx';
+
 /** Estrella de ocho puntas: detalle navideño discreto. */
 export function Star({ className, size = 18 }: { className?: string; size?: number }) {
   return (
@@ -10,13 +13,34 @@ export function Star({ className, size = 18 }: { className?: string; size?: numb
   );
 }
 
-/** Filete dorado con rombo central. */
+/** Filete dorado con rombo central (o el ornamento de marca asignado en Campaña → Ornamentos). */
 export function Rule({ className }: { className?: string }) {
+  const { content } = useContent();
+  const divider = content.campaign.decor.divider;
+  if (divider) {
+    return (
+      <div className={`rule rule--art ${className ?? ''}`} aria-hidden="true" data-anim="fade-up">
+        <Picture image={divider} sizes="(min-width: 900px) 420px, 70vw" decorative className="pic--contain" />
+      </div>
+    );
+  }
   return (
     <div className={`rule ${className ?? ''}`} aria-hidden="true" data-anim="rule">
       <span className="rule__line" />
       <span className="rule__diamond" />
       <span className="rule__line" />
+    </div>
+  );
+}
+
+/** Ornamento de marca opcional (rama, acento…). No se muestra si no se ha asignado. */
+export function DecorArt({ slot, className }: { slot: 'heroAccent' | 'branch'; className: string }) {
+  const { content } = useContent();
+  const img = content.campaign.decor[slot];
+  if (!img) return null;
+  return (
+    <div className={`decor ${className}`} aria-hidden="true">
+      <Picture image={img} sizes="(min-width: 900px) 34vw, 60vw" decorative className="pic--contain" />
     </div>
   );
 }

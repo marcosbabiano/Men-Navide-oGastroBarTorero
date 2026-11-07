@@ -2,7 +2,7 @@ import { useContent } from '../ContentContext.tsx';
 import { Picture } from '../components/Picture.tsx';
 import { BookLink } from '../components/BookLink.tsx';
 import { ArrowUpRight, Clock, Facebook, Globe, Instagram, Phone, Pin, TikTok, WhatsApp } from '../components/Icons.tsx';
-import { Rule, Star } from '../components/Ornament.tsx';
+import { DecorArt, Rule, Star } from '../components/Ornament.tsx';
 import { Brand } from './Nav.tsx';
 import { formatAddress, formatDateEs, formatRanges, groupWeekly, mapsLink, telLink } from '../../../shared/format.ts';
 import { splitBrand } from '../brand.ts';
@@ -92,7 +92,8 @@ export function Hours() {
 }
 
 export function Footer() {
-  const { content, t } = useContent();
+  const { content, t, media } = useContent();
+  const usesStock = Object.values(media).some((a) => a.kind === 'static');
   const b = content.business;
   const socials = SOCIAL.filter((s) => b.social[s.key]);
   const brand = splitBrand(b.name);
@@ -100,6 +101,7 @@ export function Footer() {
   return (
     <footer className="foot" id="contacto" aria-labelledby="foot-title">
       <div className="foot__glow" aria-hidden="true" />
+      <DecorArt slot="branch" className="decor--branch-foot" />
       <div className="container">
         <div className="foot__closing">
           <h2 className="foot__title" id="foot-title" data-anim="lines">
@@ -182,7 +184,7 @@ export function Footer() {
         <p>
           © {year} {b.name} · {formatAddress(content)}
         </p>
-        <p>Fotografías ilustrativas (Unsplash): no representan exactamente los platos servidos.</p>
+        {usesStock && <p>Fotografías ilustrativas (Unsplash): no representan exactamente los platos servidos.</p>}
         {content.texts.footer.legal && <p className="foot__legal">{t(content.texts.footer.legal)}</p>}
         <p>Esta web no utiliza cookies de seguimiento ni analítica.</p>
       </div>

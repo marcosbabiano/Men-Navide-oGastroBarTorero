@@ -131,6 +131,17 @@ export function CampaignView() {
         </Card>
       </div>
 
+      <Card
+        title="Ornamentos de marca"
+        description="Ilustraciones con fondo transparente (PNG o WebP) que decoran la web: se animan de forma individual. Mientras estén vacías no se muestra nada. Súbelas desde aquí o desde Imágenes (carpeta «Ornamentos»)."
+      >
+        <div className="grid-3">
+          <ImagePicker label="Acento de la portada" value={c.decor.heroAccent} nullable folder="ornamentos" onChange={(v) => set((x) => void (x.decor.heroAccent = v))} hint="Composición vertical o cuadrada, se sitúa a la derecha del titular." />
+          <ImagePicker label="Separador editorial" value={c.decor.divider} nullable folder="ornamentos" onChange={(v) => set((x) => void (x.decor.divider = v))} hint="Horizontal (aprox. 6:1). Sustituye a los filetes dorados." />
+          <ImagePicker label="Rama botánica" value={c.decor.branch} nullable folder="ornamentos" onChange={(v) => set((x) => void (x.decor.branch = v))} hint="Cuadrada. Aparece en «La Navidad se comparte» y en el pie." />
+        </div>
+      </Card>
+
       <Card title="SEO" description="Cómo aparece la web en Google y al compartir el enlace.">
         <TextField label="Título de la página" value={content.seo.title} max={70} onChange={(v) => update((d) => void (d.seo.title = v))} error={err('seo.title')} />
         <TextArea label="Descripción" value={content.seo.description} max={170} rows={3} onChange={(v) => update((d) => void (d.seo.description = v))} error={err('seo.description')} />
