@@ -1,0 +1,52 @@
+:root {
+  /* Paleta (sustituible desde /admin → Campaña; se inyecta en <style id="torero-theme">) */
+  --c-carbon: #1d1517;
+  --c-burgundy: #5a2533;
+  --c-gold: #c9a96e;
+  --c-ivory: #f4ece0;
+  --c-white: #ffffff;
+
+  /* Derivados */
+  --c-night: color-mix(in oklab, var(--c-carbon) 82%, black);
+  --c-carbon-2: color-mix(in oklab, var(--c-carbon) 90%, var(--c-ivory));
+  --c-carbon-3: color-mix(in oklab, var(--c-carbon) 80%, var(--c-ivory));
+  --c-wine-deep: color-mix(in oklab, var(--c-burgundy) 70%, var(--c-carbon));
+  --c-gold-bright: color-mix(in oklab, var(--c-gold) 78%, var(--c-ivory));
+  --c-gold-dim: color-mix(in oklab, var(--c-gold) 70%, var(--c-carbon));
+  --c-line: color-mix(in oklab, var(--c-gold) 40%, transparent);
+  --c-line-soft: color-mix(in oklab, var(--c-ivory) 14%, transparent);
+  --c-text-dim: color-mix(in oklab, var(--c-ivory) 78%, var(--c-carbon));
+  --c-paper: color-mix(in oklab, var(--c-ivory) 94%, var(--c-gold));
+  --c-ink: var(--c-carbon);
+  --c-ink-dim: color-mix(in oklab, var(--c-carbon) 76%, var(--c-ivory));
+
+  --font-serif: 'Fraunces', 'Fraunces Fallback', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --font-sans: 'Manrope', 'Manrope Fallback', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  --fs-display: clamp(3.35rem, 1.3rem + 8.4vw, 9.6rem);
+  --fs-h1: clamp(2.5rem, 1.25rem + 5.2vw, 6.4rem);
+  --fs-h2: clamp(2.15rem, 1.3rem + 3.6vw, 4.8rem);
+  --fs-h3: clamp(1.55rem, 1.2rem + 1.4vw, 2.4rem);
+  --fs-h4: clamp(1.25rem, 1.1rem + 0.6vw, 1.6rem);
+  --fs-lead: clamp(1.12rem, 1rem + 0.55vw, 1.42rem);
+  --fs-body: clamp(1rem, 0.97rem + 0.18vw, 1.075rem);
+  --fs-small: 0.9rem;
+  --fs-eyebrow: 0.74rem;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
+  --gutter: clamp(1.15rem, 4.4vw, 3.5rem);
+  --maxw: 1380px;
+  --nav-h: 72px;
+  --section-y: clamp(5.5rem, 4rem + 8vw, 11rem);
+  --radius: 2px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .45 0 0 0 0 .4 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media (max-width: 767px) {
+  :root {
+    --nav-h: 62px;
+  }
+}

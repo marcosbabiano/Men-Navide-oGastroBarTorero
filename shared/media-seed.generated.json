@@ -1,0 +1,307 @@
+[
+  {
+    "id": "hero-ornament",
+    "kind": "static",
+    "src": "/media/seed/hero-ornament",
+    "widths": [
+      640,
+      1280,
+      1920,
+      2400
+    ],
+    "width": 2400,
+    "height": 1603,
+    "alt": "Bola roja y luces cálidas en un árbol de Navidad",
+    "folder": "portada",
+    "position": "62% 50%",
+    "lqip": "data:image/webp;base64,UklGRmQAAABXRUJQVlA4IFgAAAAwBACdASoYABAAPu1kqU4ppaOiMAgBMB2JYgCdMoADTpib+65VbldlIgAA/uy6+Q/8jEw5FM3GpEIlNeU07JKYLhx605+7/QG8ijp+PxI1EkXRB9K+0AAA",
+    "credit": "Fotografía ilustrativa · Unsplash",
+    "sourceUrl": "https://images.unsplash.com/photo-1543258103-a62bdc069871",
+    "illustrative": true
+  },
+  {
+    "id": "gold-ornament",
+    "kind": "static",
+    "src": "/media/seed/gold-ornament",
+    "widths": [
+      640,
+      1280,
+      1920
+    ],
+    "width": 2400,
+    "height": 1600,
+    "alt": "Adorno navideño granate con dibujo dorado entre luces desenfocadas",
+    "folder": "ambiente",
+    "position": "72% 50%",
+    "lqip": "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAADQAwCdASoYABAAPu1kqU2ppaQiMAgBMB2JQBOgA3ZpGzh1xu5XJYgA/LOUrJtoJtA6gKiaPqQ3fM0OECEAmTf130avoTbswKwZG29kkR9WuAEnCymQI6dUJ8ESAAAA",
+    "credit": "Fotografía ilustrativa · Unsplash",
+    "sourceUrl": "https://images.unsplash.com/photo-1512474932049-78ac69ede12c",
+    "illustrative": true
+  },
+  {
+    "id": "champagne",
+    "kind": "static",
+    "src": "/media/seed/champagne",
+    "widths": [
+      640,
+      1280,
+      1920
+    ],
+    "width": 2400,
+    "height": 3600,
+    "alt": "Copa de vino rosado sirviéndose sobre fondo oscuro",
+    "folder": "ambiente",
+    "position": "50% 45%",
+    "lqip": "data:image/webp;base64,UklGRpIAAABXRUJQVlA4IIYAAADQBQCdASoYACQAPulgpk2pJaOiMBqtUSAdCWMAwoAUN3nt7X3DFsm9Dbjw8AFS6WBZSba72LEgAPzZEdPyDLDuST5r8HGYC6anvyf6KDCy8v4YLv0sxpU4jvCNJyNW3+qyr2/xad1Tn6i0WP+34BjRe162WHOkI4sbydBgxl0n5XBUIAAAAA==",
+    "credit": "Fotografía ilustrativa · Unsplash",
+    "sourceUrl": "https://images.unsplash.com/photo-1547595628-c61a29f496f0",
+    "illustrative": true
+  },
+  {
+    "id": "toast-red",
+    "kind": "static",
+    "src": "/media/seed/toast-red",
+    "widths": [
+      640,
+      1280,
+      1920
+    ],
+    "width": 2400,
+    "height": 1600,
+    "alt": "Amigos brindando con copas de vino tinto",
+    "folder": "ambiente",
+    "position": "40% 50%",
+    "lqip": "data:image/webp;base64,UklGRngAAABXRUJQVlA4IGwAAADwAwCdASoYABAAPu1kqk2ppaQiMAgBMB2JQBOmUAA9fDeYBpAr3dCgAP6Y4vx062spXNPS2x/3vBugOqvq4tjwYaR93MiXgSp3tqvRzNyx0mrWmSmHyOVR6DX72nvq8SU4KZ21/nXzWfYAAAA=",
+    "credit": "Fotografía ilustrativa · Unsplash",
+    "sourceUrl": "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3",
+    "illustrative": true
+  },
+  {
+    "id": "friends-toast",
+    "kind": "static",
+    "src": "/media/seed/friends-toast",
+    "widths": [
+      640,
+      1280,
+      1920
+    ],
+    "width": 2400,
+    "height": 1600,
+    "alt": "Grupo de amigos brindando con vino alrededor de una mesa",
+    "folder": "ambiente",
+    "position": "40% 40%",
+    "lqip": "data:image/webp;base64,UklGRmwAAABXRUJQVlA4IGAAAAAwBACdASoYABAAPu1kqk4ppaQiMAgBMB2JQBOmUABpUMmwcO7QdQQg9AAA/rvxsxeABYf1fbUwkQz4tdASK373OeZMJIW8Wq4HfJrspK85T5Zn+zwtn86/7MAxbV+aQAA=",
+    "credit": "Fotografía ilustrativa · Unsplash",
+    "sourceUrl": "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf",
+    "illustrative": true
+  },
+  {
+    "id": "group-dinner",
+    "kind": "static",
+    "src": "/media/seed/group-dinner",
+    "widths": [
+      640,
+      1280,
+      1920
+    ],
+    "width": 2400,
+    "height": 1600,
+    "alt": "Mesa larga de amigos compartiendo una comida",
+    "folder": "ambiente",
+    "position": "50% 50%",
+    "lqip": "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAAAQBACdASoYABAAPu1mqk4ppaOiMAgBMB2JYwCdACFqFcqmmbQMEnvR+AD6lMgTNAKpvR4dkq4r0NgBZPtyZwvw0bWNGCqgboMJjW2mDes2pCl4m9g3D7PQegzAewAA",
+    "credit": "Fotografía ilustrativa · Unsplash",
+    "sourceUrl": "https://images.unsplash.com/photo-1528605248644-14dd04022da1",
+    "illustrative": true
+  },
+  {
+    "id": "cheese",
+    "kind": "static",
+    "src": "/media/seed/cheese",
+    "widths": [
+      640,
+      1280,
+      1920
+    ],
+    "width": 2400,
+    "height": 1602,
+    "alt": "Queso curado con higos, nueces y hierbas",
+    "folder": "platos",
+    "position": "50% 45%",
+    "lqip": "data:image/webp;base64,UklGRmYAAABXRUJQVlA4IFoAAAAQBACdASoYABAAPu1orU6ppiSiMAgBMB2JYwCdABbW7pjDcEgOBuWIYAD+3PqRI7+rrkvSsndkkrQsMZ4/Fpc732FjeWThB8LqBLykjqwPN3rrgdmiE7NHiAA=",
+    "credit": "Fotografía ilustrativa · Unsplash",
+    "sourceUrl": "https://images.unsplash.com/photo-1452195100486-9cc805987862",
+    "illustrative": true
+  },
+  {
+    "id": "prawns",
+    "kind": "static",
+    "src": "/media/seed/prawns",
+    "widths": [
+      640,
+      1280,
+      1920
+    ],
+    "width": 2400,
+    "height": 1602,
+    "alt": "Langostinos cocidos servidos en un plato",
+    "folder": "platos",
+    "position": "50% 50%",
+    "lqip": "data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAABQBACdASoYABAAPu1kqU2ppaQiMAgBMB2JaACdLwABZC4qhlvk74xhL/cAAP68EzWF1CO4jCVIJAB6DfGS0p66/ihmr7x3cx+MiYTil30SBRU7vcyFcYryN8WbT/c8HSuvlB+Tx3QfoZMEJgAAAA==",
+    "credit": "Fotografía ilustrativa · Unsplash",
+    "sourceUrl": "https://images.unsplash.com/photo-1565680018434-b513d5e5fd47",
+    "illustrative": true
+  },
+  {
+    "id": "sliced-meat",
+    "kind": "static",
+    "src": "/media/seed/sliced-meat",
+    "widths": [
+      640,
+      1280,
+      1920
+    ],
+    "width": 2400,
+    "height": 1600,
+    "alt": "Carne a la brasa cortada en lonchas sobre tabla",
+    "folder": "platos",
+    "position": "45% 50%",
+    "lqip": "data:image/webp;base64,UklGRm4AAABXRUJQVlA4IGIAAAAQBACdASoYABAAPu1kqk2ppaQiMAgBMB2JQBWABD4ZRrxYoc7U3j6vkAD+0Wr0wA2/brah9492k9YOD1vXH/lRTN8nxWMNbHGjQD6/kWHDRmsi/dIYTW/E/RfPXqdYbuvwAA==",
+    "credit": "Fotografía ilustrativa · Unsplash",
+    "sourceUrl": "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba",
+    "illustrative": true
+  },
+  {
+    "id": "steak",
+    "kind": "static",
+    "src": "/media/seed/steak",
+    "widths": [
+      640,
+      1280,
+      1920
+    ],
+    "width": 2400,
+    "height": 4267,
+    "alt": "Corte de carne roja al punto en primer plano",
+    "folder": "platos",
+    "position": "50% 78%",
+    "lqip": "data:image/webp;base64,UklGRqAAAABXRUJQVlA4IJQAAABwBQCdASoYACsAPtVWpE2oJKOiNUwBABqJZgDDNG2xi6Hbwau/5ZCIx0vEq0oPm54P6ogAAP73O++XEvAmm/7mhMq6xPLkZ89Zb9q0r40aHuevFiyIlt2WcbT+i3JCisQ8RqUXDlupC3iQMX7iAmqEv010gPz35k0DTUo5K+cYdwnPKTtV5SEpY9qIvwaiEb1mAAAA",
+    "credit": "Fotografía ilustrativa · Unsplash",
+    "sourceUrl": "https://images.unsplash.com/photo-1588168333986-5078d3ae3976",
+    "illustrative": true
+  },
+  {
+    "id": "chocolate-cake",
+    "kind": "static",
+    "src": "/media/seed/chocolate-cake",
+    "widths": [
+      640,
+      1280,
+      1920
+    ],
+    "width": 2400,
+    "height": 3600,
+    "alt": "Porción de tarta de chocolate con salsa de chocolate",
+    "folder": "platos",
+    "position": "55% 45%",
+    "lqip": "data:image/webp;base64,UklGRqoAAABXRUJQVlA4IJ4AAABwBgCdASoYACQAPuVapk2pJKOiNVgMASAciWUAxCQWaHiIHc62TvAKv/F7n5HMuwgiVnf1miR6ZU5GnwAA/qN4C/QgSIK16EykIAN8hNL4trF9wx0tk/FtorlM4yZD43aMDrHP/3E7G0h9IMEgVOBqSQsXnFmqTnyetExH0tVr2xP5qqULc4jIaMVU/I5LcUGi400sQxvC4AHO0ZgAAA==",
+    "credit": "Fotografía ilustrativa · Unsplash",
+    "sourceUrl": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c",
+    "illustrative": true
+  },
+  {
+    "id": "long-table",
+    "kind": "static",
+    "src": "/media/seed/long-table",
+    "widths": [
+      640,
+      1280,
+      1920
+    ],
+    "width": 2400,
+    "height": 1600,
+    "alt": "Mesa larga preparada con copas y cubiertos",
+    "folder": "ambiente",
+    "position": "45% 60%",
+    "lqip": "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAAAQBACdASoYABAAPu1iqU2ppaOiMAgBMB2JYwAAYfOb1QwQNuzKjfD9IAD+3KSETIVA/FNIvtT0oEoLrqlPkR8ixejELjEbMcNY9Z9ST0Urg/tMBCbBbZExSdCFJAAA",
+    "credit": "Fotografía ilustrativa · Unsplash",
+    "sourceUrl": "https://images.unsplash.com/photo-1574966739987-65e38db0f7ce",
+    "illustrative": true
+  },
+  {
+    "id": "bar-lights",
+    "kind": "static",
+    "src": "/media/seed/bar-lights",
+    "widths": [
+      640,
+      1280,
+      1920
+    ],
+    "width": 2400,
+    "height": 3200,
+    "alt": "Barra de bar iluminada con luz cálida",
+    "folder": "ambiente",
+    "position": "50% 40%",
+    "lqip": "data:image/webp;base64,UklGRpIAAABXRUJQVlA4IIYAAAAQBgCdASoYACAAPu1orE+ppiQiMBgIATAdiWQAnS/Up/+DJS29CfeJKzJAgE/Zi6tIGBb7MQ+16IAA/vKo+5RW49bBgyYQohgrxxafB2vPPgg1j3yotQ3XT15NFzKbZHWhh+j99IvSxmJMN/RAIb+Avv1zkQyAOaiL8JKEvnvfKiOG8mMAAA==",
+    "credit": "Fotografía ilustrativa · Unsplash",
+    "sourceUrl": "https://images.unsplash.com/photo-1543007630-9710e4a00a20",
+    "illustrative": true
+  },
+  {
+    "id": "pine-lights",
+    "kind": "static",
+    "src": "/media/seed/pine-lights",
+    "widths": [
+      640,
+      1280,
+      1920
+    ],
+    "width": 2400,
+    "height": 1600,
+    "alt": "Ramas de abeto con pequeñas luces",
+    "folder": "texturas",
+    "position": "50% 50%",
+    "lqip": "data:image/webp;base64,UklGRkQAAABXRUJQVlA4IDgAAAAwAwCdASoYABAAPu1iqU2ppaOiMAgBMB2JZQC/ODKKvhuAAP7v6Fu19vlaU0HxcYaQuH6CNaOgAA==",
+    "credit": "Fotografía ilustrativa · Unsplash",
+    "sourceUrl": "https://images.unsplash.com/photo-1513297887119-d46091b24bfa",
+    "illustrative": true
+  },
+  {
+    "id": "gold-ribbons",
+    "kind": "static",
+    "src": "/media/seed/gold-ribbons",
+    "widths": [
+      640,
+      1280,
+      1920
+    ],
+    "width": 2400,
+    "height": 2400,
+    "alt": "Regalos oscuros con lazos dorados",
+    "folder": "texturas",
+    "position": "50% 50%",
+    "lqip": "data:image/webp;base64,UklGRpoAAABXRUJQVlA4II4AAABQBQCdASoYABgAPu1crE2ppKSiMBgMATAdiWUAwzQOmWgDK00lqGL8/YNFjON8f/V+9SAA3lHXN1zDQw0bCzm0Ui9Ddmw4IRlaFsez9a+ZwKoXsq+favkZWw25xeqYsf5D3PBtyZA/zoPy9HVuYnGKmcAcL44/D5ZGBwp5Zol9gmSRGqPhEcRXEIKzeAAA",
+    "credit": "Fotografía ilustrativa · Unsplash",
+    "sourceUrl": "https://images.unsplash.com/photo-1607344645866-009c320b63e0",
+    "illustrative": true
+  },
+  {
+    "id": "pine-branch",
+    "kind": "static",
+    "src": "/media/seed/pine-branch",
+    "widths": [
+      640,
+      1280,
+      1920
+    ],
+    "width": 2400,
+    "height": 1600,
+    "alt": "Rama de abeto con adornos y bayas rojas sobre madera",
+    "folder": "ambiente",
+    "position": "35% 50%",
+    "lqip": "data:image/webp;base64,UklGRnAAAABXRUJQVlA4IGQAAAAwBACdASoYABAAPu1kqU2ppaQiMAgBMB2JQBOnKAAXFqvvVGzDUbRYngAA/sDGhynCkjE07xHEErHHcBGBJsHTBTiItFivVGI/v2PvpUtZW9ayp3B4MlmLcQsVPpTPaXOTAAAA",
+    "credit": "Fotografía ilustrativa · Unsplash",
+    "sourceUrl": "https://images.unsplash.com/photo-1543934638-bd2e138430c4",
+    "illustrative": true
+  }
+]

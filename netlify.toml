@@ -1,0 +1,38 @@
+# Configuración de despliegue en Netlify.
+# Documentación del proyecto: README.md y docs/DESPLIEGUE.md
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+  functions = "netlify/functions"
+  edge_functions = "netlify/edge-functions"
+
+[build.environment]
+  NODE_VERSION = "22"
+  NPM_FLAGS = "--legacy-peer-deps"
+
+[functions]
+  node_bundler = "esbuild"
+
+# Portada: SEO y contenido publicado inyectados en el HTML (Netlify Blobs).
+[[edge_functions]]
+  function = "landing"
+  path = "/"
+  cache = "manual"
+
+# Panel de administración (aplicación independiente).
+[[redirects]]
+  from = "/admin"
+  to = "/admin.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin/*"
+  to = "/admin.html"
+  status = 200
+
+# Vista previa del borrador (usa la landing con datos del borrador; requiere sesión de administrador).
+[[redirects]]
+  from = "/preview"
+  to = "/index.html"
+  status = 200

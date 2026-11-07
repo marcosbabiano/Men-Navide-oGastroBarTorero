@@ -1,0 +1,18 @@
+[
+  { "id": "hero-ornament", "unsplash": "1543258103-a62bdc069871", "folder": "portada", "position": "62% 50%", "maxWidth": 2400, "alt": "Bola roja y luces cálidas en un árbol de Navidad" },
+  { "id": "gold-ornament", "unsplash": "1512474932049-78ac69ede12c", "folder": "ambiente", "position": "72% 50%", "alt": "Adorno navideño granate con dibujo dorado entre luces desenfocadas" },
+  { "id": "champagne", "unsplash": "1547595628-c61a29f496f0", "folder": "ambiente", "position": "50% 45%", "alt": "Copa de vino rosado sirviéndose sobre fondo oscuro" },
+  { "id": "toast-red", "unsplash": "1510812431401-41d2bd2722f3", "folder": "ambiente", "position": "40% 50%", "alt": "Amigos brindando con copas de vino tinto" },
+  { "id": "friends-toast", "unsplash": "1519671482749-fd09be7ccebf", "folder": "ambiente", "position": "40% 40%", "alt": "Grupo de amigos brindando con vino alrededor de una mesa" },
+  { "id": "group-dinner", "unsplash": "1528605248644-14dd04022da1", "folder": "ambiente", "position": "50% 50%", "alt": "Mesa larga de amigos compartiendo una comida" },
+  { "id": "cheese", "unsplash": "1452195100486-9cc805987862", "folder": "platos", "position": "50% 45%", "alt": "Queso curado con higos, nueces y hierbas" },
+  { "id": "prawns", "unsplash": "1565680018434-b513d5e5fd47", "folder": "platos", "position": "50% 50%", "alt": "Langostinos cocidos servidos en un plato" },
+  { "id": "sliced-meat", "unsplash": "1529692236671-f1f6cf9683ba", "folder": "platos", "position": "45% 50%", "alt": "Carne a la brasa cortada en lonchas sobre tabla" },
+  { "id": "steak", "unsplash": "1588168333986-5078d3ae3976", "folder": "platos", "position": "50% 78%", "alt": "Corte de carne roja al punto en primer plano" },
+  { "id": "chocolate-cake", "unsplash": "1606313564200-e75d5e30476c", "folder": "platos", "position": "55% 45%", "alt": "Porción de tarta de chocolate con salsa de chocolate" },
+  { "id": "long-table", "unsplash": "1574966739987-65e38db0f7ce", "folder": "ambiente", "position": "45% 60%", "alt": "Mesa larga preparada con copas y cubiertos" },
+  { "id": "bar-lights", "unsplash": "1543007630-9710e4a00a20", "folder": "ambiente", "position": "50% 40%", "alt": "Barra de bar iluminada con luz cálida" },
+  { "id": "pine-lights", "unsplash": "1513297887119-d46091b24bfa", "folder": "texturas", "position": "50% 50%", "alt": "Ramas de abeto con pequeñas luces" },
+  { "id": "gold-ribbons", "unsplash": "1607344645866-009c320b63e0", "folder": "texturas", "position": "50% 50%", "alt": "Regalos oscuros con lazos dorados" },
+  { "id": "pine-branch", "unsplash": "1543934638-bd2e138430c4", "folder": "ambiente", "position": "35% 50%", "alt": "Rama de abeto con adornos y bayas rojas sobre madera" }
+]

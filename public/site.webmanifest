@@ -1,0 +1,9 @@
+{
+  "name": "GastroBar Torero · Navidad",
+  "short_name": "Torero",
+  "icons": [{ "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }],
+  "theme_color": "#1d1517",
+  "background_color": "#1d1517",
+  "display": "browser",
+  "lang": "es"
+}

@@ -1,0 +1,13 @@
+node_modules
+dist
+.netlify
+.local-data
+assets-src
+test-results
+playwright-report
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+/gastrobar-torero-navidad-2026.zip
+.DS_Store
