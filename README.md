@@ -3,7 +3,8 @@
 Web de la campaña de Navidad de **GastroBar Torero** (Fuenlabrada de los Montes, Badajoz) con **panel de administración privado** en `/admin`.
 
 - **Landing** cinematográfica (intro, portada, «La Navidad se comparte», menús, comparativa, celebración, cómo reservar, preguntas frecuentes, sobre nosotros y pie) diseñada primero para móvil.
-- **Panel `/admin`** con Netlify Identity: menús (crear, duplicar, reordenar arrastrando, ocultar, eliminar), textos, establecimiento y horarios, imágenes, campaña/colores/SEO, vista previa, publicación e historial.
+- **Panel `/admin`** con Netlify Identity: **secciones** (ordenar, mostrar/ocultar, eliminar y crear bloques con 8 plantillas), menús (crear, duplicar, reordenar arrastrando, ocultar, eliminar), textos, establecimiento y horarios, imágenes, campaña/colores/ornamentos/SEO, vista previa, publicación e historial.
+- **Estudio Creativo — Redes Sociales** en el panel: editor visual (Konva) con 10 plantillas de la campaña, formatos de Instagram (4:5, 1:1, 9:16, carrusel y personalizado), datos vinculados a los menús publicados, diseños guardados y exportación PNG/JPG/PDF a tamaño real.
 - **Contenido persistente** en Netlify Blobs: los cambios se publican **sin tocar código ni redesplegar** y sobreviven a nuevos despliegues.
 - **Reservas** en la plataforma externa existente (Qamarero). Todos los botones enlazan a `https://booking.qamarero.com/new-reservation/bar-torero` (editable).
 
@@ -20,14 +21,15 @@ Web de la campaña de Navidad de **GastroBar Torero** (Fuenlabrada de los Montes
 | [`docs/PENDIENTES.md`](docs/PENDIENTES.md) | Datos comerciales y configuraciones pendientes de confirmar. |
 | [`docs/ARQUITECTURA-Y-SEGURIDAD.md`](docs/ARQUITECTURA-Y-SEGURIDAD.md) | Arquitectura técnica, API, modelo de datos y medidas de seguridad. |
 | [`docs/INFORME-DE-PRUEBAS.md`](docs/INFORME-DE-PRUEBAS.md) | Pruebas ejecutadas y resultados. |
-| [`ASSETS-PENDIENTES.md`](ASSETS-PENDIENTES.md) | Fotografías definitivas a producir (con prompts para generación externa). |
+| [`docs/PROMPT-MAESTRO-CHATGPT.md`](docs/PROMPT-MAESTRO-CHATGPT.md) | **Prompt maestro** para generar la colección de ilustraciones en ChatGPT y cómo integrarla. |
+| [`ASSETS-PENDIENTES.md`](ASSETS-PENDIENTES.md) | Resumen de recursos visuales pendientes. |
 | [`CREDITOS-IMAGENES.md`](CREDITOS-IMAGENES.md) | Origen y licencia de las imágenes incluidas. |
 
 ---
 
 ## Puesta en marcha rápida (resumen)
 
-1. Sube este proyecto a un repositorio Git y créalo en Netlify con **Add new project → Import an existing project** (la configuración se lee de `netlify.toml`).
+1. El código vive en GitHub (`marcosbabiano/Men-Navide-oGastroBarTorero`). Vincula el repositorio en Netlify con **Add new project → Import an existing project** (la configuración se lee de `netlify.toml`); cada `git push` a la rama vinculada publica automáticamente.
 2. En Netlify activa **Identity**, pon el registro en **Invite only** e invítate.
 3. Abre el correo de invitación, crea tu contraseña y asígnate el rol **`admin`** en Netlify (o usa la variable `ADMIN_EMAILS`).
 4. Entra en `https://TU-SITIO/admin`, revisa el contenido y pulsa **Publicar**.
@@ -74,7 +76,6 @@ Con `npm run dev` (Vite) puedes trabajar en el diseño de la landing con recarga
 | `npm run test:e2e` | Pruebas de extremo a extremo con Playwright (landing, accesibilidad, panel). |
 | `npm run check` | typecheck + lint + test + build. |
 | `npm run images` | Regenera las variantes AVIF/WebP de las fotografías incluidas. |
-| `npm run zip` | Genera `entrega/gastrobar-torero-navidad-2026.zip`. |
 
 ---
 
@@ -93,13 +94,13 @@ Con `npm run dev` (Vite) puedes trabajar en el diseño de la landing con recarga
 │   ├── admin/                    Panel /admin
 │   └── styles/                   Fuentes, tokens de diseño
 ├── public/                       Fuentes, imágenes optimizadas, favicon, cabeceras (_headers)
-├── scripts/                      Servidor local, preparación de imágenes, ZIP
+├── scripts/                      Servidor local y preparación de imágenes
 ├── tests/                        unit/ (Vitest) y e2e/ (Playwright)
 └── docs/                         Documentación
 ```
 
 ## Tecnologías
 
-React 19 · TypeScript · Vite · GSAP 3 (ScrollTrigger + SplitText) · Netlify Functions (v2) · Netlify Edge Functions · Netlify Blobs · Netlify Identity (`@netlify/identity`) · Zod · dnd-kit · Vitest · Playwright · axe-core.
+React 19 · TypeScript · Vite · GSAP 3 (ScrollTrigger + SplitText) · Konva (Estudio) · jsPDF · Netlify Functions (v2) · Netlify Edge Functions · Netlify Blobs · Netlify Identity (`@netlify/identity`) · Zod · dnd-kit · Vitest · Playwright · axe-core.
 
 Sin analítica, sin cookies de seguimiento y sin servicios de terceros en la web pública (fuentes autoalojadas; Google Maps se abre como enlace, sin incrustar), por lo que **no necesita banner de cookies**.

@@ -18,7 +18,7 @@ Este proyecto usa **Netlify Functions**, una **Edge Function**, **Netlify Blobs*
 
 ## Opción B: con Netlify CLI (sin Git)
 
-Desde la carpeta del proyecto (descomprimida del ZIP):
+Desde una copia local del repositorio:
 
 ```bash
 npm install
@@ -93,7 +93,7 @@ En **Domain management** añade el dominio. No hay que cambiar nada en el códig
 | --- | --- | --- |
 | `ADMIN_EMAILS` | No | Correos con acceso de administrador aunque no tengan el rol (arranque). |
 
-No hay contraseñas ni claves en el código ni en el ZIP. Netlify inyecta automáticamente las credenciales de Blobs e Identity en las funciones.
+No hay contraseñas ni claves en el repositorio. Netlify inyecta automáticamente las credenciales de Blobs e Identity en las funciones.
 
 ## Caché y publicación instantánea
 

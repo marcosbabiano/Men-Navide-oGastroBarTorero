@@ -1,5 +1,25 @@
 # Informe de pruebas
 
+## Actualización · 8 de noviembre de 2026 (secciones, bloques y Estudio Creativo)
+
+| Comprobación | Resultado |
+| --- | --- |
+| Lint, typecheck y build | ✅ sin errores |
+| Unitarias e integración (Vitest + Blobs local) | ✅ **49/49** (12 nuevas) |
+| E2E (Playwright) | ✅ **29/29**, ejecutadas dos veces seguidas sin fallos |
+| Lighthouse móvil / escritorio | **97·100·100·100** / **100·100·100·100** (CLS 0) |
+| `netlify build --offline` | ✅ 3 funciones + edge function con ruta `/` |
+
+Nuevas pruebas:
+- **Secciones**: migración no destructiva de contenido antiguo (respeta la comparativa oculta), validación de enlaces y duplicados, protección de secciones esenciales, solo secciones visibles en la web; en navegador: ocultar y volver a mostrar la comparativa (desaparece de la web y de la navegación), protección de portada/menús/reservas, reordenar, editar textos desde el gestor, crear un bloque «Llamada a la acción» con enlace a reservas y entrada en la navegación, publicar y recargar sin perder cambios.
+- **Estudio Creativo**: las 10 plantillas generan diseños válidos con el tamaño de su formato; los textos de menú salen de lo publicado (sin postre ni bebida inventados para el Menú Distinción); las historias respetan la zona segura; API de diseños (guardar, listar, reabrir, duplicar, eliminar; 401/403 sin permisos; 422 con datos o miniatura no válidos); en navegador: publicación 4:5 desde plantilla, añadir y editar texto, insertar el precio vinculado a un menú publicado, insertar una imagen de la biblioteca existente, guardar, reabrir y **exportar PNG 1080×1350, JPG 1080×1350 y PDF** (dimensiones leídas del archivo descargado); historia exportada a **1080×1920**; aviso para actualizar o conservar un diseño cuando cambia el precio publicado.
+- **Compatibilidad**: el gestor de imágenes sigue subiendo y listando imágenes; no permite borrar una imagen usada por un diseño del Estudio; todas las pruebas anteriores de landing y panel siguen pasando.
+- Revisión visual de los 8 tipos de bloque a 1440 y 390 px (sin desbordes horizontales) y de las 10 plantillas del Estudio.
+
+---
+
+## Versión inicial
+
 Fecha de ejecución: 7 de noviembre de 2026. Entorno: Linux, Node.js 22, Chromium (Playwright 1.63).
 
 ## Resumen

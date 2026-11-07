@@ -13,6 +13,9 @@ Navegador ──► CDN Netlify ──► «/»  Edge Function landing ──►
 
 - **Frontend**: React 19 + TypeScript + Vite con dos entradas independientes: `index.html` (landing, ~13 KB gzip propios + React + GSAP) y `admin.html` (panel). El código del panel nunca se descarga en la web pública.
 - **Animación**: GSAP 3 con ScrollTrigger y SplitText. Los componentes declaran intenciones (`data-anim="lines|words-scrub|fade-up|stagger|mask|rule|draw|chars"`, `data-parallax`) y `src/landing/anim/choreography.ts` las ejecuta con `gsap.matchMedia()`: solo `transform`, `opacity` y `clip-path`; parallax solo en escritorio; nada bloquea el scroll; todo el contenido es visible sin JavaScript o con `prefers-reduced-motion`.
+- **Estructura**: `content.layout.sections` define orden, visibilidad y bloques personalizados de la landing. `shared/layout.ts` incluye la **migración no destructiva** que completa contenidos guardados con la versión anterior (al leerlos en servidor y Edge Function), respetando la comparativa si estaba oculta.
+- **Sistema de diseño compartido**: `shared/brand.ts` (tipografías y ornamentos vectoriales propios) y la paleta de campaña los usan tanto la landing como el Estudio.
+- **Estudio Creativo**: `src/admin/studio/` (Konva, cargado solo al abrirlo) con plantillas en `shared/studio-templates.ts` y modelo validado en `shared/studio.ts`. La exportación renderiza el mismo lienzo a escala 1 con las dimensiones exactas del formato; el PDF (jsPDF) se descarga solo al pedirlo.
 - **Datos**: un único documento JSON validado con Zod (`shared/schema.ts`) y una proyección pública (`shared/public.ts`) que elimina notas internas, secciones pendientes, cantidades pendientes, horario no verificado y menús no publicados.
 
 ## Almacenamiento (Netlify Blobs)
@@ -25,6 +28,7 @@ Stores **de sitio** (`getStore`), que persisten entre despliegues, con **consist
 | | `content/published` | Versión publicada `{ …, publishedAt, publishedBy, sourceRevision }` |
 | | `history/<fecha>-r<n>` | Versiones publicadas anteriores (máx. 30) |
 | | `media/index` | Índice de imágenes subidas |
+| | `designs/<id>` · `designs-index` | Diseños del Estudio Creativo y su listado con miniaturas |
 | `torero-media` | `files/<id>` y `files/<id>@sm` | Imagen optimizada y miniatura |
 
 - **Contenido inicial seguro**: si no existe borrador se crea con `onlyIfNew` a partir de lo publicado o, si no hay nada, del contenido inicial (`shared/seed.ts`). Nunca se sobrescribe un cambio posterior. La web pública muestra el contenido inicial sin escribir nada mientras no haya publicación.
@@ -46,7 +50,9 @@ Stores **de sitio** (`getStore`), que persisten entre despliegues, con **consist
 | GET | `/api/admin/history` | Admin | Historial |
 | POST | `/api/admin/history/restore` | Admin | Restaurar versión en el borrador |
 | POST | `/api/admin/media` | Admin | Subir imagen (multipart) |
-| PATCH/DELETE | `/api/admin/media/:id` | Admin | Editar / eliminar imagen |
+| PATCH/DELETE | `/api/admin/media/:id` | Admin | Editar / eliminar imagen (no si está en uso en la web o en un diseño) |
+| GET | `/api/admin/designs` | Admin | Diseños del Estudio (resumen y miniatura) |
+| GET/PUT/DELETE | `/api/admin/designs/:id` | Admin | Abrir, guardar (validado) o eliminar un diseño |
 
 ## Seguridad
 

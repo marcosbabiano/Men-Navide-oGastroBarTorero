@@ -75,3 +75,36 @@ En los textos puedes escribir estos marcadores y se sustituyen solos:
 ## Historial
 
 Cada publicación guarda la versión anterior (las 30 últimas). En **Publicar → Historial** pulsa «Restaurar en el borrador»: el borrador se sustituye por esa versión y la web **no cambia** hasta que vuelvas a publicar.
+
+## Secciones de la web
+
+En **Secciones** aparecen todas las partes de la landing en orden:
+
+- **Ordenar**: arrastra con el asa (⋮⋮) o usa las flechas ↑↓.
+- **Mostrar/ocultar**: el interruptor oculta la sección **sin perder su contenido** (por ejemplo, la comparativa de menús).
+- **Editar**: lleva a sus textos (las secciones del sistema se editan en Textos; los menús, en Menús).
+- **Ajustes**: nombre en el panel y texto en el menú de navegación (vacío = no aparece en la navegación).
+- **Eliminar** quita la sección (con confirmación). Las secciones del sistema eliminadas se pueden **restaurar** desde la misma pantalla; sus textos se conservan. Una versión publicada anterior se puede recuperar en Publicar → Historial.
+- 🔒 **Protegidas**: la portada y los menús no se pueden ocultar ni eliminar; el proceso de reservas no se puede eliminar (sí ocultar, con confirmación). Los botones de reserva funcionan siempre.
+
+**Añadir un bloque**: elige una plantilla (Imagen y texto, Texto e imagen, Imagen a pantalla completa, Galería, Texto destacado, Separador editorial, Llamada a la acción o Bloque informativo). En su editor cambias plantilla, ambiente de color (carbón, marfil, burdeos), textos, botón y enlace (vacío = reservas; también `https://…`, `#menus`, `tel:` o `mailto:`) e imágenes, que se eligen o suben con el gestor de imágenes de siempre.
+
+## Ornamentos de marca
+
+En **Campaña → Ornamentos de marca** asigna ilustraciones con fondo transparente: acento de la portada, separador editorial (sustituye a los filetes dorados) y rama botánica. Vacíos no muestran nada. Ver `docs/PROMPT-MAESTRO-CHATGPT.md`.
+
+## Estudio Creativo — Redes Sociales
+
+1. **Estudio** → elige una plantilla (anuncio, Menú I, Menú II, comparación, historias, carrusel, felicitación o promoción) o empieza en blanco, y el formato: publicación 4:5 (1080×1350), cuadrada (1080×1080), historia (1080×1920, con zonas seguras marcadas), carrusel o personalizado.
+2. En el editor:
+   - **Añadir**: titulares, párrafos, fotografías o ilustraciones de la biblioteca, ornamentos de marca, formas y logotipo.
+   - **Menús**: inserta datos de un menú publicado (nombre, precio, entrantes, principales…). Solo se ofrecen datos publicados y confirmados.
+   - **Fondo**: color, degradado o imagen con opacidad.
+   - **Capas**: selecciona elementos superpuestos.
+   - Arrastra para mover, usa los tiradores para redimensionar y girar; el panel derecho permite cambiar texto, tipografía, tamaño, grosor, cursiva, mayúsculas, colores de la marca, alineación, espaciados, opacidad y orden. Ajuste magnético a centros y bordes.
+   - Atajos: Ctrl+Z / Ctrl+Y, Ctrl+D (duplicar), Supr (borrar), flechas (mover; Mayús = 10 px).
+3. **Guardar** crea o actualiza el diseño (persistente). **Duplicar** crea una copia.
+4. **Exportar** en PNG, JPG o PDF al tamaño real del formato.
+5. Si después cambian los datos de un menú, al reabrir un diseño guardado el Estudio te pregunta si **actualizarlo** o **conservarlo** tal cual. Nunca se modifica solo.
+
+En **Diseños guardados** tienes miniatura, nombre, formato, fecha y las acciones Editar, Duplicar, Exportar y Eliminar.

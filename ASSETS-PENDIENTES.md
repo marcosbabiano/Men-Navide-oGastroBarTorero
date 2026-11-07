@@ -1,5 +1,11 @@
 # Recursos visuales pendientes
 
+> **Nueva dirección artística:** la colección de ilustraciones exclusivas está definida en
+> [`docs/PROMPT-MAESTRO-CHATGPT.md`](docs/PROMPT-MAESTRO-CHATGPT.md) (11 piezas, formatos,
+> transparencias, prompts y dónde se asigna cada una en el panel). Ese documento sustituye a
+> la lista de fotografías de abajo, que se conserva como referencia de la versión anterior.
+
+
 La web está completa con fotografía **ilustrativa** de Unsplash (sin imágenes rotas ni huecos). Para la versión definitiva se recomienda sustituirla por **fotografías reales de GastroBar Torero** o, como paso intermedio, por imágenes generadas externamente **identificadas como ilustrativas** (la web ya muestra el aviso «Imágenes ilustrativas»; no presentes imágenes generadas como fotos reales de los platos).
 
 Todas se sustituyen **desde el panel** (Imágenes → Subir, y después elegirlas en cada sección). El panel las redimensiona y comprime automáticamente; súbelas en la mayor calidad disponible.
