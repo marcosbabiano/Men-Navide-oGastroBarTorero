@@ -87,12 +87,14 @@ export const menuSectionSchema = z.object({
   hint: safeText(160),
   /** Si está pendiente, la sección nunca se muestra en la web pública. */
   pending: z.boolean(),
+  /** Grupos «a elegir»: cuántas opciones elige cada comensal. */
+  choose: z.number().int().min(1).max(10),
   items: z.array(menuItemSchema).max(40),
 });
 
 export const MENU_STATUSES = ['draft', 'published', 'hidden'] as const;
 export type MenuStatus = (typeof MENU_STATUSES)[number];
-export const MENU_THEMES = ['ivory', 'noir', 'burgundy', 'forest'] as const;
+export const MENU_THEMES = ['ivory', 'noir', 'burgundy', 'forest', 'gourmet'] as const;
 export type MenuTheme = (typeof MENU_THEMES)[number];
 
 export const menuSchema = z.object({
@@ -320,6 +322,8 @@ export const siteContentSchema = z.object({
     }),
   }),
   menus: z.array(menuSchema).max(30),
+  /** Parches de datos ya aplicados (evita repetirlos o duplicar contenido). */
+  patches: z.array(z.string().max(60)).max(100),
   layout: z
     .object({ sections: z.array(layoutSectionSchema).max(40) })
     .superRefine((l, ctx) => {

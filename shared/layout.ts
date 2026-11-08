@@ -1,7 +1,8 @@
 /**
  * Estructura de la landing: secciones del sistema, protecciones y migración de contenidos antiguos.
  */
-import type { BuiltinSection, BlockTemplate, CustomBlock, LayoutSection, SiteContent } from './schema.ts';
+import type { BuiltinSection, BlockTemplate, CustomBlock, LayoutSection, Menu, SiteContent } from './schema.ts';
+import { DISTINCION_DESSERT, DISTINCION_DRINK, PATCH_MENUS_2026_11, gourmetMenu } from './menu-data-2026.ts';
 
 export const BUILTIN_INFO: Record<BuiltinSection, { label: string; anchor: string; protection: 'locked' | 'no-delete' | 'none'; description: string }> = {
   hero: { label: 'Portada principal', anchor: 'inicio', protection: 'locked', description: 'Titular, botones de menús y reserva.' },
@@ -73,7 +74,37 @@ export function migrateContent<T>(raw: T): T {
   if (texts?.compare && 'enabled' in texts.compare) delete texts.compare.enabled;
   if (!c.layout && texts?.nav) c.layout = defaultLayout(c as unknown as Pick<SiteContent, 'texts'>, compareEnabled);
   if (c.campaign && !c.campaign.decor) c.campaign.decor = { heroAccent: null, divider: null, branch: null };
+  // Grupos de platos sin «choose» (versiones anteriores): una opción por comensal.
+  if (Array.isArray(c.menus)) {
+    for (const m of c.menus as { sections?: Raw[] }[]) for (const sec of m.sections ?? []) if (typeof sec.choose !== 'number') sec.choose = 1;
+  }
+  if (Array.isArray(c.menus) && !Array.isArray(c.patches)) c.patches = [];
+  if (Array.isArray(c.menus)) applyMenuPatch2026(c as unknown as SiteContent);
   return c as unknown as T;
+}
+
+/**
+ * Actualización controlada de noviembre de 2026 (se aplica una sola vez por contenido):
+ *  - Menú Distinción: postre («Postre») y bebida («Bebida incluida») SOLO si esas secciones
+ *    siguen vacías y pendientes (no se pisa nada escrito desde el panel).
+ *  - Menú Selección Gourmet: se añade en borrador si no existe ya.
+ */
+function applyMenuPatch2026(c: SiteContent) {
+  if (c.patches.includes(PATCH_MENUS_2026_11)) return;
+  const dist = c.menus.find((m) => m.id === 'menu-distincion');
+  if (dist) {
+    const fill = (kind: 'dessert' | 'drink', data: typeof DISTINCION_DESSERT) => {
+      const sec = dist.sections.find((s) => s.kind === kind);
+      if (!sec) dist.sections.push({ id: `distincion-${kind === 'dessert' ? 'postre' : 'bebida'}`, kind, pending: false, choose: 1, ...structuredClone(data) });
+      else if (sec.pending && sec.items.length === 0) Object.assign(sec, { pending: false, ...structuredClone(data) });
+    };
+    fill('dessert', DISTINCION_DESSERT);
+    fill('drink', DISTINCION_DRINK);
+  }
+  if (!c.menus.some((m: Menu) => m.id === 'menu-seleccion-gourmet' || /selecci[oó]n gourmet/i.test(m.name))) {
+    c.menus.push(gourmetMenu(c.menus.reduce((max, m) => Math.max(max, m.order), -1) + 1));
+  }
+  c.patches.push(PATCH_MENUS_2026_11);
 }
 
 export function visibleSections(content: SiteContent): LayoutSection[] {

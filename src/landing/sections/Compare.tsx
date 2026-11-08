@@ -13,6 +13,8 @@ export function Compare() {
   const menus = content.menus;
   const rows = useMemo(() => buildComparison(menus), [menus]);
   if (menus.length < 2) return null;
+  // Con tres o más menús, «En ambos menús» deja de ser correcto.
+  const commonLabel = menus.length > 2 && /ambos/i.test(c.commonLabel) ? 'En todos los menús' : c.commonLabel;
   const hasCommon = rows.some((r) => r.cells.some((cell) => cell.items.some((i) => i.common)));
   const cols = { '--cols': menus.length } as CSSProperties;
 
@@ -33,7 +35,7 @@ export function Compare() {
           )}
         </div>
 
-        <div className={`compare__scroller ${menus.length > 2 ? 'compare__scroller--wide' : ''}`} tabIndex={menus.length > 2 ? 0 : undefined} role={menus.length > 2 ? 'region' : undefined} aria-label={menus.length > 2 ? 'Comparativa (desplázate horizontalmente)' : undefined}>
+        <div className={`compare__scroller ${menus.length > 2 ? 'compare__scroller--stack' : ''}`}>
           <table className="ctable" style={cols}>
             <caption className="sr-only">{t(c.title)}</caption>
             <thead>
@@ -56,7 +58,7 @@ export function Compare() {
                   {c.priceLabel}
                 </th>
                 {menus.map((m) => (
-                  <td key={m.id} className="ctable__cell">
+                  <td key={m.id} className="ctable__cell" data-menu={splitMenuName(m.name).main}>
                     {m.price.amount !== null ? (
                       <>
                         <span className="ctable__price">{formatPrice(m.price.amount)}</span>
@@ -75,17 +77,18 @@ export function Compare() {
                     {row.hint && <span className="ctable__hint">{row.hint}</span>}
                   </th>
                   {row.cells.map((cell) => (
-                    <td key={cell.menuId} className="ctable__cell">
+                    <td key={cell.menuId} className="ctable__cell" data-menu={splitMenuName(menus.find((m) => m.id === cell.menuId)?.name ?? '').main}>
                       {cell.pending ? (
                         <span className="ctable__pending">{c.pendingLabel}</span>
                       ) : (
                         <ul role="list" className="ctable__items">
                           {cell.items.map((it, i) => (
-                            <li key={i} className={it.common ? 'is-common' : ''}>
+                            <li key={i} className={`${it.common ? 'is-common' : ''} ${it.group ? 'has-group' : ''}`}>
+                              {it.group && <span className="ctable__group">{it.group}</span>}
                               {it.common && <span className="ctable__dot" aria-hidden="true" />}
                               <span>{it.name}</span>
                               {it.quantity && <span className="ctable__qty"> · {it.quantity}</span>}
-                              {it.common && <span className="sr-only"> ({c.commonLabel})</span>}
+                              {it.common && <span className="sr-only"> ({commonLabel})</span>}
                             </li>
                           ))}
                         </ul>
@@ -97,7 +100,7 @@ export function Compare() {
               <tr className="ctable__row ctable__row--cta">
                 <td />
                 {menus.map((m) => (
-                  <td key={m.id} className="ctable__cell">
+                  <td key={m.id} className="ctable__cell" data-menu={splitMenuName(m.name).main}>
                     <BookLink variant="link" place={`comparativa-${m.id}`}>
                       {content.texts.nav.book}
                     </BookLink>
@@ -109,7 +112,7 @@ export function Compare() {
         </div>
         {hasCommon && (
           <p className="compare__legend">
-            <span className="ctable__dot" aria-hidden="true" /> {c.commonLabel}
+            <span className="ctable__dot" aria-hidden="true" /> {commonLabel}
           </p>
         )}
       </div>

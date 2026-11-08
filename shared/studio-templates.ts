@@ -52,10 +52,10 @@ function text(o: TextOpts): TextElement {
 }
 const eyebrow = (o: TextOpts) => text({ font: 'sans', size: 26, weight: 700, letterSpacing: 7, uppercase: true, ...o });
 
-function bound(menu: Menu | undefined, field: BindingField, o: Omit<TextOpts, 'text'>, prefix = ''): TextElement | null {
-  const v = bindingValue(menu, field);
+function bound(menu: Menu | undefined, field: BindingField, o: Omit<TextOpts, 'text'>, prefix = '', sectionId?: string): TextElement | null {
+  const v = bindingValue(menu, field, 'o', sectionId);
   if (!v || !menu) return null;
-  return text({ ...o, text: prefix + v, binding: { menuId: menu.id, field } });
+  return text({ ...o, text: prefix + v, binding: sectionId ? { menuId: menu.id, field, sectionId } : { menuId: menu.id, field } });
 }
 
 function orn(ornament: OrnamentId, x: number, y: number, w: number, h: number, color: string, strokeWidth = 2, rotation = 0, opacity = 1): DesignElement {
@@ -74,6 +74,8 @@ function image(asset: string | null, x: number, y: number, w: number, h: number,
   if (!asset) return [];
   return [{ ...common(), type: 'image', asset, fit: 'cover', x, y, width: w, height: h, radius }];
 }
+/** Menús publicados (los borradores, como un menú sin precio, no se anuncian en plantillas generales). */
+const live = (ctx: TemplateContext) => ctx.menus.filter((m) => m.status === 'published');
 const compact = (list: (DesignElement | null)[]) => list.filter((e): e is DesignElement => !!e);
 
 /** Marco doble dorado característico de la landing. */
@@ -119,6 +121,52 @@ function menuCard(ctx: TemplateContext, W: number, H: number, menu: Menu | undef
   return { background: { color: dark ? '#141012' : t.ivory, gradient: dark ? { to: '#2a1219', angle: 160 } : null, image: null }, elements: compact(els) };
 }
 
+/** Ficha para menús con varios grupos (p. ej. Gourmet: para empezar, primer y segundo plato, para terminar). */
+function groupedCard(ctx: TemplateContext, W: number, H: number, menu: Menu | undefined): Pick<Design, 'background' | 'elements'> {
+  const t = ctx.theme;
+  const m = 100;
+  const cw = W - m * 2;
+  const els: (DesignElement | null)[] = [
+    ...frame(W, H, 40, t.gold),
+    orn('corner', 64, 64, 130, 130, t.gold, 2),
+    orn('corner', W - 64, H - 64, 130, 130, t.gold, 2, 180),
+    eyebrow({ text: `Navidad ${ctx.year}`, x: m, y: 130, width: cw, color: t.gold }),
+    text({ text: 'Menú', x: m, y: 182, width: cw, size: 40, italic: true, opacity: 0.85 }),
+    bound(menu, 'nameMain', { x: m, y: 232, width: cw, size: 100, weight: 300, italic: true, color: t.gold, lineHeight: 1 }),
+    orn('rule', W / 2 - 150, 372, 300, 30, t.gold, 1.5),
+  ];
+  const price = bindingValue(menu, 'price');
+  els.push(
+    price
+      ? bound(menu, 'price', { x: m, y: 420, width: cw, size: 64 })
+      : text({ text: 'Precio próximamente', x: m, y: 430, width: cw, size: 40, italic: true, opacity: 0.85 }),
+  );
+  const visible = (menu?.sections ?? []).filter((x) => !x.pending && x.items.some((i) => i.name));
+  const left = visible.filter((x) => x.kind !== 'choice' && x.kind !== 'drink');
+  const right = visible.filter((x) => x.kind === 'choice');
+  const colW = cw / 2 - 24;
+  const place = (list: typeof visible, x: number) => {
+    let y = 540;
+    for (const sec of list) {
+      if (y > H - 300) break;
+      els.push(eyebrow({ text: sec.title, x, y, width: colW, size: 20, color: t.gold, align: 'left' }));
+      const names = sec.items.map((i) => i.name).filter(Boolean);
+      // Líneas reales: cada plato puede ocupar varias líneas en la columna (≈0,5 em por carácter).
+      const perLine = Math.max(8, Math.floor(colW / (30 * 0.5)));
+      const wrapped = names.reduce((sum, nm) => sum + Math.ceil(nm.length / perLine), 0);
+      const lines = wrapped + (sec.kind === 'choice' && sec.choose === 1 ? names.length - 1 : 0);
+      els.push(bound(menu, 'section', { x, y: y + 42, width: colW, size: 30, align: 'left', lineHeight: 1.3, italic: sec.kind === 'choice' }, '', sec.id));
+      y += 42 + lines * 39 + 46;
+    }
+  };
+  place(left, m);
+  place(right, m + cw / 2 + 24);
+  const drink = visible.find((x) => x.kind === 'drink');
+  if (drink) els.push(bound(menu, 'section', { x: m, y: H - 230, width: cw, font: 'sans', size: 26, weight: 600, letterSpacing: 4, uppercase: true, opacity: 0.85 }, '', drink.id));
+  els.push(logo(W / 2 - 140, H - 175, 280, t.ivory, t.gold));
+  return { background: { color: '#120b0e', gradient: { to: t.burgundy, angle: 200 }, image: null }, elements: compact(els) };
+}
+
 export const TEMPLATES: TemplateDef[] = [
   {
     id: 'anuncio',
@@ -138,7 +186,7 @@ export const TEMPLATES: TemplateDef[] = [
         text({ text: 'merece algo especial', x: m, y: H * 0.27 + 130, width: W - m * 2, size: 92, weight: 300, italic: true, color: t.gold, lineHeight: 1 }),
         orn('rule', W / 2 - 160, H * 0.27 + 270, 320, 32, t.gold, 1.5),
       ];
-      const pub = ctx.menus.slice(0, 3);
+      const pub = live(ctx).slice(0, 3);
       const colW = (W - m * 2) / Math.max(pub.length, 1);
       pub.forEach((menu, i) => {
         const x = m + colW * i;
@@ -167,6 +215,14 @@ export const TEMPLATES: TemplateDef[] = [
     build: (ctx, W, H, menu) => menuCard(ctx, W, H, menu, true),
   },
   {
+    id: 'menu-gourmet',
+    name: 'Menú III (Selección Gourmet)',
+    description: 'Ficha premium para menús con primer y segundo plato a elegir.',
+    format: 'post',
+    menuIndex: 2,
+    build: (ctx, W, H, menu) => groupedCard(ctx, W, H, menu),
+  },
+  {
     id: 'comparativa',
     name: 'Comparación de menús',
     description: 'Los menús publicados frente a frente con su precio y principales.',
@@ -174,7 +230,7 @@ export const TEMPLATES: TemplateDef[] = [
     build: (ctx, W, H) => {
       const t = ctx.theme;
       const m = 90;
-      const pub = ctx.menus.slice(0, 3);
+      const pub = live(ctx).slice(0, 3);
       const colW = (W - m * 2) / Math.max(pub.length, 1);
       const els: (DesignElement | null)[] = [
         ...frame(W, H, 46, t.gold),
@@ -216,7 +272,7 @@ export const TEMPLATES: TemplateDef[] = [
         text({ text: 'tu mesa de Navidad', x: m, y: at(0.26) + 370, width: W - m * 2, size: 64, weight: 300 }),
         orn('rule', W / 2 - 180, at(0.6), 360, 36, t.gold, 1.5),
       ];
-      ctx.menus.slice(0, 3).forEach((menu, i) => {
+      live(ctx).slice(0, 3).forEach((menu, i) => {
         els.push(bound(menu, 'nameMain', { x: m, y: at(0.66) + i * 120, width: (W - m * 2) * 0.6, size: 64, italic: true, align: 'right' }));
         els.push(bound(menu, 'price', { x: m + (W - m * 2) * 0.65, y: at(0.66) + i * 120, width: (W - m * 2) * 0.35, size: 64, color: t.gold, align: 'left' }));
       });
@@ -253,7 +309,7 @@ export const TEMPLATES: TemplateDef[] = [
     build: (ctx, W, H) => {
       const t = ctx.theme;
       const m = 100;
-      const numerals = ctx.menus.slice(0, 3).map((_, i) => ['I', 'II', 'III'][i]).join(' · ') || 'I · II';
+      const numerals = live(ctx).slice(0, 3).map((_, i) => ['I', 'II', 'III'][i]).join(' · ') || 'I · II';
       const els: (DesignElement | null)[] = [
         orn('laurel', W / 2 - 230, 130, 220, 220, t.gold, 2, -20, 0.9),
         orn('laurel', W / 2 + 10, 130, 220, 220, t.gold, 2, 20, 0.9),

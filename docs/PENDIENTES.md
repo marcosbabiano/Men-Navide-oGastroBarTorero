@@ -12,9 +12,10 @@ Nada de lo siguiente se ha inventado. Todo se puede completar desde `/admin` sin
 | Sabores de las croquetas | Solo «Una de cada especialidad · 3 por persona». | Menú Esencia → Entrantes → Croquetas → Descripción |
 | Salsa del bacalao | Solo «Bacalao en salsa». | Menú Esencia → Principal |
 | Tipos/límites de la bebida del Menú Esencia | Solo «Bebida incluida». | Menú Esencia → Bebida |
-| **Postre del Menú Distinción** | **No se muestra** (sección pendiente). En la comparativa aparece «Consúltanos». | Menú Distinción → Postre → añadir plato y desactivar «Pendiente» |
-| **Bebida del Menú Distinción** | **No se muestra** (sección pendiente). | Menú Distinción → Bebida |
-| Tercer menú | No existe (no se ha creado ningún contenido ficticio). | Menús → + Nuevo menú (ver `GUIA-DEL-PANEL.md`) |
+| Postre concreto del Menú Distinción | Se muestra «Para terminar · Postre» (incluido, sin especificar). | Menú Distinción → Para terminar → Postre |
+| Bebida del Menú Distinción | «Bebida incluida» (sin cantidades ni condiciones). | Menú Distinción → Bebida |
+| **Precio del Menú Selección Gourmet** | El menú está creado y completo, **en borrador**: no aparece en la web. No se puede marcar como publicado sin precio. | Menús → Menú Selección Gourmet → Precio y estado «Publicado» → Publicar |
+| Imagen del Menú Selección Gourmet | Sin imagen: la web usa un fondo decorativo de la marca. | Menús → Menú Selección Gourmet → Imagen principal (ver pieza 12 del prompt maestro) |
 | Condiciones adicionales (IVA, mínimos, cancelación…) | No se muestra ninguna. | Menús → (menú) → Condiciones adicionales |
 
 ## Establecimiento

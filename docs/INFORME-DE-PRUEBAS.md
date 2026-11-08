@@ -1,5 +1,20 @@
 # Informe de pruebas
 
+## Actualización · menús de Navidad (Selección Gourmet, postres y bebidas)
+
+| Comprobación | Resultado |
+| --- | --- |
+| Lint, typecheck y build | ✅ sin errores |
+| Unitarias e integración | ✅ **56/56** |
+| E2E (Playwright) | ✅ **30/30** |
+
+- Datos: Esencia (36 €) y Distinción (45 €) publicados con postre y bebida; Distinción con «Postre» sin concretar y «Bebida incluida»; Gourmet con estructura exacta (para empezar · primer plato a elegir · segundo plato a elegir · para terminar · bebida), sin precio y en borrador; cada menú con su propio postre.
+- Actualización controlada de contenido ya guardado: añade el Gourmet una sola vez, completa postre/bebida del Distinción solo si seguían vacíos, no pisa ediciones del panel, no recrea el Gourmet si se eliminó y no lo duplica si se creó a mano; es idempotente.
+- Panel: el Gourmet aparece una sola vez en borrador; campo «opciones que elige cada comensal»; sin precio no se puede publicar (aviso obligatorio); con precio se publica.
+- Landing: el Gourmet en borrador no aparece; publicado aparece con tema propio, dos grupos a elegir separados, entrantes sin alternativas y su postre/café; comparativa con grupos «Primer plato/Segundo plato» y, en móvil con 3 menús, filas apiladas sin desplazamiento lateral. Revisión visual a 1440 y 390 px (sin desbordes).
+- Estudio: plantilla «Menú III (Selección Gourmet)» con grupos vinculados por separado y «Precio próximamente» sin inventar precio; las plantillas generales no anuncian menús en borrador.
+
+
 ## Actualización · 8 de noviembre de 2026 (secciones, bloques y Estudio Creativo)
 
 | Comprobación | Resultado |

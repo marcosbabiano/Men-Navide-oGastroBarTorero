@@ -30,7 +30,7 @@ Este documento tiene dos partes:
 - **Coherencia:** la misma mano y el mismo grosor de línea en todas las piezas. El oro siempre como acento, nunca como relleno plano.
 - **Prohibido:** fotografías, fotorrealismo, platos concretos «reales», texto o tipografía dentro de la imagen, logotipos, marcas de agua, personas con rostro reconocible y Papá Noel, renos o muñecos.
 
-### C. Inventario mínimo (11 piezas)
+### C. Inventario mínimo (12 piezas)
 
 | # | Pieza | Ubicación en la web | Formato | Transparencia | Campo del panel `/admin` |
 | --- | --- | --- | --- | --- | --- |
@@ -44,9 +44,10 @@ Este documento tiene dos partes:
 | 8 | Menú II (Distinción) | Columna fija del menú | 4:5 · 2000×2500 · JPG | No | Menús → Menú Distinción → Imagen principal |
 | 9 | Celebración · fondo | Imagen a pantalla completa | 16:9 · 2560×1440 · JPG | No. El tercio inferior debe quedar oscuro | Textos → Celebración → Imagen de fondo |
 | 10 | Sobre nosotros | Imagen junto al texto | 4:5 · 2000×2500 · JPG | No | Textos → Sobre nosotros → Imagen |
+| 12 | Menú III (Selección Gourmet) | Columna fija del menú | 4:5 · 2000×2500 · JPG | No | Menús → Menú Selección Gourmet → Imagen principal |
 | 11 | Textura de papel marfil | Fondos del Estudio Creativo y bloques | 1:1 · 2048×2048 · JPG, repetible | No | Imágenes → carpeta «Texturas» |
 
-Las galerías de los menús y las imágenes 2 y 3 de «Celebración» son opcionales: con estas 11 piezas la web queda completa. Si se quiere más riqueza, pueden reutilizarse las piezas 2, 4 y 6.
+Las galerías de los menús y las imágenes 2 y 3 de «Celebración» son opcionales: con estas 12 piezas la web queda completa. Si se quiere más riqueza, pueden reutilizarse las piezas 2, 4 y 6.
 
 ### D y E
 
@@ -147,12 +148,18 @@ PIEZAS:
     Papel de algodón marfil #F4ECE0 con fibra muy sutil y alguna partícula dorada mínima.
     Sin ilustración, sin viñeteado, iluminación uniforme para poder repetirse en mosaico.
 
+12) MENÚ III · SELECCIÓN GOURMET — 4:5, 2000×2500 px, JPG.
+    La pieza más rica de la colección, mismo estilo de grabado: sobre fondo burdeos noche,
+    composición asimétrica con una alcachofa grabada, una copa de vino, una cloche dorada
+    entreabierta y una rama de laurel en pan de oro; destellos dorados sutiles. Tercio
+    inferior izquierdo despejado (allí irá el numeral «III»).
+
 ENTREGA: cada imagen con el tamaño exacto indicado. Las piezas 2, 3 y 4 deben exportarse
 en PNG con canal alfa real (sin fondo blanco ni cuadriculado dibujado). Nombra los
 archivos así: 01-portada.jpg, 02-acento-portada.png, 03-separador.png,
 04-rama-botanica.png, 05-navidad-principal.jpg, 06-navidad-detalle.jpg,
 07-menu-esencia.jpg, 08-menu-distincion.jpg, 09-celebracion-fondo.jpg,
-10-sobre-nosotros.jpg, 11-textura-papel.jpg.
+10-sobre-nosotros.jpg, 11-textura-papel.jpg, 12-menu-gourmet.jpg.
 ```
 
 ---

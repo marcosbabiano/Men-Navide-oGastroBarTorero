@@ -13,6 +13,7 @@
 import type { Menu, SiteContent } from './schema.ts';
 import { DEFAULT_THEME } from './theme.ts';
 import { defaultLayout } from './layout.ts';
+import { DISTINCION_DESSERT, DISTINCION_DRINK, PATCH_MENUS_2026_11, gourmetMenu } from './menu-data-2026.ts';
 
 export const DEFAULT_BOOKING_URL = 'https://booking.qamarero.com/new-reservation/bar-torero';
 
@@ -39,6 +40,7 @@ const menuEsencia: Menu = {
       title: 'Entrantes',
       hint: 'Para compartir en el centro de la mesa',
       pending: false,
+      choose: 1,
       items: [
         {
           id: 'esencia-croquetas',
@@ -67,6 +69,7 @@ const menuEsencia: Menu = {
       title: 'Principal',
       hint: 'A elegir un plato por comensal',
       pending: false,
+      choose: 1,
       items: [
         { id: 'esencia-secreto', name: 'Secreto ibérico', detail: '', quantity: '', quantityPending: false, note: '' },
         { id: 'esencia-bacalao', name: 'Bacalao en salsa', detail: '', quantity: '', quantityPending: false, note: '' },
@@ -78,6 +81,7 @@ const menuEsencia: Menu = {
       title: 'Postre',
       hint: '',
       pending: false,
+      choose: 1,
       items: [{ id: 'esencia-tarta', name: 'Tarta de tres chocolates', detail: '', quantity: '', quantityPending: false, note: '' }],
     },
     {
@@ -86,6 +90,7 @@ const menuEsencia: Menu = {
       title: 'Bebida',
       hint: '',
       pending: false,
+      choose: 1,
       items: [{ id: 'esencia-bebida-incluida', name: 'Bebida incluida', detail: '', quantity: '', quantityPending: false, note: '' }],
     },
   ],
@@ -119,6 +124,7 @@ const menuDistincion: Menu = {
       title: 'Entrantes',
       hint: 'Para compartir en el centro de la mesa',
       pending: false,
+      choose: 1,
       items: [
         { id: 'distincion-jamon', name: 'Jamón ibérico de cebo', detail: '', quantity: '', quantityPending: false, note: '' },
         { id: 'distincion-gambones', name: 'Gambones', detail: '', quantity: '', quantityPending: false, note: '' },
@@ -133,19 +139,20 @@ const menuDistincion: Menu = {
       title: 'Principal',
       hint: 'A elegir un plato por comensal',
       pending: false,
+      choose: 1,
       items: [
         { id: 'distincion-entrecot', name: 'Entrecot', detail: '', quantity: '', quantityPending: false, note: '' },
         { id: 'distincion-rodaballo', name: 'Rodaballo al horno', detail: '', quantity: '', quantityPending: false, note: '' },
       ],
     },
-    { id: 'distincion-postre', kind: 'dessert', title: 'Postre', hint: '', pending: true, items: [] },
-    { id: 'distincion-bebida', kind: 'drink', title: 'Bebida', hint: '', pending: true, items: [] },
+    { id: 'distincion-postre', kind: 'dessert', pending: false, choose: 1, ...DISTINCION_DESSERT },
+    { id: 'distincion-bebida', kind: 'drink', pending: false, choose: 1, ...DISTINCION_DRINK },
   ],
   conditions: [],
   cta: { label: 'Reservar mesa', helper: '' },
   theme: 'noir',
   adminNotes:
-    'Pendiente: confirmar el precio final, el postre y la bebida. Mientras las secciones de postre y bebida estén marcadas como pendientes no aparecerán en la web.',
+    'Pendiente: confirmar el precio final y concretar el postre (ahora se muestra simplemente «Postre»).',
 };
 
 const DAYS = [0, 1, 2, 3, 4, 5, 6];
@@ -358,7 +365,8 @@ export function createSeedContent(): SiteContent {
         unverifiedMessage: 'Consulta nuestro horario de Navidad llamándonos al {telefono}.',
       },
     },
-    menus: [menuEsencia, menuDistincion],
+    menus: [menuEsencia, menuDistincion, gourmetMenu(2)],
+    patches: [PATCH_MENUS_2026_11],
   };
   return { ...base, layout: defaultLayout(base) };
 }

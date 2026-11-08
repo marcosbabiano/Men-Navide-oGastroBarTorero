@@ -1611,12 +1611,7 @@ html.menu-open {
   color: var(--c-text-dim);
   font-size: var(--fs-lead);
 }
-.compare__scroller--wide {
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x proximity;
-  padding-bottom: 0.5rem;
-}
+
 .ctable {
   width: 100%;
   border-collapse: collapse;
@@ -1741,10 +1736,26 @@ html.menu-open {
     border-bottom: 1px solid var(--c-line-soft);
     padding-block: 1rem;
   }
-  .compare__scroller--wide .ctable tr {
-    grid-template-columns: repeat(var(--cols), minmax(150px, 1fr));
-    width: max-content;
-    min-width: 100%;
+  /* Tres o más menús en móvil: cada fila apila los menús con su nombre (sin scroll lateral). */
+  .compare__scroller--stack .ctable tr {
+    grid-template-columns: 1fr;
+    row-gap: 0.9rem;
+  }
+  .compare__scroller--stack .ctable thead {
+    display: none;
+  }
+  .compare__scroller--stack .ctable__cell::before {
+    content: attr(data-menu);
+    display: block;
+    margin-bottom: 0.25rem;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--c-gold-bright);
+  }
+  .compare__scroller--stack .ctable__cell {
+    padding-left: 0.9rem !important;
+    border-left: 1px solid var(--c-line) !important;
   }
   .ctable th,
   .ctable td {
@@ -2835,4 +2846,72 @@ html.menu-open .mbar {
   .decor--branch-story {
     animation: none;
   }
+}
+
+/* ---------- Menú Gourmet y grupos a elegir ---------- */
+.menu--gourmet .menu__card-inner {
+  --m-bg: linear-gradient(165deg, color-mix(in oklab, var(--c-burgundy) 55%, var(--c-night)) 0%, var(--c-night) 70%);
+  --m-fg: var(--c-ivory);
+  --m-dim: var(--c-text-dim);
+  --m-accent: var(--c-gold-bright);
+  --m-line: color-mix(in oklab, var(--c-gold) 55%, transparent);
+  background: var(--m-bg);
+  box-shadow:
+    0 50px 110px -30px rgb(0 0 0 / 0.75),
+    inset 0 0 0 1px var(--m-line),
+    inset 0 0 120px -40px color-mix(in oklab, var(--c-gold) 30%, transparent);
+}
+.menu--gourmet .menu__card-inner::before {
+  inset: 9px;
+  border-color: var(--m-line);
+  outline: 1px solid color-mix(in oklab, var(--c-gold) 25%, transparent);
+  outline-offset: 6px;
+}
+.menu--gourmet .menu__card-inner::after {
+  mix-blend-mode: overlay;
+  opacity: 0.22;
+}
+.menu--gourmet .menu__title-main {
+  background: linear-gradient(100deg, var(--c-ivory) 20%, var(--c-gold-bright) 55%, var(--c-ivory) 85%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.menu--gourmet .msec__choices {
+  border-color: var(--m-line);
+  background: color-mix(in oklab, var(--c-gold) 5%, transparent);
+}
+.menu__title-main {
+  text-wrap: balance;
+}
+.menu__price--soon {
+  padding-block: 1.1rem;
+}
+.menu__price--soon .menu__price-unit {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.3rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--m-accent);
+}
+.msec__choose {
+  margin-top: 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--m-accent);
+}
+.ctable__group {
+  display: block;
+  margin-top: 0.4rem;
+  font-size: 0.68rem;
+  font-weight: 750;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--c-gold);
+}
+.ctable__items li.has-group:not(:first-child) {
+  margin-top: 0.5rem;
 }

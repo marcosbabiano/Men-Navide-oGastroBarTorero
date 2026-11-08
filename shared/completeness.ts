@@ -46,6 +46,8 @@ export function menuIssues(menu: Menu): ContentIssue[] {
       out.push({ level: 'warning', area: 'menus', menuId: menu.id, message: `${name}: ${label.toLowerCase()} pendiente de completar (no se muestra).` });
     else if (!s.items.some((i) => i.name.trim()))
       out.push({ level: 'info', area: 'menus', menuId: menu.id, message: `${name}: la sección «${label}» está vacía y no se mostrará.` });
+    if (!s.pending && s.kind === 'choice' && s.choose > 1 && s.items.filter((i) => i.name.trim()).length <= s.choose)
+      out.push({ level: 'warning', area: 'menus', menuId: menu.id, message: `${name}: «${label}» pide elegir ${s.choose} pero no hay más opciones que esas.` });
     if (!s.pending && s.kind === 'choice' && s.items.filter((i) => i.name.trim()).length === 1)
       out.push({ level: 'warning', area: 'menus', menuId: menu.id, message: `${name}: la sección «${label}» es «a elegir» pero solo tiene un plato.` });
     for (const i of s.items) {
@@ -54,6 +56,10 @@ export function menuIssues(menu: Menu): ContentIssue[] {
       if (!i.name.trim() && !s.pending)
         out.push({ level: 'info', area: 'menus', menuId: menu.id, message: `${name}: hay un plato sin nombre en «${label}» (se ignora).` });
     }
+  }
+  for (const kind of ['dessert', 'drink'] as const) {
+    if (!visibleSections.some((s) => s.kind === kind))
+      out.push({ level: 'warning', area: 'menus', menuId: menu.id, message: `${name}: no muestra ${kind === 'dessert' ? 'postre' : 'bebida'} (todos los menús de Navidad los incluyen).` });
   }
   if (!menu.image) out.push({ level: 'info', area: 'menus', menuId: menu.id, message: `${name}: sin imagen principal (se usará un fondo decorativo).` });
   if (menu.status === 'draft') out.push({ level: 'info', area: 'menus', menuId: menu.id, message: `${name}: en borrador (no aparece en la web).` });

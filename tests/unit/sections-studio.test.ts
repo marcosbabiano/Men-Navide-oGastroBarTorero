@@ -67,7 +67,7 @@ describe('plantillas del Estudio', () => {
   const pub = toPublicContent(createSeedContent());
   const ctx: TemplateContext = { menus: pub.menus, theme: DEFAULT_THEME, year: 2026, businessName: 'GastroBar Torero', heroAsset: 'hero-ornament', photoAsset: 'sliced-meat' };
   it('las 10 plantillas generan diseños válidos con las dimensiones de su formato', () => {
-    expect(TEMPLATES).toHaveLength(10);
+    expect(TEMPLATES).toHaveLength(11);
     for (const t of TEMPLATES) {
       const d = createDesignFromTemplate(t, ctx, { id: `d-${t.id}`, now: '2026-11-08T00:00:00Z' });
       const r = designSchema.safeParse(d);
@@ -75,13 +75,27 @@ describe('plantillas del Estudio', () => {
       expect([d.width, d.height]).toEqual(t.format === 'story' ? [1080, 1920] : t.format === 'square' ? [1080, 1080] : [1080, 1350]);
     }
   });
-  it('los textos de menú salen de los datos publicados y no inventan postre/bebida', () => {
+  it('los textos de menú salen de los datos actuales y no inventan nada', () => {
     const d = createDesignFromTemplate(TEMPLATES.find((t) => t.id === 'menu-distincion')!, ctx, { id: 'x', now: '' });
     const texts = d.elements.flatMap((e) => (e.type === 'text' ? [e.text] : [])).join('\n');
     expect(texts).toContain('45 €');
     expect(texts).toContain('Entrecot');
-    expect(d.elements.some((e) => e.type === 'text' && e.binding && ['dessert', 'drink'].includes(e.binding.field))).toBe(false);
-    expect(bindingValue(pub.menus[1], 'dessert')).toBeNull();
+    expect(bindingValue(pub.menus[1], 'dessert')).toBe('Postre');
+  });
+  it('plantilla del Gourmet: grupos vinculados por separado y «Precio próximamente» sin inventar precio', () => {
+    const all = toPublicContent(createSeedContent(), { includeDrafts: true }).menus;
+    const gctx = { ...ctx, menus: all };
+    const g = all.find((m) => m.id === 'menu-seleccion-gourmet')!;
+    const d = createDesignFromTemplate(TEMPLATES.find((t) => t.id === 'menu-gourmet')!, gctx, { id: 'g', now: '', menu: g });
+    expect(designSchema.safeParse(d).success).toBe(true);
+    const texts = d.elements.flatMap((e) => (e.type === 'text' ? [e.text] : []));
+    expect(texts).toContain('Precio próximamente');
+    expect(texts.join('\n')).not.toMatch(/\d+ €/);
+    const sectionBindings = d.elements.flatMap((e) => (e.type === 'text' && e.binding?.field === 'section' ? [e.binding.sectionId] : []));
+    expect(sectionBindings).toEqual(['gourmet-entrantes', 'gourmet-postre', 'gourmet-primero', 'gourmet-segundo', 'gourmet-bebida']);
+    // Las plantillas generales no anuncian menús en borrador.
+    const anuncio = createDesignFromTemplate(TEMPLATES[0], gctx, { id: 'a', now: '' });
+    expect(anuncio.elements.some((e) => e.type === 'text' && e.binding?.menuId === 'menu-seleccion-gourmet')).toBe(false);
   });
   it('las historias mantienen el texto dentro de la zona segura', () => {
     for (const t of TEMPLATES.filter((x) => x.format === 'story')) {

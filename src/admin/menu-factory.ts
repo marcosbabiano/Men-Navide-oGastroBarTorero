@@ -1,12 +1,12 @@
 import type { Menu, MenuItem, MenuSection, SectionKind } from '../../shared/schema.ts';
 import { newId } from '../../shared/ids.ts';
 
-export const KIND_OPTIONS: { value: SectionKind; label: string; title: string; hint: string }[] = [
-  { value: 'shared', label: 'Entrantes para compartir (centro de la mesa)', title: 'Entrantes', hint: 'Para compartir en el centro de la mesa' },
-  { value: 'choice', label: 'Plato a elegir (uno por comensal)', title: 'Principal', hint: 'A elegir un plato por comensal' },
-  { value: 'dessert', label: 'Postre', title: 'Postre', hint: '' },
-  { value: 'drink', label: 'Bebida', title: 'Bebida', hint: '' },
-  { value: 'extra', label: 'Otra sección', title: 'Sección', hint: '' },
+export const KIND_OPTIONS: { value: SectionKind; label: string; title: string; hint: string; add: string }[] = [
+  { value: 'shared', label: 'Para compartir (al centro de la mesa)', title: 'Entrantes', hint: 'Para compartir en el centro de la mesa', add: 'Grupo para compartir' },
+  { value: 'choice', label: 'A elegir (primer plato, segundo, principal…)', title: 'Principal', hint: 'A elegir un plato por comensal', add: 'Grupo a elegir' },
+  { value: 'dessert', label: 'Postre', title: 'Postre', hint: '', add: 'Postre' },
+  { value: 'drink', label: 'Bebida', title: 'Bebida', hint: '', add: 'Bebida' },
+  { value: 'extra', label: 'Otro grupo', title: 'Otros', hint: '', add: 'Otro grupo' },
 ];
 
 export function newItem(): MenuItem {
@@ -15,7 +15,7 @@ export function newItem(): MenuItem {
 
 export function newSection(kind: SectionKind): MenuSection {
   const k = KIND_OPTIONS.find((o) => o.value === kind)!;
-  return { id: newId('seccion'), kind, title: k.title, hint: k.hint, pending: false, items: [] };
+  return { id: newId('seccion'), kind, title: k.title, hint: k.hint, pending: false, choose: 1, items: [] };
 }
 
 /** Menú nuevo: en borrador, sin precio ni platos (nunca se inventa contenido). */

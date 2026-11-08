@@ -34,7 +34,20 @@ Si otra persona guarda mientras tú editas, verás un aviso de conflicto: recarg
 - Las **notas internas** nunca se publican.
 - La **comparativa** se genera sola con lo publicado. No hay que mantenerla aparte.
 
-## Cómo añadir el tercer menú
+## Grupos de platos
+
+Cada menú se organiza en **grupos** que puedes crear, renombrar, reordenar y eliminar («+ Grupo para compartir», «+ Grupo a elegir», «+ Postre», «+ Bebida», «+ Otro grupo»):
+
+- **Para compartir**: platos al centro de la mesa (nunca como alternativas).
+- **A elegir**: cada comensal elige; en «Opciones que elige cada comensal» indicas cuántas (normalmente 1). Un menú puede tener varios grupos a elegir, por ejemplo **Primer plato** y **Segundo plato**, como el Menú Selección Gourmet.
+- **Postre** y **Bebida**: todos los menús de Navidad los incluyen; el panel avisa si a algún menú le falta alguno.
+- En cada plato: nombre, descripción, cantidad y observación.
+
+## El Menú Selección Gourmet
+
+Está creado con todos sus platos y **en borrador** (no aparece en la web). Para publicarlo: Menús → Menú Selección Gourmet → escribe el **precio** → estado **Publicado** → Guardar → Vista previa → Publicar. Sin precio el panel no deja publicarlo. Al publicarse, la web añade el «Menú III» con su diseño propio (tema Gourmet), lo incorpora al selector móvil y a la comparativa, y el Estudio Creativo ofrece la plantilla «Menú III (Selección Gourmet)». Mientras está en borrador, el Estudio ya permite preparar diseños con sus datos (marcado «borrador»).
+
+## Cómo añadir otro menú
 
 1. **Menús → + Nuevo menú** (o «+ Nuevo menú» en Inicio). Se crea en **Borrador** con las secciones Entrantes, Principal, Postre (pendiente) y Bebida (pendiente) vacías: no se inventa ningún plato ni precio.
 2. Escribe el **nombre comercial**, subtítulo, descripción y **precio**.

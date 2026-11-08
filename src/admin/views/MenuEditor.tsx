@@ -3,7 +3,7 @@ import type { Draft } from 'immer';
 import type { Menu, MenuSection, MenuTheme, SectionKind, SiteContent } from '../../../shared/schema.ts';
 import { menuIssues } from '../../../shared/completeness.ts';
 import { useStore } from '../store.tsx';
-import { Card, PageHeader, PriceField, Segmented, Select, SortableList, TextArea, TextField, Toggle, useConfirm, useToast } from '../ui.tsx';
+import { Card, Field, PageHeader, PriceField, Segmented, Select, SortableList, TextArea, TextField, Toggle, useConfirm, useToast } from '../ui.tsx';
 import { ImagePicker } from '../media.tsx';
 import { IssueList } from './Dashboard.tsx';
 import { KIND_OPTIONS, duplicateMenu, newItem, newSection } from '../menu-factory.ts';
@@ -14,6 +14,7 @@ const THEMES: { value: MenuTheme; label: string }[] = [
   { value: 'noir', label: 'Noche (oscuro con oro)' },
   { value: 'burgundy', label: 'Burdeos' },
   { value: 'forest', label: 'Verde abeto' },
+  { value: 'gourmet', label: 'Gourmet (burdeos noche con oro)' },
 ];
 
 function SectionEditor({
@@ -42,7 +43,7 @@ function SectionEditor({
         <strong className="sec__title">{section.title || kindInfo?.title}</strong>
         <span className="sec__kind">{kindInfo?.label}</span>
         <button type="button" className="abtn abtn--small abtn--danger-ghost sec__remove" onClick={onRemove}>
-          Quitar sección
+          Quitar grupo
         </button>
       </div>
       <div className="sec__grid">
@@ -62,6 +63,23 @@ function SectionEditor({
         <TextField label="Título" value={section.title} max={80} onChange={(v) => set((s) => void (s.title = v))} />
         <TextField label="Indicación" value={section.hint} max={160} onChange={(v) => set((s) => void (s.hint = v))} hint="Ej.: «Para compartir en el centro de la mesa»." />
       </div>
+      {section.kind === 'choice' && (
+        <Field label="Opciones que elige cada comensal" hint="Normalmente 1. Si es más de 1, la web lo indica («Elige 2»).">
+          {(fid, d) => (
+            <input
+              id={fid}
+              aria-describedby={d}
+              className="input input--small"
+              type="number"
+              min={1}
+              max={Math.max(1, Math.min(10, section.items.length || 1))}
+              value={section.choose}
+              onChange={(e) => set((s) => void (s.choose = Math.min(10, Math.max(1, Math.round(Number(e.target.value) || 1)))))}
+              style={{ maxWidth: '8rem' }}
+            />
+          )}
+        </Field>
+      )}
       <Toggle
         label="Pendiente de confirmar"
         tone="warn"
@@ -123,7 +141,7 @@ export function MenuEditor({ id }: { id: string }) {
 
   const removeSection = async (sIdx: number) => {
     const s = menu.sections[sIdx];
-    const ok = await confirm({ title: `¿Quitar la sección «${s.title}»?`, text: `Se eliminarán sus ${s.items.length} platos del borrador.`, confirmLabel: 'Quitar sección', danger: true });
+    const ok = await confirm({ title: `¿Quitar el grupo «${s.title}»?`, text: `Se eliminarán sus ${s.items.length} platos del borrador.`, confirmLabel: 'Quitar grupo', danger: true });
     if (ok) set((m) => void m.sections.splice(sIdx, 1));
   };
 
@@ -213,7 +231,7 @@ export function MenuEditor({ id }: { id: string }) {
         )}
       </Card>
 
-      <Card title="Platos" description="Arrastra las secciones y los platos para reordenarlos. No añadas ingredientes, cantidades ni acompañamientos que no estén confirmados.">
+      <Card title="Platos" description="Cada grupo es «para compartir» o «a elegir» (por ejemplo, Primer plato y Segundo plato como grupos distintos). Arrastra grupos y platos para reordenarlos. No añadas ingredientes, cantidades ni acompañamientos sin confirmar.">
         <SortableList
           label="Secciones del menú"
           items={menu.sections}
@@ -221,10 +239,10 @@ export function MenuEditor({ id }: { id: string }) {
           renderItem={(s, sIdx, handle) => <SectionEditor section={s} menuIdx={idx} secIdx={sIdx} handle={handle} onRemove={() => removeSection(sIdx)} />}
         />
         <div className="add-row">
-          <span className="muted small">Añadir sección:</span>
+          <span className="muted small">Añadir grupo de platos:</span>
           {KIND_OPTIONS.map((k) => (
             <button key={k.value} type="button" className="abtn abtn--ghost abtn--small" onClick={() => set((m) => void m.sections.push(newSection(k.value)))}>
-              + {k.title}
+              + {k.add}
             </button>
           ))}
         </div>

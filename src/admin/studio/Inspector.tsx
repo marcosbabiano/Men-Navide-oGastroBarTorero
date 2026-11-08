@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { MediaAsset, Menu } from '../../../shared/schema.ts';
 import { ORNAMENTS, ORNAMENT_IDS, brandSwatches, type OrnamentId } from '../../../shared/brand.ts';
-import { BINDING_FIELDS, BINDING_LABEL, bindingValue, type Design, type DesignElement, type TextElement } from '../../../shared/studio.ts';
+import { BINDING_FIELDS, BINDING_LABEL, bindingValue, boundValue, type BindingField, type Design, type DesignElement, type TextElement } from '../../../shared/studio.ts';
 import type { ThemeColors } from '../../../shared/theme.ts';
 import { MediaDialog } from '../media.tsx';
 
@@ -167,7 +167,8 @@ export function ElementInspector({
 
 function TextProps({ el, theme, menus, onChange }: { el: TextElement; theme: ThemeColors; menus: Menu[]; onChange: (p: Partial<TextElement>) => void }) {
   const boundMenu = el.binding ? menus.find((m) => m.id === el.binding!.menuId) : undefined;
-  const current = el.binding ? bindingValue(boundMenu, el.binding.field) : null;
+  const current = el.binding ? boundValue(menus, el.binding) : null;
+  const sectionTitle = el.binding?.field === 'section' ? boundMenu?.sections.find((x) => x.id === el.binding!.sectionId)?.title : undefined;
   return (
     <div className="inspector__group">
       <p className="inspector__title">Texto</p>
@@ -178,7 +179,7 @@ function TextProps({ el, theme, menus, onChange }: { el: TextElement; theme: The
       {el.binding && (
         <div className="bindinfo">
           <span>
-            Vinculado a <strong>{boundMenu?.name ?? 'un menú que ya no está publicado'}</strong> · {BINDING_LABEL[el.binding.field]}
+            Vinculado a <strong>{boundMenu?.name ?? 'un menú que ya no existe'}</strong> · {sectionTitle ?? BINDING_LABEL[el.binding.field]}
           </span>
           {current !== null && current !== el.text && (
             <button type="button" className="abtn abtn--small abtn--ghost" onClick={() => onChange({ text: current })}>
@@ -233,33 +234,54 @@ function TextProps({ el, theme, menus, onChange }: { el: TextElement; theme: The
   );
 }
 
-export function MenuDataPicker({ menus, onInsert }: { menus: Menu[]; onInsert: (menu: Menu, field: (typeof BINDING_FIELDS)[number], value: string) => void }) {
+export function MenuDataPicker({
+  menus,
+  onInsert,
+}: {
+  menus: Menu[];
+  onInsert: (menu: Menu, field: BindingField, value: string, sectionId?: string) => void;
+}) {
   const [menuId, setMenuId] = useState(menus[0]?.id ?? '');
   const menu = menus.find((m) => m.id === menuId);
-  if (!menus.length) return <p className="muted small">No hay menús publicados.</p>;
+  if (!menus.length) return <p className="muted small">No hay menús.</p>;
   return (
     <div className="menudata">
       <label className="sfield">
-        <span>Menú publicado</span>
+        <span>Menú</span>
         <select className="input input--small" value={menuId} onChange={(e) => setMenuId(e.target.value)}>
           {menus.map((m) => (
             <option key={m.id} value={m.id}>
               {m.name}
+              {m.status === 'published' ? '' : m.status === 'draft' ? ' (borrador)' : ' (oculto)'}
             </option>
           ))}
         </select>
       </label>
+      <p className="inspector__title">Datos generales</p>
       <div className="menudata__fields">
-        {BINDING_FIELDS.map((f) => {
+        {BINDING_FIELDS.filter((f) => f !== 'section').map((f) => {
           const v = bindingValue(menu, f);
           return (
-            <button key={f} type="button" className="chip" disabled={!v} title={v ?? 'Sin dato publicado'} onClick={() => menu && v && onInsert(menu, f, v)}>
+            <button key={f} type="button" className="chip" disabled={!v} title={v ?? 'Sin dato confirmado'} onClick={() => menu && v && onInsert(menu, f, v)}>
               + {BINDING_LABEL[f]}
             </button>
           );
         })}
       </div>
-      <p className="muted small">Solo se ofrecen datos publicados y confirmados. Los textos quedan vinculados al menú.</p>
+      <p className="inspector__title">Grupos de platos</p>
+      <div className="menudata__fields">
+        {menu?.sections
+          .filter((sec) => !sec.pending)
+          .map((sec) => {
+            const v = bindingValue(menu, 'section', 'o', sec.id);
+            return (
+              <button key={sec.id} type="button" className="chip" disabled={!v} title={v ?? 'Sin platos'} onClick={() => v && onInsert(menu, 'section', v, sec.id)}>
+                + {sec.title}
+              </button>
+            );
+          })}
+      </div>
+      <p className="muted small">Datos actuales del panel (sin lo marcado como pendiente). Los textos quedan vinculados al menú.</p>
     </div>
   );
 }

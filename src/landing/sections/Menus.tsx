@@ -14,6 +14,7 @@ const THEME_BG: Record<Menu['theme'], string> = {
   noir: 'var(--c-night)',
   burgundy: 'var(--c-carbon)',
   forest: 'var(--c-carbon)',
+  gourmet: 'var(--c-night)',
 };
 
 function SectionBlock({ section, joiner }: { section: MenuSection; joiner: string }) {
@@ -28,6 +29,7 @@ function SectionBlock({ section, joiner }: { section: MenuSection; joiner: strin
           {section.title}
         </h4>
         {section.hint && <p className="msec__hint">{section.hint}</p>}
+        {isChoice && section.choose > 1 && <p className="msec__choose">Elige {section.choose}</p>}
       </div>
       {isChoice ? (
         <ol className="msec__choices" role="list">
@@ -35,7 +37,7 @@ function SectionBlock({ section, joiner }: { section: MenuSection; joiner: strin
             <li key={item.id} className="msec__choice">
               {i > 0 && (
                 <span className="msec__or" aria-hidden="true">
-                  {joiner}
+                  {section.choose > 1 ? '·' : joiner}
                 </span>
               )}
               <span className="msec__name">{item.name}</span>
@@ -111,11 +113,15 @@ function MenuShowcase({ menu, index }: { menu: Menu; index: number }) {
             {menu.subtitle && <p className="menu__subtitle">{menu.subtitle}</p>}
           </header>
 
-          {menu.price.amount !== null && (
+          {menu.price.amount !== null ? (
             <div className="menu__price" data-anim="fade-up">
               <span className="menu__price-amount">{formatPrice(menu.price.amount)}</span>
               <span className="menu__price-unit">{menu.price.unit}</span>
               {menu.price.note && <span className="menu__price-note">{menu.price.note}</span>}
+            </div>
+          ) : (
+            <div className="menu__price menu__price--soon" data-anim="fade-up">
+              <span className="menu__price-unit">Precio próximamente</span>
             </div>
           )}
 

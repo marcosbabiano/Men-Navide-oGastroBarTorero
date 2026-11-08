@@ -6,6 +6,8 @@ import type { Menu, SectionKind } from './schema.ts';
 import { normalizeDish } from './format.ts';
 
 export interface ComparisonItem {
+  /** Título del grupo cuando un menú tiene varios grupos del mismo tipo (p. ej. Primer y Segundo plato). */
+  group?: string;
   name: string;
   quantity: string;
   detail: string;
@@ -29,7 +31,7 @@ export interface ComparisonRow {
 const KIND_ORDER: SectionKind[] = ['shared', 'choice', 'dessert', 'drink', 'extra'];
 const KIND_LABEL: Record<SectionKind, string> = {
   shared: 'Para compartir',
-  choice: 'Principal a elegir',
+  choice: 'Platos a elegir',
   dessert: 'Postre',
   drink: 'Bebida',
   extra: '',
@@ -55,7 +57,13 @@ export function buildComparison(menus: Menu[]): ComparisonRow[] {
       const sections = m.sections.filter((s) =>
         kind === 'extra' ? s.kind === 'extra' && `extra:${normalizeDish(s.title)}` === key : s.kind === kind,
       );
-      return { menu: m, items: sections.flatMap((s) => s.items) };
+      const multi = sections.length > 1;
+      return {
+        menu: m,
+        items: sections.flatMap((s) =>
+          s.items.map((i, k) => ({ ...i, group: multi && k === 0 ? (s.choose > 1 ? `${s.title} (elige ${s.choose})` : s.title) : undefined })),
+        ),
+      };
     });
     const commonNames = new Set<string>();
     if (menus.length > 1) {
@@ -71,6 +79,7 @@ export function buildComparison(menus: Menu[]): ComparisonRow[] {
         menuId: menu.id,
         pending: items.length === 0,
         items: items.map((i) => ({
+          ...(i.group ? { group: i.group } : {}),
           name: i.name,
           quantity: i.quantity,
           detail: i.detail,

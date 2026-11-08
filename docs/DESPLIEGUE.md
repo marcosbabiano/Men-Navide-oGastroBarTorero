@@ -40,6 +40,9 @@ La primera vez el CLI pregunta si quieres crear un proyecto nuevo: acepta. El CL
 
 ## Activar Netlify Identity y crear el primer administrador
 
+> **Administrador previsto:** `gestion@marcosbabiano.com`. Por seguridad la contraseña **no se guarda en el código** (el repositorio es público): se elige al aceptar la invitación de Identity (paso 5). Recomendado: usar una contraseña nueva y no compartida por chat.
+
+
 Se hace **una sola vez**, después del primer despliegue.
 
 1. **Activar Identity**: en el proyecto, **Project configuration → Identity → Enable Identity**.

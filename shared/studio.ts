@@ -23,7 +23,7 @@ export const STORY_SAFE = { top: 250, bottom: 340, side: 64 };
 const hex = z.string().regex(/^#[0-9a-fA-F]{6}$/);
 const num = (min: number, max: number) => z.number().min(min).max(max);
 
-export const BINDING_FIELDS = ['name', 'nameMain', 'price', 'priceUnit', 'subtitle', 'description', 'shared', 'choice', 'dessert', 'drink'] as const;
+export const BINDING_FIELDS = ['name', 'nameMain', 'price', 'priceUnit', 'subtitle', 'description', 'shared', 'choice', 'dessert', 'drink', 'section'] as const;
 export type BindingField = (typeof BINDING_FIELDS)[number];
 export const BINDING_LABEL: Record<BindingField, string> = {
   name: 'Nombre completo',
@@ -36,6 +36,7 @@ export const BINDING_LABEL: Record<BindingField, string> = {
   choice: 'Principales a elegir',
   dessert: 'Postre',
   drink: 'Bebida',
+  section: 'Grupo de platos',
 };
 
 const base = {
@@ -62,7 +63,7 @@ export const textElementSchema = z.object({
   letterSpacing: num(-20, 100),
   lineHeight: num(0.6, 3),
   uppercase: z.boolean(),
-  binding: z.object({ menuId: z.string().max(80), field: z.enum(BINDING_FIELDS) }).nullable(),
+  binding: z.object({ menuId: z.string().max(80), field: z.enum(BINDING_FIELDS), sectionId: z.string().max(80).optional() }).nullable(),
 });
 
 export const imageElementSchema = z.object({
@@ -148,9 +149,19 @@ function sectionItems(menu: Menu, kind: string): string[] {
   return menu.sections.filter((s) => s.kind === kind && !s.pending).flatMap((s) => s.items.map((i) => i.name).filter(Boolean));
 }
 
-/** Valor actual de un dato de menú (solo información publicada y confirmada). */
-export function bindingValue(menu: Menu | undefined, field: BindingField, joiner = 'o'): string | null {
+function choiceText(names: string[], joiner: string): string {
+  return names.join(`\n${joiner}\n`);
+}
+
+/** Valor actual de un dato de menú (solo información confirmada: nunca secciones pendientes). */
+export function bindingValue(menu: Menu | undefined, field: BindingField, joiner = 'o', sectionId?: string): string | null {
   if (!menu) return null;
+  if (field === 'section') {
+    const sec = menu.sections.find((s) => s.id === sectionId && !s.pending);
+    const names = sec?.items.map((i) => i.name).filter(Boolean) ?? [];
+    if (!sec || !names.length) return null;
+    return sec.kind === 'choice' && sec.choose === 1 ? choiceText(names, joiner) : names.join('\n');
+  }
   switch (field) {
     case 'name':
       return menu.name;
@@ -166,13 +177,29 @@ export function bindingValue(menu: Menu | undefined, field: BindingField, joiner
       return menu.description;
     case 'shared':
       return sectionItems(menu, 'shared').join('\n') || null;
-    case 'choice':
-      return sectionItems(menu, 'choice').join(`\n${joiner}\n`) || null;
+    case 'choice': {
+      const groups = menu.sections.filter((s) => s.kind === 'choice' && !s.pending && s.items.some((i) => i.name));
+      if (groups.length <= 1) return choiceText(sectionItems(menu, 'choice'), joiner) || null;
+      // Varios grupos a elegir (p. ej. Primer y Segundo plato): título de cada grupo y sus opciones.
+      return groups.map((g) => `${g.title}: ${g.items.map((i) => i.name).filter(Boolean).join(` ${joiner} `)}`).join('\n');
+    }
     case 'dessert':
       return sectionItems(menu, 'dessert').join('\n') || null;
     case 'drink':
       return sectionItems(menu, 'drink').join('\n') || null;
+    default:
+      return null;
   }
+}
+
+/** Valor actual de un texto vinculado. */
+export function boundValue(menus: Menu[], binding: { menuId: string; field: BindingField; sectionId?: string }): string | null {
+  return bindingValue(
+    menus.find((m) => m.id === binding.menuId),
+    binding.field,
+    'o',
+    binding.sectionId,
+  );
 }
 
 export function displayText(el: TextElement): string {

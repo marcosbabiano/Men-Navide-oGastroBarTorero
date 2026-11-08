@@ -64,8 +64,7 @@ dl,
 dd {
   margin: 0;
 }
-ul[role='list'],
-ol[role='list'] {
+:where(ul, ol)[role='list'] {
   list-style: none;
   padding: 0;
 }

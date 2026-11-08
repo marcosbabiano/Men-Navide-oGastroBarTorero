@@ -13,7 +13,7 @@ async function scrollThrough(page: Page) {
 }
 
 test.describe('Landing', () => {
-  test('muestra los dos menús con precios y sin inventar postre/bebida del Menú Distinción', async ({ page }) => {
+  test('muestra Esencia y Distinción con precio, postre y bebida; el Gourmet en borrador no aparece', async ({ page }) => {
     await skipIntro(page);
     await page.goto('/');
     await expect(page.getByRole('heading', { level: 1 })).toContainText('cada encuentro');
@@ -24,8 +24,12 @@ test.describe('Landing', () => {
     await expect(esencia.getByText('Para compartir en el centro de la mesa')).toBeVisible();
     await expect(esencia.getByText('A elegir un plato por comensal')).toBeVisible();
     await expect(esencia.getByText('Tarta de tres chocolates')).toBeVisible();
-    await expect(distincion.locator('.msec--dessert, .msec--drink')).toHaveCount(0);
-    await expect(page.locator('#comparar .ctable__pending')).toHaveCount(2);
+    await expect(distincion.locator('.msec--dessert')).toContainText('Postre');
+    await expect(distincion.locator('.msec--drink')).toContainText('Bebida incluida');
+    await expect(esencia.locator('.msec--dessert')).toContainText('Tarta de tres chocolates');
+    await expect(page.locator('.menu')).toHaveCount(2);
+    await expect(page.getByText('Selección Gourmet')).toHaveCount(0);
+    await expect(page.locator('#comparar .ctable__pending')).toHaveCount(0);
     // Los entrantes compartidos no se presentan como alternativas.
     await expect(esencia.locator('.msec--shared .msec__or')).toHaveCount(0);
     await expect(esencia.locator('.msec--choice .msec__or')).toHaveCount(1);

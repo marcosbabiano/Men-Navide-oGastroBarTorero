@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type Konva from 'konva';
 import { ORNAMENTS, ORNAMENT_IDS, type OrnamentId } from '../../../shared/brand.ts';
-import { FORMATS, bindingValue, type Design, type DesignElement, type TextElement } from '../../../shared/studio.ts';
+import { FORMATS, boundValue, type Design, type DesignElement, type TextElement } from '../../../shared/studio.ts';
 import { createDesignFromTemplate, findTemplate } from '../../../shared/studio-templates.ts';
 import type { MediaAsset } from '../../../shared/schema.ts';
 import { slugify } from '../../../shared/format.ts';
@@ -41,10 +41,7 @@ export async function exportDesignFile(stage: Konva.Stage, design: Design, media
 function outdatedBindings(design: Design, menus: ReturnType<typeof useStudioData>['menus']) {
   return design.elements.filter((e): e is TextElement => {
     if (e.type !== 'text' || !e.binding) return false;
-    const v = bindingValue(
-      menus.find((m) => m.id === e.binding!.menuId),
-      e.binding.field,
-    );
+    const v = boundValue(menus, e.binding);
     return v !== null && v !== e.text;
   });
 }
@@ -375,10 +372,7 @@ export function StudioEditor({ id, query }: { id: string; query: URLSearchParams
                   ...d,
                   elements: d.elements.map((e) => {
                     if (e.type !== 'text' || !e.binding) return e;
-                    const v = bindingValue(
-                      data.menus.find((m) => m.id === e.binding!.menuId),
-                      e.binding.field,
-                    );
+                    const v = boundValue(data.menus, e.binding);
                     return v !== null ? { ...e, text: v } : e;
                   }),
                 }));
@@ -457,7 +451,7 @@ export function StudioEditor({ id, query }: { id: string; query: URLSearchParams
           {panel === 'menu' && (
             <MenuDataPicker
               menus={data.menus}
-              onInsert={(menu, field, value) =>
+              onInsert={(menu, field, value, sectionId) =>
                 add({
                   ...base,
                   id: uid(),
@@ -468,7 +462,7 @@ export function StudioEditor({ id, query }: { id: string; query: URLSearchParams
                   height: 100,
                   text: value,
                   font: field === 'price' ? 'serif' : field === 'priceUnit' ? 'sans' : 'serif',
-                  size: field === 'price' ? 110 : field === 'nameMain' || field === 'name' ? 96 : 42,
+                  size: field === 'price' ? 110 : field === 'nameMain' || field === 'name' ? 96 : 40,
                   weight: 400,
                   italic: field === 'subtitle',
                   color: field === 'price' ? data.theme.gold : data.theme.ivory,
@@ -476,7 +470,7 @@ export function StudioEditor({ id, query }: { id: string; query: URLSearchParams
                   letterSpacing: 0,
                   lineHeight: 1.25,
                   uppercase: field === 'priceUnit',
-                  binding: { menuId: menu.id, field },
+                  binding: sectionId ? { menuId: menu.id, field, sectionId } : { menuId: menu.id, field },
                 })
               }
             />

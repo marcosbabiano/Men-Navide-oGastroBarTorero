@@ -175,21 +175,22 @@ describe('edición y publicación', () => {
     expect((await publish(rev)).status).toBe(200);
     expect((await (await pub('/api/content')).json()).content.menus).toHaveLength(2);
 
-    c.menus[2].status = 'published';
+    const nuevo = c.menus.find((x) => x.id === m.id)!;
+    nuevo.status = 'published';
     rev = (await (await save(c, rev)).json()).draft.revision;
     const blocked = await publish(rev);
     expect(blocked.status).toBe(422);
     expect((await blocked.json()).error.code).toBe('publish_blocked');
 
-    c.menus[2].name = 'Menú Tradición';
-    c.menus[2].price.amount = 52;
-    c.menus[2].sections[0].items.push({ id: 'p1', name: 'Plato confirmado', detail: '', quantity: '', quantityPending: false, note: '' });
+    nuevo.name = 'Menú Tradición';
+    nuevo.price.amount = 52;
+    nuevo.sections[0].items.push({ id: 'p1', name: 'Plato confirmado', detail: '', quantity: '', quantityPending: false, note: '' });
     rev = (await (await save(c, rev)).json()).draft.revision;
     expect((await publish(rev)).status).toBe(200);
     const live = (await (await pub('/api/content')).json()).content as SiteContent;
     expect(live.menus.map((x) => x.name)).toEqual(['Menú Esencia', 'Menú Distinción', 'Menú Tradición']);
     ({ draft } = await getState());
-    expect(draft.content.menus).toHaveLength(3);
+    expect(draft.content.menus).toHaveLength(4);
   });
   it('los cambios persisten con nuevas instancias (nuevo despliegue) y el seed no los sobrescribe', async () => {
     const { draft } = await getState();

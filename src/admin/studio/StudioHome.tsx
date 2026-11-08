@@ -148,6 +148,7 @@ export function StudioHome() {
                   {data.menus.map((m) => (
                     <option key={m.id} value={m.id}>
                       {m.name}
+                      {m.status === 'published' ? '' : ' (borrador)'}
                     </option>
                   ))}
                 </select>
