@@ -21,6 +21,7 @@
  *    GET    /api/admin/designs/:id        Diseño completo.
  *    PUT    /api/admin/designs/:id        Crear o guardar { design, thumb }.
  *    DELETE /api/admin/designs/:id        Eliminar diseño.
+ *    /api/admin/signage…                  Pantallas digitales (ver server/signage.ts).
  *
  *  SEO:
  *    GET /sitemap.xml · GET /robots.txt
@@ -34,6 +35,7 @@ import { type AuthResolver, requireAdmin } from './auth.ts';
 import { ContentRepo, type KV } from './repo.ts';
 import { type BinaryKV, blobKey, findUsages, parseUpload, serveMedia, storeUpload } from './media.ts';
 import { DesignRepo } from './designs.ts';
+import { type SignageDeps, handleSignageAdmin } from './signage.ts';
 
 export const CONTENT_CACHE_TAG = 'torero-content';
 
@@ -77,9 +79,21 @@ export function createPublicHandler(deps: ApiDeps) {
   };
 }
 
+export function signageDepsOf(deps: Pick<ApiDeps, 'content' | 'purge' | 'now'>): SignageDeps {
+  const repo = new ContentRepo(deps.content, deps.now);
+  return {
+    content: deps.content,
+    purge: deps.purge,
+    now: deps.now,
+    readPublished: () => repo.readPublicContent(),
+    readUploads: () => repo.readMediaIndex(),
+  };
+}
+
 export function createAdminHandler(deps: ApiDeps) {
   const repo = new ContentRepo(deps.content, deps.now);
   const designs = new DesignRepo(deps.content);
+  const signage = signageDepsOf(deps);
 
   const knownAssets = async (): Promise<MediaAsset[]> => [...SEED_MEDIA, ...(await repo.readMediaIndex())];
 
@@ -253,6 +267,9 @@ export function createAdminHandler(deps: ApiDeps) {
         }
         throw methodNotAllowed(['PATCH', 'DELETE']);
       }
+
+      const sig = await handleSignageAdmin(req, path, who, signage);
+      if (sig) return sig;
 
       throw new ApiError(404, 'not_found', 'Recurso no encontrado.');
     } catch (err) {

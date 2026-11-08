@@ -85,6 +85,7 @@ Para añadir más personas: repite los pasos 4–6 con su correo. Para quitar el
 - [ ] Cambia un texto, **Guardar** → **Vista previa** (muestra el borrador) → **Publicar** → la web lo muestra al recargar.
 - [ ] Al compartir el enlace por WhatsApp aparece la imagen y el título (puede tardar en refrescarse la caché de WhatsApp).
 - [ ] `/robots.txt` y `/sitemap.xml` muestran tu dominio.
+- [ ] `/pantalla` reproduce la programación; en `/admin/pantallas` → Televisiones se vincula una TV con su código y el Panel de control la muestra **Conectada**; «Activar Fiesta» se ve en la TV y pasa a «Confirmado por la TV» (ver `docs/PANTALLAS.md`).
 
 ## Dominio propio
 
@@ -110,3 +111,4 @@ Estas piezas están construidas y probadas localmente (ver `docs/INFORME-DE-PRUE
 - Ejecución de la Edge Function `landing` y su lectura de Blobs (empaquetada correctamente con Netlify CLI; si fallase, la web sigue funcionando y carga el contenido desde `/api/content`).
 - Purga de caché por etiqueta al publicar.
 - Límites de peticiones (`rateLimit`) configurados en las funciones, según el plan contratado.
+- Purga por etiqueta de las respuestas de las pantallas (`torero-signage`, `torero-screen-<id>`) y consumo de ejecuciones del latido de las televisiones (ver `docs/PANTALLAS.md`).

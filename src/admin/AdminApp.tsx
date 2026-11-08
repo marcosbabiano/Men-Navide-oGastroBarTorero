@@ -16,6 +16,8 @@ import { BlockEditor, SectionsView } from './views/Sections.tsx';
 
 // El Estudio Creativo (Konva) se descarga solo al abrirlo.
 const StudioRoutes = lazy(() => import('./studio/StudioHome.tsx'));
+// Gestor de Pantallas (incluye las escenas del reproductor para las vistas previas).
+const ScreensRoutes = lazy(() => import('./screens/ScreensApp.tsx'));
 
 type Gate =
   | { kind: 'checking' }
@@ -161,6 +163,7 @@ const NAV = [
   { href: '#/multimedia', key: 'multimedia', label: 'Imágenes', icon: '▣' },
   { href: '#/campana', key: 'campana', label: 'Campaña', icon: '✦' },
   { href: '#/estudio', key: 'estudio', label: 'Estudio', icon: '✎' },
+  { href: '#/pantallas', key: 'pantallas', label: 'Pantallas', icon: '▭' },
   { href: '#/publicar', key: 'publicar', label: 'Publicar', icon: '↑' },
 ];
 
@@ -223,6 +226,13 @@ function Shell({ onLogout, reauth, onReauthed }: { onLogout: () => void; reauth:
       view = (
         <Suspense fallback={<p className="muted">Cargando el Estudio Creativo…</p>}>
           <StudioRoutes path={route.path} query={route.query} />
+        </Suspense>
+      );
+      break;
+    case 'pantallas':
+      view = (
+        <Suspense fallback={<p className="muted">Cargando el Gestor de Pantallas…</p>}>
+          <ScreensRoutes path={route.path} />
         </Suspense>
       );
       break;
@@ -325,7 +335,7 @@ function Shell({ onLogout, reauth, onReauthed }: { onLogout: () => void; reauth:
             </button>
           </div>
         )}
-        <main id="admin-main" className={`content ${section === 'estudio' && route.path[1] ? 'content--wide' : ''}`} tabIndex={-1}>
+        <main id="admin-main" className={`content ${(section === 'estudio' && route.path[1]) || section === 'pantallas' ? 'content--wide' : ''}`} tabIndex={-1}>
           {view}
         </main>
       </div>

@@ -36,3 +36,14 @@
   from = "/preview"
   to = "/index.html"
   status = 200
+
+# Reproductor de cartelería digital para las televisiones.
+[[redirects]]
+  from = "/pantalla"
+  to = "/pantalla.html"
+  status = 200
+
+[[redirects]]
+  from = "/pantalla/*"
+  to = "/pantalla.html"
+  status = 200

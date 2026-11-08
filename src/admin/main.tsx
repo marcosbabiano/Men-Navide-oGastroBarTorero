@@ -5,6 +5,9 @@ import '../styles/tokens.css';
 import './admin.css';
 import { AdminRoot } from './AdminApp.tsx';
 
+// /admin/pantallas (enlace directo) → ruta interna del panel.
+if (/^\/admin\/pantallas\/?$/.test(location.pathname) && !location.hash) history.replaceState(null, '', '/admin#/pantallas');
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AdminRoot />

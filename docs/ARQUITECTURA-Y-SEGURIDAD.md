@@ -29,6 +29,11 @@ Stores **de sitio** (`getStore`), que persisten entre despliegues, con **consist
 | | `history/<fecha>-r<n>` | Versiones publicadas anteriores (máx. 30) |
 | | `media/index` | Índice de imágenes subidas |
 | | `designs/<id>` · `designs-index` | Diseños del Estudio Creativo y su listado con miniaturas |
+| | `signage/config` | Pantallas: escenas, eventos, programaciones, horarios y ajustes (con revisión) |
+| | `signage/screens/<id>` | Televisión vinculada: nombre, programación fija, calidad, cambio manual, pausa, versión y orden puntual |
+| | `signage/status/<id>` | Último latido de cada televisión (escena, versión aplicada, resolución, FPS…) |
+| | `signage/tokens/<sha256>` | Huella del token del dispositivo → televisión (el token nunca se guarda en claro) |
+| | `signage/pair/<código>` | Solicitud de vinculación temporal (10 min, un solo uso) |
 | `torero-media` | `files/<id>` y `files/<id>@sm` | Imagen optimizada y miniatura |
 
 - **Contenido inicial seguro**: si no existe borrador se crea con `onlyIfNew` a partir de lo publicado o, si no hay nada, del contenido inicial (`shared/seed.ts`). Nunca se sobrescribe un cambio posterior. La web pública muestra el contenido inicial sin escribir nada mientras no haya publicación.
@@ -53,6 +58,17 @@ Stores **de sitio** (`getStore`), que persisten entre despliegues, con **consist
 | PATCH/DELETE | `/api/admin/media/:id` | Admin | Editar / eliminar imagen (no si está en uso en la web o en un diseño) |
 | GET | `/api/admin/designs` | Admin | Diseños del Estudio (resumen y miniatura) |
 | GET/PUT/DELETE | `/api/admin/designs/:id` | Admin | Abrir, guardar (validado) o eliminar un diseño |
+| GET | `/api/admin/signage` | Admin | Configuración de pantallas + televisiones con su estado |
+| PUT | `/api/admin/signage/config` | Admin | Guardar `{config, baseRevision}` (validado; 409 si hay conflicto; purga `torero-signage`) |
+| POST | `/api/admin/signage/pair` | Admin | Vincular `{code, name}` |
+| PATCH/DELETE | `/api/admin/signage/screens/:id` | Admin | Renombrar / programación fija / calidad · revocar |
+| POST | `/api/admin/signage/command` | Admin | Control remoto `{screenIds, action, ref?, party?, minutes?}` |
+| GET | `/api/screen/config` | Público | Escenas y eventos **publicados** (CDN, etiqueta `torero-signage`) |
+| GET | `/api/screen/d/:huella` | Dispositivo | Órdenes de una TV (CDN, purgada al cambiarlas) |
+| POST | `/api/screen/heartbeat` | Dispositivo (`Bearer`) | Latido de estado y confirmación de órdenes |
+| POST | `/api/screen/pair/start` · `/poll` | Público (límite estricto) | Código de vinculación y recogida del token |
+
+Detalle del sistema de pantallas: [`PANTALLAS.md`](PANTALLAS.md).
 
 ## Seguridad
 

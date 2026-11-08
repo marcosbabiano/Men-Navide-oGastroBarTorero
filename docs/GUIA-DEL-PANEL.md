@@ -121,3 +121,15 @@ En **Campaña → Ornamentos de marca** asigna ilustraciones con fondo transpare
 5. Si después cambian los datos de un menú, al reabrir un diseño guardado el Estudio te pregunta si **actualizarlo** o **conservarlo** tal cual. Nunca se modifica solo.
 
 En **Diseños guardados** tienes miniatura, nombre, formato, fecha y las acciones Editar, Duplicar, Exportar y Eliminar.
+
+## Pantallas (televisiones del local)
+
+**Pantallas** (`/admin/pantallas`) controla las televisiones que muestran `/pantalla`:
+
+- **Panel de control**: estado real de cada TV (conectada, última comunicación, escena actual y siguiente, próximo cambio) y acciones rápidas para una, varias o todas: *Activar Fiesta*, *Activar Navidad*, *Activar Ambiente*, *Volver a automática*, *Pausar/Reanudar*, *Siguiente escena*, *Reiniciar*. Cada orden aparece *Pendiente* hasta que la TV la confirma.
+- **Escenas** (y **Eventos**): crea, edita con vista previa 16:9 animada, duplica, publica o elimina escenas; el modo fiesta tiene 5 estilos (Gold Night, Red Velvet, Club Night, Midnight, Torero Classic) y ajustes de luz.
+- **Programaciones** (y **Horarios**): secuencias de escenas y cuándo suena cada una (hora de Madrid, prioridades, fechas, por TV).
+- **Televisiones**: vincular con el código que muestra la TV, renombrar, fijar programación, calidad y **revocar acceso**.
+- **Configuración**: programación por defecto, calidad, frecuencia de comunicación y recarga preventiva.
+
+Los cambios de escenas y programaciones se aplican con **Guardar cambios** (barra amarilla); las órdenes del panel de control son inmediatas. Guía completa e instalación en el local: `docs/PANTALLAS.md`.

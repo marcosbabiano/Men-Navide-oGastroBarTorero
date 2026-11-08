@@ -5,6 +5,7 @@ Web de la campaña de Navidad de **GastroBar Torero** (Fuenlabrada de los Montes
 - **Landing** cinematográfica (intro, portada, «La Navidad se comparte», menús, comparativa, celebración, cómo reservar, preguntas frecuentes, sobre nosotros y pie) diseñada primero para móvil.
 - **Panel `/admin`** con Netlify Identity: **secciones** (ordenar, mostrar/ocultar, eliminar y crear bloques con 8 plantillas), menús (crear, duplicar, reordenar arrastrando, ocultar, eliminar), textos, establecimiento y horarios, imágenes, campaña/colores/ornamentos/SEO, vista previa, publicación e historial.
 - **Estudio Creativo — Redes Sociales** en el panel: editor visual (Konva) con 10 plantillas de la campaña, formatos de Instagram (4:5, 1:1, 9:16, carrusel y personalizado), datos vinculados a los menús publicados, diseños guardados y exportación PNG/JPG/PDF a tamaño real.
+- **Pantallas digitales** para las televisiones del local: reproductor `/pantalla` (Chrome + HDMI, 1080p/4K) con escenas animadas (menús, eventos, fotos, logotipo, mensajes, reservas con QR y **modo fiesta** con luces WebGL en tiempo real), y **Gestor de Pantallas** en `/admin/pantallas`: programaciones, horarios (Europe/Madrid), varias televisiones vinculadas con código y **control remoto desde el móvil**. Ver [`docs/PANTALLAS.md`](docs/PANTALLAS.md).
 - **Contenido persistente** en Netlify Blobs: los cambios se publican **sin tocar código ni redesplegar** y sobreviven a nuevos despliegues.
 - **Reservas** en la plataforma externa existente (Qamarero). Todos los botones enlazan a `https://booking.qamarero.com/new-reservation/bar-torero` (editable).
 
@@ -18,6 +19,7 @@ Web de la campaña de Navidad de **GastroBar Torero** (Fuenlabrada de los Montes
 | --- | --- |
 | [`docs/DESPLIEGUE.md`](docs/DESPLIEGUE.md) | Publicar en Netlify paso a paso, activar Identity, crear el primer administrador y comprobar Blobs. |
 | [`docs/GUIA-DEL-PANEL.md`](docs/GUIA-DEL-PANEL.md) | Uso diario del panel (incluye **cómo añadir el tercer menú**). |
+| [`docs/PANTALLAS.md`](docs/PANTALLAS.md) | **Pantallas del local**: instalación HDMI/Chrome, vincular TV, control remoto, escenas, horarios, arranque automático y lanzadores. |
 | [`docs/PENDIENTES.md`](docs/PENDIENTES.md) | Datos comerciales y configuraciones pendientes de confirmar. |
 | [`docs/ARQUITECTURA-Y-SEGURIDAD.md`](docs/ARQUITECTURA-Y-SEGURIDAD.md) | Arquitectura técnica, API, modelo de datos y medidas de seguridad. |
 | [`docs/INFORME-DE-PRUEBAS.md`](docs/INFORME-DE-PRUEBAS.md) | Pruebas ejecutadas y resultados. |
@@ -82,19 +84,22 @@ Con `npm run dev` (Vite) puedes trabajar en el diseño de la landing con recarga
 ## Estructura
 
 ```
-├── index.html, admin.html        Entradas de la landing y del panel
+├── index.html, admin.html,       Entradas de la landing, del panel
+│   pantalla.html                 y del reproductor de pantallas
 ├── netlify.toml                  Build, funciones, edge function y redirecciones
 ├── netlify/
-│   ├── functions/                api-public (lectura), api-admin (privado), seo (sitemap/robots)
+│   ├── functions/                api-public (lectura), api-admin (privado), seo (sitemap/robots),
+│   │                             api-screen y api-screen-pair (reproductores de /pantalla)
 │   └── edge-functions/landing.ts SEO + contenido publicado inyectados en «/»
 ├── server/                       Lógica de la API (auth, repositorio Blobs, imágenes)
 ├── shared/                       Esquema validado (Zod), contenido inicial, comparativa, SEO
 ├── src/
 │   ├── landing/                  Web pública (React + GSAP)
-│   ├── admin/                    Panel /admin
+│   ├── admin/                    Panel /admin (screens/ = Gestor de Pantallas)
+│   ├── screen/                   Reproductor /pantalla (escenas, WebGL, transiciones)
 │   └── styles/                   Fuentes, tokens de diseño
 ├── public/                       Fuentes, imágenes optimizadas, favicon, cabeceras (_headers)
-├── scripts/                      Servidor local y preparación de imágenes
+├── scripts/                      Servidor local, preparación de imágenes y lanzadores de pantalla
 ├── tests/                        unit/ (Vitest) y e2e/ (Playwright)
 └── docs/                         Documentación
 ```

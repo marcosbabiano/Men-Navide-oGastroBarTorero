@@ -2,6 +2,7 @@ import { HttpError, parseError } from '../lib/api.ts';
 import type { MediaAsset, SiteContent } from '../../shared/schema.ts';
 import type { ContentIssue } from '../../shared/completeness.ts';
 import type { Design, DesignSummary } from '../../shared/studio.ts';
+import type { PartyConfig, ScreenRecord, ScreenStatus, SignageConfig } from '../../shared/signage.ts';
 
 export { HttpError };
 
@@ -25,6 +26,23 @@ export interface AdminState {
   media: MediaAsset[];
   issues: ContentIssue[];
 }
+export type ScreenView = Omit<ScreenRecord, 'tokenHash'> & { status: ScreenStatus | null };
+export interface SignageState {
+  config: SignageConfig;
+  revision: number;
+  updatedAt: string;
+  updatedBy: string;
+  screens: ScreenView[];
+  serverTime: string;
+}
+export interface CommandBody {
+  screenIds: string[] | 'all';
+  action: 'playlist' | 'scene' | 'party' | 'auto' | 'pause' | 'resume' | 'next' | 'reload';
+  ref?: string;
+  party?: PartyConfig | null;
+  minutes?: number | null;
+}
+
 export interface HistoryEntry {
   key: string;
   revision: number;
@@ -76,5 +94,13 @@ export const adminApi = {
   saveDesign: (design: Design, thumb: string) =>
     call<{ summary: DesignSummary }>(`/designs/${encodeURIComponent(design.id)}`, { method: 'PUT', body: JSON.stringify({ design, thumb }) }),
   deleteDesign: (id: string) => call<{ deleted: string }>(`/designs/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+  signage: () => call<SignageState>('/signage'),
+  saveSignage: (config: SignageConfig, baseRevision: number) =>
+    call<{ revision: number; updatedAt: string; updatedBy: string; cachePurged: boolean }>('/signage/config', { method: 'PUT', body: JSON.stringify({ config, baseRevision }) }),
+  pairScreen: (code: string, name: string) => call<{ screen: ScreenView }>('/signage/pair', { method: 'POST', body: JSON.stringify({ code, name }) }),
+  patchScreen: (id: string, patch: { name?: string; playlistId?: string | null; quality?: string | null }) =>
+    call<{ screen: ScreenView }>(`/signage/screens/${encodeURIComponent(id)}`, { method: 'PATCH', body: JSON.stringify(patch) }),
+  revokeScreen: (id: string) => call<{ deleted: string }>(`/signage/screens/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+  command: (body: CommandBody) => call<{ updated: { id: string; version: number }[]; cachePurged: boolean }>('/signage/command', { method: 'POST', body: JSON.stringify(body) }),
   deleteMedia: (id: string) => call<{ deleted: string }>(`/media/${encodeURIComponent(id)}`, { method: 'DELETE' }),
 };

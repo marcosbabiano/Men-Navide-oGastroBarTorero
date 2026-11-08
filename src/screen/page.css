@@ -1,0 +1,4 @@
+/* Estilos de página del reproductor (no se cargan en el panel). */
+* { box-sizing: border-box; }
+html, body, #root { margin: 0; height: 100%; background: #000; overflow: hidden; }
+body { color: var(--c-ivory); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }

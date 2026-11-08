@@ -73,11 +73,16 @@ export function collectImageRefs(content: SiteContent): ImageRef[] {
 }
 
 export function buildMediaMap(content: SiteContent, uploads: MediaAsset[]): Record<string, MediaAsset> {
+  return mediaMapForRefs(collectImageRefs(content), uploads);
+}
+
+/** Mapa id → imagen para un conjunto de referencias (incluidas y subidas). */
+export function mediaMapForRefs(refs: ImageRef[], uploads: MediaAsset[]): Record<string, MediaAsset> {
   const all = new Map<string, MediaAsset>();
   for (const a of SEED_MEDIA) all.set(a.id, a);
   for (const a of uploads) all.set(a.id, a);
   const out: Record<string, MediaAsset> = {};
-  for (const ref of collectImageRefs(content)) {
+  for (const ref of refs) {
     const a = all.get(ref.asset);
     if (a) out[a.id] = a;
   }

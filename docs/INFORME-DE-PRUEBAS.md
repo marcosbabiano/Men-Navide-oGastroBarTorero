@@ -1,5 +1,27 @@
 # Informe de pruebas
 
+## Actualización · Pantallas digitales y control remoto (8 de noviembre de 2026)
+
+| Comprobación | Resultado |
+| --- | --- |
+| Lint (ESLint), typecheck (`tsc -b`) y build | ✅ sin errores |
+| Unitarias e integración (Vitest + Blobs local) | ✅ **82/82** (26 nuevas de pantallas) |
+| E2E (Playwright, Chromium) | ✅ **40/40** (10 nuevas de pantallas), suite completa en una sola ejecución |
+| `netlify build --offline` | ✅ 5 funciones empaquetadas (incluidas `api-screen` y `api-screen-pair`). ⚠️ La Edge Function (sin cambios en esta entrega) no se pudo empaquetar en este entorno: «fetch failed» al descargar Deno sin red. |
+
+Pruebas nuevas:
+- **Horarios**: hora de Madrid en invierno/verano y en los dos cambios de hora de 2026 (29-03 y 25-10); tramos que cruzan la medianoche; prioridades; rangos de fechas; horarios por televisión; anulación manual temporal/indefinida y su caducidad; programación fija; próximo cambio.
+- **Motor**: escenas sin contenido se saltan (sin eventos, sin fotos); nunca queda la secuencia vacía (logotipo de reserva); modo fiesta como escena única; menús solo publicados y con sus datos reales (el Gourmet en borrador no aparece; «Postre» del Distinción tal cual); bucle o parada al final.
+- **API**: vinculación con código (token de un solo uso, nunca guardado en claro: solo su huella), código caducado o secreto incorrecto, órdenes con versión y confirmación por latido, purga de caché por TV y general, validación de órdenes (escenas inexistentes, borradores, ajustes de fiesta fuera de rango, TV inexistente), revocación inmediata, el token de una TV no sirve en el API de administración (401) y un usuario sin rol recibe 403, conflicto 409 y validación 422 al guardar, renombrar/fijar programación/calidad.
+- **Reproductor (navegador)**: escalado exacto a 1920×1080, 3840×2160 y 1280×720 sin barras de desplazamiento; pantalla de inicio con «Iniciar reproductor» y «Vincular esta pantalla»; cursor oculto y controles discretos; escena de menús con el precio publicado en ese momento; los **5 estilos de fiesta** dibujan luz WebGL y el logotipo queda centrado.
+- **Control remoto real** entre dos navegadores (panel y TV): código mostrado en la TV → vinculación desde el panel → TV «Conectada» → **Activar Fiesta** (la TV cambia y el panel pasa de «Pendiente» a «Confirmado por la TV») → **Pausar/Reanudar** → **Volver a automática** → **Activar Navidad** → **Siguiente escena**.
+- **Gestor**: crear una escena de mensaje, editarla con vista previa, publicarla, añadirla a una programación nueva, crear un horario que cruza la medianoche, guardar, recargar y comprobar que persiste y que el reproductor público la recibe; panel de pantallas en móvil (390 px) sin desbordes.
+- **Resistencia**: reproducción continua de un minuto alternando escenas WebGL y DOM cada 4 s: como máximo 2 contextos WebGL vivos (se crean y liberan al pasar por escenas de luz), como máximo 3 capas montadas, sin errores de página. La memoria que informa Chromium sin flags es aproximada (9,5 → 9,5 MB en la muestra).
+- Revisión visual a 1920×1080 y 1280×720 de todas las escenas, y del panel a 1440 px y 390 px.
+
+Limitaciones: **no se ha probado en televisiones físicas** ni en GPU reales (Chromium con WebGL por software); los FPS dependen del equipo del local.
+
+
 ## Actualización · menús de Navidad (Selección Gourmet, postres y bebidas)
 
 | Comprobación | Resultado |

@@ -17,7 +17,8 @@ import { readFile, stat, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { BlobsServer } from '@netlify/blobs/server';
 import { getStore } from '@netlify/blobs';
-import { createAdminHandler, createPublicHandler, createSeoHandler, type ApiDeps } from '../server/api.ts';
+import { createAdminHandler, createPublicHandler, createSeoHandler, signageDepsOf, type ApiDeps } from '../server/api.ts';
+import { createScreenHandler } from '../server/signage.ts';
 import type { KV } from '../server/repo.ts';
 import type { BinaryKV } from '../server/media.ts';
 import type { AuthUser } from '../server/auth.ts';
@@ -204,6 +205,7 @@ export async function startLocalServer(port = PORT) {
   const pub = createPublicHandler(deps);
   const admin = createAdminHandler(deps);
   const seo = createSeoHandler(deps);
+  const screen = createScreenHandler(signageDepsOf(deps));
   const repo = new ContentRepo(deps.content);
   const rules = await loadHeaderRules();
   const origin = `http://localhost:${port}`;
@@ -220,6 +222,7 @@ export async function startLocalServer(port = PORT) {
 
       if (p.startsWith('/.netlify/identity')) return send(res, await identity(await toWebRequest(req, origin), p.slice('/.netlify/identity'.length)));
       if (p.startsWith('/api/admin')) return send(res, await admin(await toWebRequest(req, origin)));
+      if (p.startsWith('/api/screen/')) return send(res, await screen(await toWebRequest(req, origin)));
       if (p.startsWith('/api/')) return send(res, await pub(await toWebRequest(req, origin)));
       if (p === '/sitemap.xml' || p === '/robots.txt') return send(res, await seo(await toWebRequest(req, origin)));
       if (p === '/__local/purges') return send(res, Response.json(purges));
@@ -227,6 +230,7 @@ export async function startLocalServer(port = PORT) {
       let file = p;
       if (p === '/admin' || p.startsWith('/admin/')) file = '/admin.html';
       else if (p === '/' || p === '/preview') file = '/index.html';
+      else if (p === '/pantalla' || p.startsWith('/pantalla/')) file = '/pantalla.html';
       const full = path.join(dist, path.normalize(file).replace(/^(\.\.[/\\])+/, ''));
       if (!full.startsWith(dist)) return send(res, new Response('Forbidden', { status: 403 }));
       let data: Buffer;

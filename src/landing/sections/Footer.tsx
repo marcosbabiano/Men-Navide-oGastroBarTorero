@@ -187,6 +187,11 @@ export function Footer() {
         {usesStock && <p>Fotografías ilustrativas (Unsplash): no representan exactamente los platos servidos.</p>}
         {content.texts.footer.legal && <p className="foot__legal">{t(content.texts.footer.legal)}</p>}
         <p>Esta web no utiliza cookies de seguimiento ni analítica.</p>
+        <p>
+          <a className="link-underline foot__screen" href="/pantalla">
+            Modo Pantalla
+          </a>
+        </p>
       </div>
     </footer>
   );
