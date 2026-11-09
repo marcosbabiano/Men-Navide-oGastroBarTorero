@@ -1,4 +1,10 @@
-# Créditos y licencias de las imágenes incluidas
+# Créditos de imágenes
+
+## Ilustraciones propias (noviembre de 2026)
+Colección generada con ChatGPT a partir de `docs/PROMPT-MAESTRO-CHATGPT.md` para GastroBar Torero: portada, acento, separador, rama, «La Navidad se comparte» (principal y detalle), Menú I, Menú II, Menú III, celebración y textura de papel (`public/media/seed/arte-*`). Se integran con `node scripts/prepare-art.mjs` (fuentes en `assets-src/arte/`, no versionadas). Son imágenes ilustrativas: no representan exactamente los platos servidos.
+
+La fotografía de la barra («Sobre nosotros», `bar-lights`) se conserva. El resto de fotografías de Unsplash siguen en la biblioteca, pero el contenido inicial ya no las usa.
+
 
 Todas las fotografías de `public/media/seed/` son **ilustrativas**: no muestran los platos ni el local de GastroBar Torero. La web lo indica junto a los menús («Imágenes ilustrativas») y en el pie.
 

@@ -440,9 +440,9 @@ export function defaultSignage(): SignageConfig {
       sc({ id: 'escena-logo', type: 'logo', name: 'Logotipo · ambiente cálido', duration: 20, mood: 'warm', tagline: '', particles: true }),
       sc({ id: 'escena-logo-navidad', type: 'logo', name: 'Logotipo · Navidad', duration: 18, mood: 'christmas', tagline: 'Feliz Navidad', particles: true }),
       sc({ id: 'escena-fotos', type: 'photos', name: 'Ambiente', duration: 8, images: [
+        { asset: 'arte-celebracion', alt: 'Comedor navideño con mesa larga, velas y chimenea' },
         { asset: 'bar-lights', alt: 'Barra de bar iluminada con luz cálida' },
-        { asset: 'long-table', alt: 'Mesa larga preparada con copas y cubiertos' },
-        { asset: 'toast-red', alt: 'Amigos brindando con copas de vino tinto' },
+        { asset: 'arte-navidad-comparte', alt: 'Manos brindando con vino tinto y cava alrededor de la mesa' },
       ], effect: 'kenburns', caption: '' }),
       sc({ id: 'escena-eventos', type: 'events', name: 'Próximos eventos', duration: 14, max: 3 }),
       sc({ id: 'escena-fiesta', type: 'party', name: 'Fiesta · Gold Night', duration: 60, party: structuredClone(PARTY_PRESETS['gold-night'].config) }),

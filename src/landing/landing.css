@@ -636,6 +636,14 @@ html.menu-open {
     linear-gradient(180deg, rgb(10 6 7 / 0.55) 0%, rgb(10 6 7 / 0.05) 30%, rgb(10 6 7 / 0.35) 55%, rgb(14 8 10 / 0.94) 100%),
     radial-gradient(ellipse at 20% 100%, color-mix(in oklab, var(--c-burgundy) 55%, transparent), transparent 60%);
 }
+@media (max-width: 767px) {
+  /* Ilustración luminosa: más velo bajo el titular en móvil para mantener el contraste. */
+  .hero__shade {
+    background:
+      linear-gradient(180deg, rgb(10 6 7 / 0.55) 0%, rgb(10 6 7 / 0.35) 25%, rgb(10 6 7 / 0.78) 48%, rgb(14 8 10 / 0.96) 100%),
+      radial-gradient(ellipse at 20% 100%, color-mix(in oklab, var(--c-burgundy) 55%, transparent), transparent 60%);
+  }
+}
 .hero__glow {
   position: absolute;
   left: 50%;

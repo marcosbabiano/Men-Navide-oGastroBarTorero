@@ -303,5 +303,193 @@
     "credit": "Fotografía ilustrativa · Unsplash",
     "sourceUrl": "https://images.unsplash.com/photo-1543934638-bd2e138430c4",
     "illustrative": true
+  },
+  {
+    "id": "arte-portada",
+    "kind": "static",
+    "src": "/media/seed/arte-portada",
+    "widths": [
+      640,
+      1280,
+      1536
+    ],
+    "width": 1536,
+    "height": 1024,
+    "alt": "Ilustración de mesa navideña con copas de vino, vela y plato dorado sobre terciopelo granate",
+    "folder": "portada",
+    "position": "70% 50%",
+    "lqip": "data:image/webp;base64,UklGRkwAAABXRUJQVlA4IEAAAACwAgCdASoYABAAA4BaJYwC7AEO/h7M8SeECN9a2UAA/vd3wSev3IhdSw7RK/4n5ZQp6/dt7SWHdmp9M2um79AA",
+    "credit": "Ilustración propia de GastroBar Torero (generada con IA)",
+    "illustrative": true
+  },
+  {
+    "id": "arte-acento",
+    "kind": "static",
+    "src": "/media/seed/arte-acento",
+    "widths": [
+      640,
+      1254
+    ],
+    "width": 1254,
+    "height": 1254,
+    "alt": "Copa de champán dorada con cinta y ramas de abeto",
+    "folder": "ornamentos",
+    "position": "50% 50%",
+    "credit": "Ilustración propia de GastroBar Torero (generada con IA)",
+    "illustrative": true
+  },
+  {
+    "id": "arte-separador",
+    "kind": "static",
+    "src": "/media/seed/arte-separador",
+    "widths": [
+      640,
+      1280,
+      1920,
+      2172
+    ],
+    "width": 2172,
+    "height": 724,
+    "alt": "Separador dorado con estrella y hojas",
+    "folder": "ornamentos",
+    "position": "50% 50%",
+    "credit": "Ilustración propia de GastroBar Torero (generada con IA)",
+    "illustrative": true
+  },
+  {
+    "id": "arte-rama",
+    "kind": "static",
+    "src": "/media/seed/arte-rama",
+    "widths": [
+      640,
+      1254
+    ],
+    "width": 1254,
+    "height": 1254,
+    "alt": "Rama de abeto dorada con acebo, cinta y bolas granates",
+    "folder": "ornamentos",
+    "position": "50% 50%",
+    "credit": "Ilustración propia de GastroBar Torero (generada con IA)",
+    "illustrative": true
+  },
+  {
+    "id": "arte-navidad-comparte",
+    "kind": "static",
+    "src": "/media/seed/arte-navidad-comparte",
+    "widths": [
+      640,
+      1122
+    ],
+    "width": 1122,
+    "height": 1402,
+    "alt": "Ilustración de manos brindando con vino tinto y cava alrededor de la mesa",
+    "folder": "ilustraciones",
+    "position": "50% 50%",
+    "lqip": "data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAADwBACdASoYAB4APtlcpU2oJaOiN/qoAQAbCWcAx+RXb9+pJWtvbKJ+eTM25tAMScAA/vNpJE/dEXOvye4pOCuT9Lz+RCZH7YoZiUEI8shvaugBtvIxWUQ1Ky4yUcRMUL7lmRJNwBkLYCu2nMqwAA==",
+    "credit": "Ilustración propia de GastroBar Torero (generada con IA)",
+    "illustrative": true
+  },
+  {
+    "id": "arte-navidad-detalle",
+    "kind": "static",
+    "src": "/media/seed/arte-navidad-detalle",
+    "widths": [
+      640,
+      1122
+    ],
+    "width": 1122,
+    "height": 1402,
+    "alt": "Servilleta granate con ramita de abeto y estrella dorada sobre un plato",
+    "folder": "ilustraciones",
+    "position": "50% 45%",
+    "lqip": "data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAACQBQCdASoYAB4APu1or1CppaQiqAqpMB2JYwCo9BBWI/bx0NxNI719Ify8P3y/87eOSWfFAAD+7V1LeKzMWD0et6HVF8Mge4kVmKqSUWoKJPK4lL+10FGlP6pCtGDSajb/VnuP7ghrYRkx+5gMMjoEAqmORWWyOEvQpu6LwAAAAA==",
+    "credit": "Ilustración propia de GastroBar Torero (generada con IA)",
+    "illustrative": true
+  },
+  {
+    "id": "arte-menu-esencia",
+    "kind": "static",
+    "src": "/media/seed/arte-menu-esencia",
+    "widths": [
+      640,
+      1122
+    ],
+    "width": 1122,
+    "height": 1402,
+    "alt": "Ilustración de mesa de Navidad para compartir con tabla, platos y copas sobre mantel granate",
+    "folder": "platos",
+    "position": "50% 50%",
+    "lqip": "data:image/webp;base64,UklGRoIAAABXRUJQVlA4IHYAAADQBACdASoYAB4APu1uqlGppiOiqAqpMB2JYwCw7A8qHfGWVzn+4Z1aHSK+ZjqJAAD+0DpouZtCbFLuctHUwrSbQr+gQZbnU2lqgXrPSRy2McEyW5xTMy/3E2UGhBROAvr1bodGBNKeE98g/NGvADydx2ooAAAA",
+    "credit": "Ilustración propia de GastroBar Torero (generada con IA)",
+    "illustrative": true
+  },
+  {
+    "id": "arte-menu-distincion",
+    "kind": "static",
+    "src": "/media/seed/arte-menu-distincion",
+    "widths": [
+      640,
+      1122
+    ],
+    "width": 1122,
+    "height": 1402,
+    "alt": "Ilustración de campana dorada, copa de vino y cubiertos sobre terciopelo oscuro",
+    "folder": "platos",
+    "position": "60% 45%",
+    "lqip": "data:image/webp;base64,UklGRnAAAABXRUJQVlA4IGQAAAAwBQCdASoYAB4APu1sq1EppiOiqAqpMB2JYwC7M2QBf/70US4jdu7TAKxj/CHsS+85gAD+8N9jG2Ic8e01ZP+Zo94zqlZ/eiIoAKQUsXd5jskCKrUQKgo1f0YuEYPSlAFoAAAA",
+    "credit": "Ilustración propia de GastroBar Torero (generada con IA)",
+    "illustrative": true
+  },
+  {
+    "id": "arte-celebracion",
+    "kind": "static",
+    "src": "/media/seed/arte-celebracion",
+    "widths": [
+      640,
+      1280,
+      1672
+    ],
+    "width": 1672,
+    "height": 941,
+    "alt": "Ilustración de un comedor navideño con mesa larga, velas y chimenea",
+    "folder": "ambiente",
+    "position": "50% 50%",
+    "lqip": "data:image/webp;base64,UklGRkwAAABXRUJQVlA4IEAAAADwAwCdASoYAA4APu1kqU2ppaQiMAgBMB2JZQCdACHEoLMR39esjPAAAP7ZNCDOtwe72Koa9Nnavt6+4OLAPkAA",
+    "credit": "Ilustración propia de GastroBar Torero (generada con IA)",
+    "illustrative": true
+  },
+  {
+    "id": "arte-papel-marfil",
+    "kind": "static",
+    "src": "/media/seed/arte-papel-marfil",
+    "widths": [
+      640,
+      1254
+    ],
+    "width": 1254,
+    "height": 1254,
+    "alt": "Textura de papel marfil",
+    "folder": "texturas",
+    "position": "50% 50%",
+    "lqip": "data:image/webp;base64,UklGRjwAAABXRUJQVlA4IDAAAAAQAwCdASoYABgAPu1wsVKppiSiqAgBMB2JZwC7ABanFAAA/u/uN+oOrRVXkwAAAAA=",
+    "credit": "Ilustración propia de GastroBar Torero (generada con IA)",
+    "illustrative": true
+  },
+  {
+    "id": "arte-menu-gourmet",
+    "kind": "static",
+    "src": "/media/seed/arte-menu-gourmet",
+    "widths": [
+      640,
+      1122
+    ],
+    "width": 1122,
+    "height": 1402,
+    "alt": "Ilustración de campana dorada, alcachofa y copa de vino sobre terciopelo granate",
+    "folder": "platos",
+    "position": "55% 50%",
+    "lqip": "data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAABwBQCdASoYAB4APu1qrVCppaQiqAqpMB2JQBUk5fg1W/n4ADhzbDHvWgCCm0TWWKcNwq7AAP7r7iHVTgoVVdtqbXK6qh0PQVLsuOfjH05KkEVJ58IyVhyBP8ufKgQ/5ZapfoEzgAA=",
+    "credit": "Ilustración propia de GastroBar Torero (generada con IA)",
+    "illustrative": true
   }
 ]

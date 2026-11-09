@@ -93,7 +93,8 @@ export function Hours() {
 
 export function Footer() {
   const { content, t, media } = useContent();
-  const usesStock = Object.values(media).some((a) => a.kind === 'static');
+  const usesStock = Object.values(media).some((a) => a.kind === 'static' && /unsplash/i.test(a.credit ?? ''));
+  const usesIllustrations = Object.values(media).some((a) => a.illustrative);
   const b = content.business;
   const socials = SOCIAL.filter((s) => b.social[s.key]);
   const brand = splitBrand(b.name);
@@ -184,7 +185,11 @@ export function Footer() {
         <p>
           © {year} {b.name} · {formatAddress(content)}
         </p>
-        {usesStock && <p>Fotografías ilustrativas (Unsplash): no representan exactamente los platos servidos.</p>}
+        {usesStock ? (
+          <p>Imágenes ilustrativas (incluye fotografía de Unsplash): no representan exactamente los platos servidos.</p>
+        ) : (
+          usesIllustrations && <p>Imágenes ilustrativas: no representan exactamente los platos servidos.</p>
+        )}
         {content.texts.footer.legal && <p className="foot__legal">{t(content.texts.footer.legal)}</p>}
         <p>Esta web no utiliza cookies de seguimiento ni analítica.</p>
         <p>

@@ -2,6 +2,7 @@
  * Estructura de la landing: secciones del sistema, protecciones y migración de contenidos antiguos.
  */
 import type { BuiltinSection, BlockTemplate, CustomBlock, LayoutSection, Menu, SiteContent } from './schema.ts';
+import { applyArtPatch2026 } from './art-2026.ts';
 import { DISTINCION_DESSERT, DISTINCION_DRINK, PATCH_MENUS_2026_11, gourmetMenu } from './menu-data-2026.ts';
 
 export const BUILTIN_INFO: Record<BuiltinSection, { label: string; anchor: string; protection: 'locked' | 'no-delete' | 'none'; description: string }> = {
@@ -80,6 +81,7 @@ export function migrateContent<T>(raw: T): T {
   }
   if (Array.isArray(c.menus) && !Array.isArray(c.patches)) c.patches = [];
   if (Array.isArray(c.menus)) applyMenuPatch2026(c as unknown as SiteContent);
+  if (Array.isArray(c.menus) && c.texts && c.campaign) applyArtPatch2026(c as unknown as SiteContent);
   return c as unknown as T;
 }
 

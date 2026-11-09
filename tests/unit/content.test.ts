@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { siteContentSchema } from '../../shared/schema.ts';
+import type { SiteContent } from '../../shared/schema.ts';
 import { createSeedContent, DEFAULT_BOOKING_URL } from '../../shared/seed.ts';
 import { migrateContent } from '../../shared/layout.ts';
 import { PATCH_MENUS_2026_11 } from '../../shared/menu-data-2026.ts';
 import { THEME_PRESETS, checkThemeContrast } from '../../shared/theme.ts';
-import { toPublicContent, buildPublicPayload } from '../../shared/public.ts';
+import { toPublicContent, buildPublicPayload, collectImageRefs } from '../../shared/public.ts';
 import { buildComparison } from '../../shared/comparison.ts';
 import { contentIssues, publishBlockers } from '../../shared/completeness.ts';
 import { injectIntoHtml, safeJson } from '../../shared/head.ts';
@@ -206,7 +207,7 @@ describe('actualización controlada de menús (contenido ya guardado)', () => {
     expect(siteContentSchema.safeParse(m).success).toBe(true);
     expect(m.menus.map((x) => [x.id, x.status])).toEqual([['menu-esencia', 'published'], ['menu-distincion', 'published'], ['menu-seleccion-gourmet', 'draft']]);
     expect(m.menus[1].sections.find((s) => s.kind === 'dessert')!.items.map((i) => i.name)).toEqual(['Postre']);
-    expect(m.patches).toEqual([PATCH_MENUS_2026_11]);
+    expect(m.patches).toContain(PATCH_MENUS_2026_11);
     expect(migrateContent(m)).toEqual(m);
   });
   it('no pisa lo editado en el panel ni recrea el Gourmet si se eliminó', () => {
@@ -225,5 +226,34 @@ describe('actualización controlada de menús (contenido ya guardado)', () => {
     l.menus.push({ ...(createSeedContent().menus[2] as unknown as Record<string, unknown>), id: 'menu-abc', name: 'Menú Selección Gourmet' });
     const m = migrateContent(l) as unknown as ReturnType<typeof createSeedContent>;
     expect(m.menus.filter((x) => /Gourmet/.test(x.name))).toHaveLength(1);
+  });
+});
+
+describe('ilustraciones propias (sustitución controlada de la fotografía de stock)', () => {
+  it('sustituye solo la fotografía de stock y conserva la barra de «Sobre nosotros» y lo cambiado en el panel', async () => {
+    const { PATCH_ART_2026_11 } = await import('../../shared/art-2026.ts');
+    const c = structuredClone(createSeedContent()) as SiteContent;
+    expect(c.texts.hero.image.asset).toBe('arte-portada');
+    expect(c.texts.about.image?.asset).toBe('bar-lights');
+    expect(c.campaign.decor.divider?.asset).toBe('arte-separador');
+    // Contenido antiguo guardado antes de las ilustraciones, con una imagen cambiada a mano.
+    const old = structuredClone(c) as SiteContent;
+    old.patches = old.patches.filter((p) => p !== PATCH_ART_2026_11);
+    old.texts.hero.image = { asset: 'hero-ornament', alt: 'x' };
+    old.texts.story.images[0] = { asset: 'mi-foto-subida', alt: 'propia' };
+    old.menus[0].image = { asset: 'sliced-meat', alt: 'x' };
+    old.menus[0].gallery = [{ asset: 'cheese', alt: 'x' }, { asset: 'mi-foto', alt: 'y' }];
+    old.campaign.decor.branch = null;
+    const m = migrateContent(old);
+    expect(m.texts.hero.image.asset).toBe('arte-portada');
+    expect(m.texts.story.images[0].asset).toBe('mi-foto-subida');
+    expect(m.menus[0].image?.asset).toBe('arte-menu-esencia');
+    expect(m.menus[0].gallery.map((g) => g.asset)).toEqual(['mi-foto']);
+    expect(m.campaign.decor.branch?.asset).toBe('arte-rama');
+    expect(m.texts.about.image?.asset).toBe('bar-lights');
+    expect(migrateContent(m)).toEqual(m);
+    // Todas las imágenes referenciadas existen en el catálogo.
+    const ids = new Set(SEED_MEDIA.map((a) => a.id));
+    for (const r of collectImageRefs(createSeedContent())) expect(ids.has(r.asset), r.asset).toBe(true);
   });
 });
