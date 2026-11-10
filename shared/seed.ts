@@ -185,6 +185,7 @@ export function createSeedContent(): SiteContent {
     },
     booking: {
       url: DEFAULT_BOOKING_URL,
+      preselect: true,
       notice: {
         enabled: true,
         text: 'Cuando hagas tu reserva, recuerda indicarnos qué menú habéis elegido. Si tienes cualquier duda, llámanos al {telefono}.',

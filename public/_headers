@@ -27,3 +27,8 @@
 /pantalla*
   X-Robots-Tag: noindex, nofollow
   Cache-Control: no-cache
+
+/reservar*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-cache
+  Referrer-Policy: no-referrer

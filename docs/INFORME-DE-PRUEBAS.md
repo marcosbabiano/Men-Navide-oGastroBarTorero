@@ -1,5 +1,24 @@
 # Informe de pruebas
 
+## Actualización · Reservas de Navidad (10 de noviembre de 2026)
+
+| Comprobación | Resultado |
+| --- | --- |
+| Lint, typecheck y build | ✅ sin errores |
+| Unitarias e integración (Vitest + Blobs local) | ✅ **114/114** (26 nuevas de reservas + 5 de calendario) |
+| E2E (Playwright, Chromium) | ✅ **48/48** en una ejecución completa (7 nuevas de reservas) |
+| `netlify build --offline` | ✅ 8 funciones empaquetadas, incluida `reservas-sync` como función programada (`*/10 * * * *`) |
+
+- **Formulario**: dos adultos con el mismo menú y platos distintos; diez adultos con «aplicar a todos»; adultos y niños; niño de carta habitual; niño con otro menú; Gourmet con primero y segundo (unitaria, publicándolo con precio; en borrador no está disponible); notas y alergias; campos obligatorios y menú común obligatorio; guardado con referencia; botón a Qamarero; sin desbordes a 390 px.
+- **Correos**: HTML con tabla y texto plano; fecha («jueves, 24 de diciembre de 2026», «24/12/2026», «5/1» con año deducido), hora, titular, teléfono y personas; vinculación por referencia, por teléfono y coincidencia ambigua con revisión y fusión en el panel; correo duplicado (no duplica); campos incompletos (no inventa); remitente no autorizado; webhook sin secreto (401); Gmail con OAuth simulado (lectura programada, idempotencia, el token no se expone).
+- **WhatsApp y modificaciones**: generar enlace, número normalizado, mensaje precargado sin alergias, `wa.me` codificado; abrir no consume; modificar platos, menú común, niños, añadir y quitar comensales (con confirmación); guardar; enlace consumido y segunda modificación rechazada (410); **doble envío simultáneo: uno 200 y otro 409**; solicitar nuevo enlace; generar otro revoca el anterior; plazo límite y excepción autorizada; enlace para completar en reservas hechas directamente en Qamarero; cambio de comensales pendiente y su confirmación.
+- **Administración**: listado, filtros, vinculación, revisión, cancelación, edición con control de versión (409), historial, estados y avisos; acceso sin rol (403) y con el token del cliente (401).
+- **Cocina e informes**: platos por grupo, entrantes compartidos con regla o «pendiente de definir», niños de carta, alergias, cancelada excluida, impresión A4 en ventana propia, **PDF** (cabecera `%PDF` verificada), CSV y aviso de **cambios posteriores a la última impresión**.
+- Revisión visual: formulario a 390 px (todos los pasos), panel a 1440 px (listado, ficha, día, cocina, correo) e informe impreso.
+
+Limitaciones: no había correos reales de Qamarero para comprobar su formato (las pruebas usan ejemplos); la integración con Gmail se ha probado con respuestas simuladas de Google (no con una cuenta real); el envío por WhatsApp abre `wa.me` y no se ha comprobado en un móvil real.
+
+
 ## Actualización · Pantallas digitales y control remoto (8 de noviembre de 2026)
 
 | Comprobación | Resultado |

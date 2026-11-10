@@ -12,23 +12,23 @@ interface Props {
 }
 
 /**
- * Enlace a la plataforma externa de reservas.
- * Se abre en una pestaña nueva con rel="noopener noreferrer" y se anuncia a lectores de pantalla.
- * No se añaden parámetros a la URL: la plataforma no admite preseleccionar menús.
+ * Botón «Reservar». Con la elección anticipada activada lleva a /reservar (misma pestaña); si no,
+ * a la plataforma externa de reservas en una pestaña nueva (rel="noopener noreferrer").
+ * No se añaden parámetros a la URL externa: la plataforma no documenta parámetros de precarga.
  */
 export function BookLink({ children, variant = 'primary', className = '', place, icon = true }: Props) {
   const { bookingUrl } = useContent();
+  const external = /^https?:/.test(bookingUrl);
   return (
     <a
       className={`btn btn--${variant} ${className}`}
       href={bookingUrl}
-      target="_blank"
-      rel="noopener noreferrer"
+      {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
       data-book={place}
     >
       <span className="btn__label">{children}</span>
       {icon && <ArrowUpRight className="btn__icon" />}
-      <span className="sr-only"> (se abre en una pestaña nueva)</span>
+      {external && <span className="sr-only"> (se abre en una pestaña nueva)</span>}
     </a>
   );
 }

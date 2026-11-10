@@ -85,6 +85,7 @@ export function migrateContent<T>(raw: T): T {
   if (Array.isArray(c.menus)) applyMenuPatch2026(c as unknown as SiteContent);
   if (Array.isArray(c.menus) && c.texts && c.campaign) applyArtPatch2026(c as unknown as SiteContent);
   if (Array.isArray(c.menus) && !c.calendar) c.calendar = defaultCalendar();
+  if (c.booking && typeof (c.booking as Raw).preselect !== 'boolean') (c.booking as Raw).preselect = true;
   // Sección de calendario: se añade una sola vez tras los menús (si después se elimina, no vuelve).
   if (Array.isArray(c.patches) && !(c.patches as string[]).includes(PATCH_CALENDAR_2026_11)) {
     const layout = c.layout as SiteContent['layout'] | undefined;

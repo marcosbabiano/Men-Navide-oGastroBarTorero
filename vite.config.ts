@@ -13,6 +13,7 @@ export default defineConfig({
         main: resolve(__dirname, 'index.html'),
         admin: resolve(__dirname, 'admin.html'),
         pantalla: resolve(__dirname, 'pantalla.html'),
+        reservar: resolve(__dirname, 'reservar.html'),
       },
       output: {
         manualChunks(id) {

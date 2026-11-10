@@ -19,6 +19,8 @@ import { BlockEditor, SectionsView } from './views/Sections.tsx';
 const StudioRoutes = lazy(() => import('./studio/StudioHome.tsx'));
 // Gestor de Pantallas (incluye las escenas del reproductor para las vistas previas).
 const ScreensRoutes = lazy(() => import('./screens/ScreensApp.tsx'));
+// Reservas de Navidad (elecciones de menús, Qamarero, cocina e informes).
+const ReservasRoutes = lazy(() => import('./reservas/ReservasApp.tsx'));
 
 type Gate =
   | { kind: 'checking' }
@@ -158,6 +160,7 @@ function LoginForm({ onLoggedIn, message }: { onLoggedIn: () => void; message?: 
 const NAV = [
   { href: '#/inicio', key: 'inicio', label: 'Inicio', icon: '◈' },
   { href: '#/secciones', key: 'secciones', label: 'Secciones', icon: '☰' },
+  { href: '#/reservas', key: 'reservas', label: 'Reservas', icon: '☷' },
   { href: '#/menus', key: 'menus', label: 'Menús', icon: '❦' },
   { href: '#/calendario', key: 'calendario', label: 'Calendario', icon: '▦' },
   { href: '#/textos', key: 'textos', label: 'Textos', icon: '¶' },
@@ -231,6 +234,13 @@ function Shell({ onLogout, reauth, onReauthed }: { onLogout: () => void; reauth:
       view = (
         <Suspense fallback={<p className="muted">Cargando el Estudio Creativo…</p>}>
           <StudioRoutes path={route.path} query={route.query} />
+        </Suspense>
+      );
+      break;
+    case 'reservas':
+      view = (
+        <Suspense fallback={<p className="muted">Cargando reservas…</p>}>
+          <ReservasRoutes path={route.path} query={route.query} />
         </Suspense>
       );
       break;
@@ -340,7 +350,7 @@ function Shell({ onLogout, reauth, onReauthed }: { onLogout: () => void; reauth:
             </button>
           </div>
         )}
-        <main id="admin-main" className={`content ${(section === 'estudio' && route.path[1]) || section === 'pantallas' ? 'content--wide' : ''}`} tabIndex={-1}>
+        <main id="admin-main" className={`content ${(section === 'estudio' && route.path[1]) || section === 'pantallas' || section === 'reservas' ? 'content--wide' : ''}`} tabIndex={-1}>
           {view}
         </main>
       </div>

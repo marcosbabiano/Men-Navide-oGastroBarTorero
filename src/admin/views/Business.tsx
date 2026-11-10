@@ -77,6 +77,12 @@ export function BusinessView() {
             </>
           }
         />
+        <Toggle
+          label="Los botones «Reservar» llevan primero a la elección de menús (/reservar)"
+          checked={content.booking.preselect}
+          onChange={(v) => update((d) => void (d.booking.preselect = v))}
+          hint="El cliente elige menús y platos y después continúa a la plataforma de reservas. Si lo desactivas, los botones van directamente a la plataforma."
+        />
         <Toggle label="Mostrar aviso para indicar el menú al reservar" checked={content.booking.notice.enabled} onChange={(v) => update((d) => void (d.booking.notice.enabled = v))} />
         <TextArea
           label="Texto del aviso"

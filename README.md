@@ -5,6 +5,7 @@ Web de la campaña de Navidad de **GastroBar Torero** (Fuenlabrada de los Montes
 - **Landing** cinematográfica (intro, portada, «La Navidad se comparte», menús, comparativa, celebración, cómo reservar, preguntas frecuentes, sobre nosotros y pie) diseñada primero para móvil.
 - **Panel `/admin`** con Netlify Identity: **secciones** (ordenar, mostrar/ocultar, eliminar y crear bloques con 8 plantillas), menús (crear, duplicar, reordenar arrastrando, ocultar, eliminar), textos, establecimiento y horarios, imágenes, campaña/colores/ornamentos/SEO, vista previa, publicación e historial.
 - **Estudio Creativo — Redes Sociales** en el panel: editor visual (Konva) con 10 plantillas de la campaña, formatos de Instagram (4:5, 1:1, 9:16, carrusel y personalizado), datos vinculados a los menús publicados, diseños guardados y exportación PNG/JPG/PDF a tamaño real.
+- **Reservas de Navidad**: formulario `/reservar` para elegir menú común de adultos, menús o carta de los niños y platos de cada comensal antes de reservar en Qamarero; lectura de los correos de Qamarero (Gmail OAuth o webhook), vinculación automática o revisada, enlaces privados de modificación de un solo uso por WhatsApp, conciliación, preparación de cocina e informes A4/PDF/CSV. Ver [`docs/RESERVAS.md`](docs/RESERVAS.md).
 - **Pantallas digitales** para las televisiones del local: reproductor `/pantalla` (Chrome + HDMI, 1080p/4K) con escenas animadas (menús, eventos, fotos, logotipo, mensajes, reservas con QR y **modo fiesta** con luces WebGL en tiempo real), y **Gestor de Pantallas** en `/admin/pantallas`: programaciones, horarios (Europe/Madrid), varias televisiones vinculadas con código y **control remoto desde el móvil**. Ver [`docs/PANTALLAS.md`](docs/PANTALLAS.md).
 - **Contenido persistente** en Netlify Blobs: los cambios se publican **sin tocar código ni redesplegar** y sobreviven a nuevos despliegues.
 - **Reservas** en la plataforma externa existente (Qamarero). Todos los botones enlazan a `https://booking.qamarero.com/new-reservation/bar-torero` (editable).
@@ -19,6 +20,7 @@ Web de la campaña de Navidad de **GastroBar Torero** (Fuenlabrada de los Montes
 | --- | --- |
 | [`docs/DESPLIEGUE.md`](docs/DESPLIEGUE.md) | Publicar en Netlify paso a paso, activar Identity, crear el primer administrador y comprobar Blobs. |
 | [`docs/GUIA-DEL-PANEL.md`](docs/GUIA-DEL-PANEL.md) | Uso diario del panel (incluye **cómo añadir el tercer menú**). |
+| [`docs/RESERVAS.md`](docs/RESERVAS.md) | **Reservas de Navidad**: formulario, correo de Qamarero, vinculación, WhatsApp, cocina e informes, configuración de Gmail/webhook. |
 | [`docs/PANTALLAS.md`](docs/PANTALLAS.md) | **Pantallas del local**: instalación HDMI/Chrome, vincular TV, control remoto, escenas, horarios, arranque automático y lanzadores. |
 | [`docs/PENDIENTES.md`](docs/PENDIENTES.md) | Datos comerciales y configuraciones pendientes de confirmar. |
 | [`docs/ARQUITECTURA-Y-SEGURIDAD.md`](docs/ARQUITECTURA-Y-SEGURIDAD.md) | Arquitectura técnica, API, modelo de datos y medidas de seguridad. |

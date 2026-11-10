@@ -85,6 +85,7 @@ Para añadir más personas: repite los pasos 4–6 con su correo. Para quitar el
 - [ ] Cambia un texto, **Guardar** → **Vista previa** (muestra el borrador) → **Publicar** → la web lo muestra al recargar.
 - [ ] Al compartir el enlace por WhatsApp aparece la imagen y el título (puede tardar en refrescarse la caché de WhatsApp).
 - [ ] `/robots.txt` y `/sitemap.xml` muestran tu dominio.
+- [ ] `/reservar`: completar una elección de prueba → referencia → «Continuar a Qamarero». En `/admin` → Reservas aparece «Pendiente de confirmación». Procesa manualmente un correo real de Qamarero (Reservas → Correo) y revisa la interpretación.
 - [ ] `/pantalla` reproduce la programación; en `/admin/pantallas` → Televisiones se vincula una TV con su código y el Panel de control la muestra **Conectada**; «Activar Fiesta» se ve en la TV y pasa a «Confirmado por la TV» (ver `docs/PANTALLAS.md`).
 
 ## Dominio propio
@@ -96,6 +97,8 @@ En **Domain management** añade el dominio. No hay que cambiar nada en el códig
 | Variable | Obligatoria | Uso |
 | --- | --- | --- |
 | `ADMIN_EMAILS` | No | Correos con acceso de administrador aunque no tengan el rol (arranque). |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Para leer Gmail | Credenciales OAuth de la aplicación (ver `docs/RESERVAS.md`). |
+| `INBOUND_EMAIL_SECRET` | Para webhook de correo | Secreto del webhook de correo entrante. |
 
 No hay contraseñas ni claves en el repositorio. Netlify inyecta automáticamente las credenciales de Blobs e Identity en las funciones.
 

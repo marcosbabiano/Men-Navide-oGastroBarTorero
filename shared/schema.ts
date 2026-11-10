@@ -215,6 +215,8 @@ export const siteContentSchema = z.object({
   }),
   booking: z.object({
     url: httpsUrl,
+    /** Los botones «Reservar» llevan primero al formulario de elección de menús (/reservar). */
+    preselect: z.boolean(),
     notice: z.object({ enabled: z.boolean(), text: safeText(300) }),
   }),
   texts: z.object({

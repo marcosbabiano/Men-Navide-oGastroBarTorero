@@ -12,6 +12,7 @@ import { parseAdminEmails } from './auth.ts';
 
 export const CONTENT_STORE = 'torero-content';
 export const MEDIA_STORE = 'torero-media';
+export const RESERVAS_STORE = 'torero-reservas';
 
 function originOf(value: string | undefined): string | null {
   if (!value) return null;
@@ -37,5 +38,10 @@ export function productionDeps(): ApiDeps {
       (o): o is string => !!o,
     ),
     purge: (tags) => purgeCache({ tags }),
+    reservas: {
+      store: getStore({ name: RESERVAS_STORE, consistency: 'strong' }) as unknown as KV,
+      inboundSecret: process.env.INBOUND_EMAIL_SECRET || undefined,
+      gmail: { clientId: process.env.GOOGLE_CLIENT_ID || undefined, clientSecret: process.env.GOOGLE_CLIENT_SECRET || undefined },
+    },
   };
 }

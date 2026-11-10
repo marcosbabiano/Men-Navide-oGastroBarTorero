@@ -51,7 +51,7 @@ export interface HistoryEntry {
 }
 
 /** Peticiones al API privado: cookie de sesión de Identity + cabecera anti-CSRF. */
-async function call<T>(path: string, init: RequestInit = {}): Promise<T> {
+export async function call<T>(path: string, init: RequestInit = {}): Promise<T> {
   const headers = new Headers(init.headers);
   headers.set('X-Torero-Admin', '1');
   headers.set('Accept', 'application/json');

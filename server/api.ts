@@ -36,6 +36,7 @@ import { ContentRepo, type KV } from './repo.ts';
 import { type BinaryKV, blobKey, findUsages, parseUpload, serveMedia, storeUpload } from './media.ts';
 import { DesignRepo } from './designs.ts';
 import { type SignageDeps, handleSignageAdmin } from './signage.ts';
+import { type ReservasDeps, handleReservasAdmin } from './reservas/api.ts';
 
 export const CONTENT_CACHE_TAG = 'torero-content';
 
@@ -47,6 +48,8 @@ export interface ApiDeps {
   allowedOrigins?: string[];
   purge: (tags: string[]) => Promise<void>;
   now?: () => Date;
+  /** Reservas de Navidad (store propio). Opcional para no romper usos anteriores. */
+  reservas?: Omit<ReservasDeps, 'readContent' | 'purge' | 'now'>;
 }
 
 export const publicCacheHeaders = (): Record<string, string> => ({
@@ -88,6 +91,12 @@ export function signageDepsOf(deps: Pick<ApiDeps, 'content' | 'purge' | 'now'>):
     readPublished: () => repo.readPublicContent(),
     readUploads: () => repo.readMediaIndex(),
   };
+}
+
+export function reservasDepsOf(deps: ApiDeps): ReservasDeps | null {
+  if (!deps.reservas) return null;
+  const repo = new ContentRepo(deps.content, deps.now);
+  return { ...deps.reservas, readContent: async () => (await repo.readPublicContent()).content, purge: deps.purge, now: deps.now };
 }
 
 export function createAdminHandler(deps: ApiDeps) {
@@ -270,6 +279,11 @@ export function createAdminHandler(deps: ApiDeps) {
 
       const sig = await handleSignageAdmin(req, path, who, signage);
       if (sig) return sig;
+      const rdeps = reservasDepsOf(deps);
+      if (rdeps) {
+        const r = await handleReservasAdmin(req, path, who, rdeps);
+        if (r) return r;
+      }
 
       throw new ApiError(404, 'not_found', 'Recurso no encontrado.');
     } catch (err) {

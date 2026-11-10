@@ -36,6 +36,8 @@ async function fastConfig(page: Page) {
   for (const sc of config.scenes) sc.duration = 4;
   config.settings.pollSeconds = 5;
   config.settings.heartbeatSeconds = 20;
+  // Sin horarios: la prueba no depende de la hora a la que se ejecute (programación por defecto).
+  (config as unknown as { schedules: unknown[] }).schedules = [];
   const r = await adminFetch(page, '/signage/config', { method: 'PUT', body: { config, baseRevision: s.revision } });
   expect(r.status).toBe(200);
 }

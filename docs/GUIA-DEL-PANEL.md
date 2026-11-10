@@ -144,3 +144,16 @@ Los cambios de escenas y programaciones se aplican con **Guardar cambios** (barr
 4. **Guardar → Publicar**.
 
 Mientras no haya fechas, el calendario no aparece en la web (nunca se muestran fechas inventadas). La sección se puede ocultar o mover desde **Secciones**.
+
+## Reservas de Navidad
+
+**Reservas** reúne las elecciones de menús de los clientes y las reservas de Qamarero (que sigue siendo la agenda oficial):
+
+- **Resumen** y **Reservas**: listado con búsqueda, filtros (fecha, servicio, menú, estados, pendientes de vinculación, modificaciones, canceladas, niños, alergias, zona) y la ficha de cada reserva.
+- **Ficha**: datos, platos de cada comensal, alergias destacadas, incidencias, vinculación con el correo de Qamarero, **enviar enlace por WhatsApp**, historial, imprimir/PDF, cancelar o eliminar.
+- **Por día** y **Cocina e informes**: comidas y cenas por hora, cantidades por plato e informes A4 (servicio, cocina, desglose y cambios pendientes) en impresión, PDF y CSV.
+- **Revisar con Qamarero**: comprobar reservas que pueden haber cambiado sin aviso e importar un CSV.
+- **Correo**: conectar Gmail o webhook y ver cómo se interpretó cada correo.
+- **Solicitudes** y **Configuración**.
+
+Recuerda: elegir menús no es reservar mesa; un cambio de comensales en la web no cambia Qamarero; y un correo antiguo no garantiza que la reserva siga en pie. Guía completa: `docs/RESERVAS.md`.

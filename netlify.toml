@@ -47,3 +47,14 @@
   from = "/pantalla/*"
   to = "/pantalla.html"
   status = 200
+
+# Formulario de elección de menús de Navidad y enlaces privados de modificación.
+[[redirects]]
+  from = "/reservar"
+  to = "/reservar.html"
+  status = 200
+
+[[redirects]]
+  from = "/reservar/*"
+  to = "/reservar.html"
+  status = 200

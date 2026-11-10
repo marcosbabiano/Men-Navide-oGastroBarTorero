@@ -1,7 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
-const BOOKING = 'https://booking.qamarero.com/new-reservation/bar-torero';
 const skipIntro = (page: Page) => page.addInitScript(() => localStorage.setItem('torero:intro-visto', String(Date.now())));
 
 async function scrollThrough(page: Page) {
@@ -35,7 +34,7 @@ test.describe('Landing', () => {
     await expect(esencia.locator('.msec--choice .msec__or')).toHaveCount(1);
   });
 
-  test('todos los botones de reserva enlazan a Qamarero de forma segura', async ({ page }) => {
+  test('todos los botones de reserva llevan a la elección de menús (/reservar)', async ({ page }) => {
     await skipIntro(page);
     await page.goto('/');
     const links = page.locator('[data-book]');
@@ -44,9 +43,8 @@ test.describe('Landing', () => {
     const places = new Set<string>();
     for (let i = 0; i < n; i++) {
       const a = links.nth(i);
-      await expect(a).toHaveAttribute('href', BOOKING);
-      await expect(a).toHaveAttribute('target', '_blank');
-      await expect(a).toHaveAttribute('rel', /noopener/);
+      await expect(a).toHaveAttribute('href', '/reservar');
+      await expect(a).not.toHaveAttribute('target', '_blank');
       places.add((await a.getAttribute('data-book')) ?? '');
     }
     for (const p of ['hero', 'nav', 'menu-menu-esencia', 'menu-menu-distincion', 'como-reservar', 'footer', 'barra-movil']) expect(places).toContain(p);

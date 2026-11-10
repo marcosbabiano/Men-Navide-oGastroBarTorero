@@ -76,7 +76,7 @@ test.describe('Gestor de secciones', () => {
     await expect(page.locator('#story-title')).toContainText('La Navidad se celebra en compañía');
     const block = page.locator('.cblock--cta');
     await expect(block).toContainText('Brindemos juntos esta Navidad');
-    await expect(block.locator('a[data-book]')).toHaveAttribute('href', 'https://booking.qamarero.com/new-reservation/bar-torero');
+    await expect(block.locator('a[data-book]')).toHaveAttribute('href', '/reservar');
     await expect(page.locator('.nav__links')).toContainText('Brindis');
 
     // Recargar el panel: todo sigue guardado.

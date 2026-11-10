@@ -8,6 +8,7 @@ interface Ctx {
   media: Record<string, MediaAsset>;
   preview: boolean;
   t: (text: string) => string;
+  /** Destino de los botones «Reservar»: el formulario de menús o la plataforma externa. */
   bookingUrl: string;
 }
 
@@ -20,7 +21,7 @@ export function ContentProvider({ payload, children }: { payload: PublicPayload;
       media: payload.media,
       preview: !!payload.preview,
       t: (text: string) => interpolate(text, payload.content),
-      bookingUrl: payload.content.booking.url,
+      bookingUrl: payload.content.booking.preselect ? '/reservar' : payload.content.booking.url,
     }),
     [payload],
   );

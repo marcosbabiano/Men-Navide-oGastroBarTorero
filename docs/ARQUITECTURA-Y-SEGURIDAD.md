@@ -70,6 +70,8 @@ Stores **de sitio** (`getStore`), que persisten entre despliegues, con **consist
 
 Detalle del sistema de pantallas: [`PANTALLAS.md`](PANTALLAS.md).
 
+Reservas de Navidad (store `torero-reservas`, separado por contener datos personales y de salud): `GET /api/reservas/form-config`, `POST /api/reservas/preselect`, `GET|POST /api/reservas/link/:token` (enlace de un solo uso, consumo atómico), `POST /api/reservas/link/:token/request`, `POST /api/reservas/inbound` (webhook con secreto), `GET /api/reservas/gmail/callback`, función programada `reservas-sync` (cada 10 min) y rutas de administración `/api/admin/reservas…` (listado, ficha, edición con control de versión, acciones, enlaces, vinculación, importación, correos, impresiones, configuración y purga). Detalle: [`RESERVAS.md`](RESERVAS.md).
+
 ## Seguridad
 
 - **Autenticación real en el servidor**: `getUser()` de `@netlify/identity` valida el JWT (cabecera `Authorization` o cookie `nf_jwt`) contra la API de Identity en cada petición.
