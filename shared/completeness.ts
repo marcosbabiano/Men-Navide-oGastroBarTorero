@@ -11,7 +11,7 @@ export type IssueLevel = 'blocker' | 'warning' | 'info';
 
 export interface ContentIssue {
   level: IssueLevel;
-  area: 'menus' | 'establecimiento' | 'campana' | 'textos' | 'multimedia' | 'secciones';
+  area: 'menus' | 'establecimiento' | 'campana' | 'textos' | 'multimedia' | 'secciones' | 'calendario';
   menuId?: string;
   message: string;
 }
@@ -78,6 +78,10 @@ export function contentIssues(content: SiteContent, knownAssetIds?: Set<string>)
     if (ids.has(m.id)) out.push({ level: 'blocker', area: 'menus', message: `Hay dos menús con el mismo identificador (${m.id}).` });
     ids.add(m.id);
   }
+
+  const calSection = content.layout.sections.find((s) => s.type === 'calendar');
+  if (calSection?.visible && !content.calendar.period.start && !content.calendar.days.length)
+    out.push({ level: 'warning', area: 'calendario', message: 'El calendario de Navidad no se mostrará hasta que indiques la fecha de inicio y de fin de los menús (Calendario).' });
 
   for (const [type, info] of Object.entries(BUILTIN_INFO)) {
     const entry = content.layout.sections.find((s) => s.type === type);

@@ -8,6 +8,7 @@ import { Dashboard } from './views/Dashboard.tsx';
 import { MenusList } from './views/Menus.tsx';
 import { MenuEditor } from './views/MenuEditor.tsx';
 import { TextsView } from './views/Texts.tsx';
+import { CalendarView } from './views/CalendarView.tsx';
 import { BusinessView } from './views/Business.tsx';
 import { MediaView } from './views/Media.tsx';
 import { CampaignView } from './views/Campaign.tsx';
@@ -158,6 +159,7 @@ const NAV = [
   { href: '#/inicio', key: 'inicio', label: 'Inicio', icon: '◈' },
   { href: '#/secciones', key: 'secciones', label: 'Secciones', icon: '☰' },
   { href: '#/menus', key: 'menus', label: 'Menús', icon: '❦' },
+  { href: '#/calendario', key: 'calendario', label: 'Calendario', icon: '▦' },
   { href: '#/textos', key: 'textos', label: 'Textos', icon: '¶' },
   { href: '#/establecimiento', key: 'establecimiento', label: 'Local', icon: '⌂' },
   { href: '#/multimedia', key: 'multimedia', label: 'Imágenes', icon: '▣' },
@@ -209,6 +211,9 @@ function Shell({ onLogout, reauth, onReauthed }: { onLogout: () => void; reauth:
       break;
     case 'secciones':
       view = route.path[1] ? <BlockEditor id={route.path[1]} /> : <SectionsView />;
+      break;
+    case 'calendario':
+      view = <CalendarView />;
       break;
     case 'textos':
       view = <TextsView />;

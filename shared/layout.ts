@@ -3,12 +3,14 @@
  */
 import type { BuiltinSection, BlockTemplate, CustomBlock, LayoutSection, Menu, SiteContent } from './schema.ts';
 import { applyArtPatch2026 } from './art-2026.ts';
+import { defaultCalendar, PATCH_CALENDAR_2026_11 } from './calendar.ts';
 import { DISTINCION_DESSERT, DISTINCION_DRINK, PATCH_MENUS_2026_11, gourmetMenu } from './menu-data-2026.ts';
 
 export const BUILTIN_INFO: Record<BuiltinSection, { label: string; anchor: string; protection: 'locked' | 'no-delete' | 'none'; description: string }> = {
   hero: { label: 'Portada principal', anchor: 'inicio', protection: 'locked', description: 'Titular, botones de menús y reserva.' },
   story: { label: 'Presentación de Navidad', anchor: 'la-navidad', protection: 'none', description: '«La Navidad se comparte».' },
   menus: { label: 'Menús navideños', anchor: 'menus', protection: 'locked', description: 'Menús publicados con precio y botón de reserva.' },
+  calendar: { label: 'Calendario de Navidad', anchor: 'calendario', protection: 'none', description: 'Días con menús de Navidad, días abiertos y cerrados (informativo).' },
   compare: { label: 'Comparativa de menús', anchor: 'comparar', protection: 'none', description: 'Tabla generada con los menús publicados.' },
   celebration: { label: 'Galería / ambiente', anchor: 'celebrar', protection: 'none', description: '«Una celebración a tu medida».' },
   howTo: { label: 'Proceso de reservas', anchor: 'reservar', protection: 'no-delete', description: 'Pasos para reservar y aviso del menú.' },
@@ -19,7 +21,7 @@ export const BUILTIN_INFO: Record<BuiltinSection, { label: string; anchor: strin
 /** Etiqueta de navegación por defecto según los textos existentes. */
 export function defaultNavLabel(type: BuiltinSection, content: Pick<SiteContent, 'texts'>): string {
   const n = content.texts.nav;
-  return { hero: '', story: n.story, menus: n.menus, compare: n.compare, celebration: '', howTo: n.howTo, faq: n.faq, about: '' }[type];
+  return { hero: '', story: n.story, menus: n.menus, calendar: 'Calendario', compare: n.compare, celebration: '', howTo: n.howTo, faq: n.faq, about: '' }[type];
 }
 
 export function builtinEntry(type: BuiltinSection, content: Pick<SiteContent, 'texts'>, visible = true): LayoutSection {
@@ -28,7 +30,7 @@ export function builtinEntry(type: BuiltinSection, content: Pick<SiteContent, 't
 
 export function defaultLayout(content: Pick<SiteContent, 'texts'>, compareVisible = true): SiteContent['layout'] {
   return {
-    sections: (['hero', 'story', 'menus', 'compare', 'celebration', 'howTo', 'faq', 'about'] as BuiltinSection[]).map((t) =>
+    sections: (['hero', 'story', 'menus', 'calendar', 'compare', 'celebration', 'howTo', 'faq', 'about'] as BuiltinSection[]).map((t) =>
       builtinEntry(t, content, t === 'compare' ? compareVisible : true),
     ),
   };
@@ -82,6 +84,16 @@ export function migrateContent<T>(raw: T): T {
   if (Array.isArray(c.menus) && !Array.isArray(c.patches)) c.patches = [];
   if (Array.isArray(c.menus)) applyMenuPatch2026(c as unknown as SiteContent);
   if (Array.isArray(c.menus) && c.texts && c.campaign) applyArtPatch2026(c as unknown as SiteContent);
+  if (Array.isArray(c.menus) && !c.calendar) c.calendar = defaultCalendar();
+  // Sección de calendario: se añade una sola vez tras los menús (si después se elimina, no vuelve).
+  if (Array.isArray(c.patches) && !(c.patches as string[]).includes(PATCH_CALENDAR_2026_11)) {
+    const layout = c.layout as SiteContent['layout'] | undefined;
+    if (layout && texts && !layout.sections.some((s) => s.type === 'calendar')) {
+      const i = layout.sections.findIndex((s) => s.type === 'menus');
+      layout.sections.splice(i >= 0 ? i + 1 : layout.sections.length, 0, builtinEntry('calendar', c as unknown as SiteContent));
+    }
+    (c.patches as string[]).push(PATCH_CALENDAR_2026_11);
+  }
   return c as unknown as T;
 }
 

@@ -1,3 +1,5 @@
+import { Calendar } from './sections/Calendar.tsx';
+import { hasCalendar } from '../../shared/calendar.ts';
 import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { PublicPayload } from '../../shared/public.ts';
 import { themeToCssVars } from '../../shared/theme.ts';
@@ -74,7 +76,7 @@ function Page({ preview }: { preview?: { includeDrafts: boolean; onToggle: () =>
   const sections = content.layout.sections.filter((s) => s.visible);
   const links: NavLink[] = [
     ...sections
-      .filter((s) => s.navLabel.trim() && !(s.type === 'compare' && content.menus.length < 2))
+      .filter((s) => s.navLabel.trim() && !(s.type === 'compare' && content.menus.length < 2) && !(s.type === 'calendar' && !hasCalendar(content.calendar)))
       .map((s) => ({ href: `#${sectionAnchor(s)}`, label: s.navLabel })),
     { href: '#contacto', label: n.contact },
   ];
@@ -96,6 +98,8 @@ function Page({ preview }: { preview?: { includeDrafts: boolean; onToggle: () =>
         return <Story key={s.id} />;
       case 'menus':
         return <Menus key={s.id} />;
+      case 'calendar':
+        return <Calendar key={s.id} />;
       case 'compare':
         return <Compare key={s.id} />;
       case 'celebration':

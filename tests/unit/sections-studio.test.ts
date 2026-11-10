@@ -25,7 +25,7 @@ describe('estructura de secciones', () => {
     old.texts.compare.enabled = false;
     const m = migrateContent(old) as unknown as SiteContent;
     expect(siteContentSchema.safeParse(m).success).toBe(true);
-    expect(m.layout.sections.map((s) => s.type)).toEqual(['hero', 'story', 'menus', 'compare', 'celebration', 'howTo', 'faq', 'about']);
+    expect(m.layout.sections.map((s) => s.type)).toEqual(['hero', 'story', 'menus', 'calendar', 'compare', 'celebration', 'howTo', 'faq', 'about']);
     expect(m.layout.sections.find((s) => s.type === 'compare')!.visible).toBe(false);
     expect(m.campaign.decor).toEqual({ heroAccent: null, divider: null, branch: null });
     expect(migrateContent(m)).toEqual(m);
@@ -35,7 +35,7 @@ describe('estructura de secciones', () => {
     c.layout.sections.push({ id: 'bloque-a', type: 'custom', visible: true, label: 'A', navLabel: '', block: { ...newCustomBlock('cta'), cta: { label: 'Ir', href: 'javascript:alert(1)' } } });
     expect(siteContentSchema.safeParse(c).success).toBe(false);
     for (const href of ['', 'https://x.es', '#menus', 'tel:+34 617 55 04 11', 'mailto:a@b.es']) {
-      c.layout.sections[8].block!.cta.href = href;
+      c.layout.sections[c.layout.sections.length - 1].block!.cta.href = href;
       expect(siteContentSchema.safeParse(c).success, href).toBe(true);
     }
     const d = createSeedContent();
@@ -166,7 +166,7 @@ describe('API: secciones', () => {
     const rev = (await saved.json()).draft.revision;
     expect((await admin('/publish', { method: 'POST', body: JSON.stringify({ baseRevision: rev }) })).status).toBe(200);
     const live = (await (await pub('/api/content')).json()).content as SiteContent;
-    expect(live.layout.sections.map((s) => s.type)).toEqual(['hero', 'faq', 'story', 'menus', 'celebration', 'howTo', 'about', 'custom']);
+    expect(live.layout.sections.map((s) => s.type)).toEqual(['hero', 'faq', 'story', 'menus', 'calendar', 'celebration', 'howTo', 'about', 'custom']);
     // Volver a mostrarla: el contenido se conservó.
     const st2 = await (await admin('/state')).json();
     const c2 = st2.draft.content as SiteContent;
@@ -181,9 +181,9 @@ describe('API: secciones', () => {
     delete legacy.layout;
     await (deps().content as KV).setJSON('content/published', { content: legacy, revision: 1, sourceRevision: 1, updatedAt: '', updatedBy: '', publishedAt: '2026-11-01T00:00:00Z', publishedBy: 'x' });
     const live = (await (await pub('/api/content')).json()).content as SiteContent;
-    expect(live.layout.sections).toHaveLength(8);
+    expect(live.layout.sections).toHaveLength(9);
     const st = await (await admin('/state')).json();
-    expect(st.draft.content.layout.sections).toHaveLength(8);
+    expect(st.draft.content.layout.sections).toHaveLength(9);
   });
 });
 

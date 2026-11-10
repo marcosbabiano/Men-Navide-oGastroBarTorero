@@ -133,3 +133,14 @@ En **Diseños guardados** tienes miniatura, nombre, formato, fecha y las accione
 - **Configuración**: programación por defecto, calidad, frecuencia de comunicación y recarga preventiva.
 
 Los cambios de escenas y programaciones se aplican con **Guardar cambios** (barra amarilla); las órdenes del panel de control son inmediatas. Guía completa e instalación en el local: `docs/PANTALLAS.md`.
+
+## Calendario de Navidad
+
+**Calendario** (en el menú lateral) muestra en la web qué días se pueden pedir los menús de Navidad y qué días abrís. **Es solo informativo**: no indica plazas ni disponibilidad de reserva.
+
+1. **Fechas de los menús**: elige la **fecha de inicio** y la **de fin**. Ese periodo se **destaca** en la portada y en la sección de menús («Menús de Navidad del … al …»); puedes desactivar el distintivo o cambiar su texto.
+2. **Días de cierre**: marca los días de la semana que cerráis. Los festivos marcados como «Cerrado» en *Local → Horarios especiales* (con el horario verificado) también salen cerrados.
+3. **Días concretos**: excepciones (un día sin menús, un cierre puntual, abrir un día que normalmente cerráis) con una nota opcional, por ejemplo «Nochebuena: solo comidas». También puedes **pulsar los días en la vista previa** para cambiarlos.
+4. **Guardar → Publicar**.
+
+Mientras no haya fechas, el calendario no aparece en la web (nunca se muestran fechas inventadas). La sección se puede ocultar o mover desde **Secciones**.

@@ -14,6 +14,7 @@ type Layout = SiteContent['layout'];
 function editHref(s: LayoutSection): string {
   if (s.type === 'custom') return `#/secciones/${s.id}`;
   if (s.type === 'menus') return '#/menus';
+  if (s.type === 'calendar') return '#/calendario';
   return `#/textos?s=${s.type.toLowerCase()}`;
 }
 

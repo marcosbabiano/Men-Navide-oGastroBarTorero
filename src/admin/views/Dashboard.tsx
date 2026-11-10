@@ -11,6 +11,7 @@ const AREA_LINK: Record<ContentIssue['area'], string> = {
   textos: '#/textos',
   multimedia: '#/multimedia',
   secciones: '#/secciones',
+  calendario: '#/calendario',
 };
 
 export function IssueList({ issues, empty }: { issues: ContentIssue[]; empty?: string }) {

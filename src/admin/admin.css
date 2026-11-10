@@ -2309,3 +2309,23 @@ code {
   .seditor__preview { order: 0; }
 }
 .card__foot { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.9rem; }
+
+/* ---------------- Calendario de Navidad ---------------- */
+.cal-admin__period { font-weight: 700; color: var(--a-accent); }
+.cal-admin__days { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+.cal-admin__row { display: grid; gap: 0.4rem; grid-template-columns: 1fr; align-items: center; padding: 0.6rem; border: 1px solid var(--a-line); border-radius: 10px; background: #fff; }
+.cal-admin__add { display: flex; gap: 0.5rem; margin-top: 0.8rem; flex-wrap: wrap; }
+.cal-admin__months { display: grid; gap: 1.2rem; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+.cal-admin__mname { font-weight: 700; margin-bottom: 0.4rem; }
+.cal-admin__grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.cal-admin__dow { text-align: center; font-size: 0.75rem; font-weight: 700; color: var(--a-ink-2); }
+.cal-admin__day { aspect-ratio: 1; min-height: 34px; border-radius: 8px; border: 2px solid transparent; font-weight: 700; cursor: pointer; }
+.cal-admin__day.is-menus, .cal-admin__legend .is-menus { background: #5a2533; color: #fff; }
+.cal-admin__day.is-open, .cal-admin__legend .is-open { background: #efe6d8; color: var(--a-ink); }
+.cal-admin__day.is-closed, .cal-admin__legend .is-closed { background: #fff; color: #9b8f8f; text-decoration: line-through; border-color: var(--a-line); }
+.cal-admin__day.is-manual { border-color: var(--a-gold); box-shadow: inset 0 0 0 1px #fff; }
+.cal-admin__legend { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.8rem; font-size: 0.85rem; }
+.cal-admin__legend span { padding: 0.2rem 0.6rem; border-radius: 6px; }
+@media (min-width: 760px) {
+  .cal-admin__row { grid-template-columns: 170px 170px 1fr auto; }
+}

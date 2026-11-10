@@ -14,6 +14,7 @@ import type { Menu, SiteContent } from './schema.ts';
 import { DEFAULT_THEME } from './theme.ts';
 import { defaultLayout } from './layout.ts';
 import { applyArtPatch2026 } from './art-2026.ts';
+import { defaultCalendar, PATCH_CALENDAR_2026_11 } from './calendar.ts';
 import { DISTINCION_DESSERT, DISTINCION_DRINK, PATCH_MENUS_2026_11, gourmetMenu } from './menu-data-2026.ts';
 
 export const DEFAULT_BOOKING_URL = 'https://booking.qamarero.com/new-reservation/bar-torero';
@@ -367,7 +368,8 @@ export function createSeedContent(): SiteContent {
       },
     },
     menus: [menuEsencia, menuDistincion, gourmetMenu(2)],
-    patches: [PATCH_MENUS_2026_11],
+    calendar: defaultCalendar(),
+    patches: [PATCH_MENUS_2026_11, PATCH_CALENDAR_2026_11],
   };
   const content: SiteContent = { ...base, layout: defaultLayout(base) };
   // Ilustraciones propias de la campaña (sustituyen a la fotografía de stock).

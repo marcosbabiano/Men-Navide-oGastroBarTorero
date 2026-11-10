@@ -2923,3 +2923,95 @@ html.menu-open .mbar {
 .ctable__items li.has-group:not(:first-child) {
   margin-top: 0.5rem;
 }
+
+/* ---------------- Periodo destacado y calendario ---------------- */
+.period-badge {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.55rem;
+  margin-top: 1.3rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid color-mix(in oklab, var(--c-gold) 70%, transparent);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--c-carbon) 70%, transparent);
+  color: var(--c-ivory);
+  font-size: 0.92rem;
+  line-height: 1.3;
+}
+.period-badge span {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--c-gold-bright);
+}
+.period-badge strong {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 1.08rem;
+}
+.period-badge svg { color: var(--c-gold); }
+.menus__period { margin-inline: auto; }
+
+.cal {
+  padding-block: var(--section-y);
+  background: var(--c-paper);
+  color: var(--c-ink);
+}
+.cal .eyebrow { color: color-mix(in oklab, var(--c-burgundy) 80%, var(--c-ink)); }
+.cal__head { max-width: 46rem; }
+.cal__title {
+  margin-top: 1rem;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: var(--fs-h2);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+}
+.cal__intro { margin-top: 1.2rem; font-size: var(--fs-lead); color: var(--c-ink-dim); }
+.cal__period {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-top: 1.6rem;
+  padding: 1rem 1.4rem;
+  border-left: 3px solid var(--c-gold);
+  background: color-mix(in oklab, var(--c-burgundy) 8%, var(--c-paper));
+}
+.cal__period-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--c-burgundy); }
+.cal__period strong { font-family: var(--font-serif); font-weight: 500; font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.3rem); line-height: 1.1; }
+.cal__legend { display: flex; flex-wrap: wrap; gap: 0.6rem 1.4rem; margin: 2.2rem 0 1.4rem; padding: 0; list-style: none; font-size: 0.9rem; }
+.cal__key { display: inline-flex; align-items: center; gap: 0.5rem; }
+.cal__key span { width: 1.1rem; height: 1.1rem; border-radius: 4px; }
+.cal__key--menus span { background: var(--c-burgundy); }
+.cal__key--open span { background: color-mix(in oklab, var(--c-gold) 30%, var(--c-paper)); }
+.cal__key--closed span { background: transparent; border: 1px dashed color-mix(in oklab, var(--c-ink) 35%, transparent); }
+.cal__months { display: grid; gap: 2rem; }
+.cal__month { max-width: 34rem; }
+.cal__mname { margin-bottom: 0.8rem; font-family: var(--font-serif); font-weight: 400; font-size: 1.6rem; }
+.cal__grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.3rem; margin: 0; padding: 0; list-style: none; }
+.cal__dow { text-align: center; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; color: var(--c-ink-dim); padding-bottom: 0.3rem; }
+.cal__day {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+}
+.cal__day--menus { background: var(--c-burgundy); color: var(--c-ivory); font-weight: 700; }
+.cal__day--open { background: color-mix(in oklab, var(--c-gold) 22%, var(--c-paper)); color: var(--c-ink); }
+.cal__day--closed { color: color-mix(in oklab, var(--c-ink) 45%, transparent); border: 1px dashed color-mix(in oklab, var(--c-ink) 22%, transparent); text-decoration: line-through; }
+.cal__day.is-past { opacity: 0.45; }
+.cal__day.is-today { outline: 2px solid var(--c-gold); outline-offset: 2px; }
+.cal__dot { position: absolute; right: 18%; top: 18%; width: 6px; height: 6px; border-radius: 50%; background: var(--c-gold); }
+.cal__notes { margin: 2rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.4rem; font-size: 0.95rem; }
+.cal__note { margin-top: 1.6rem; font-size: 0.88rem; color: var(--c-ink-dim); }
+@media (min-width: 768px) {
+  .cal__months.n-2, .cal__months.n-3, .cal__months.n-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3rem; }
+}
+@media (min-width: 1200px) {
+  .cal__months.n-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}

@@ -1,3 +1,4 @@
+import { PeriodBadge } from './Calendar.tsx';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { Menu, MenuSection } from '../../../shared/schema.ts';
 import { formatPrice } from '../../../shared/format.ts';
@@ -234,6 +235,7 @@ export function Menus() {
         <p className="menus__intro" data-anim="fade-up">
           {t(s.intro)}
         </p>
+        <PeriodBadge className="menus__period" />
       </div>
       {menus.length === 0 ? (
         <div className="container">

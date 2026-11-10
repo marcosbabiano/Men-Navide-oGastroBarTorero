@@ -149,7 +149,7 @@ export const customBlockSchema = z.object({
 });
 export type CustomBlock = z.infer<typeof customBlockSchema>;
 
-export const BUILTIN_SECTIONS = ['hero', 'story', 'menus', 'compare', 'celebration', 'howTo', 'faq', 'about'] as const;
+export const BUILTIN_SECTIONS = ['hero', 'story', 'menus', 'calendar', 'compare', 'celebration', 'howTo', 'faq', 'about'] as const;
 export type BuiltinSection = (typeof BUILTIN_SECTIONS)[number];
 export const SECTION_TYPES = [...BUILTIN_SECTIONS, 'custom'] as const;
 export type SectionType = (typeof SECTION_TYPES)[number];
@@ -322,6 +322,30 @@ export const siteContentSchema = z.object({
     }),
   }),
   menus: z.array(menuSchema).max(30),
+  /** Calendario informativo (sin disponibilidad de reservas) y periodo de los menús de Navidad. */
+  calendar: z
+    .object({
+      period: z.object({ start: z.union([isoDate, z.literal('')]), end: z.union([isoDate, z.literal('')]) }),
+      highlight: z.object({ enabled: z.boolean(), label: safeText(60) }),
+      eyebrow: safeText(60),
+      title: safeText(140),
+      intro: safeText(300),
+      note: safeText(300),
+      closedWeekdays: z.array(z.number().int().min(0).max(6)).max(7),
+      days: z
+        .array(z.object({ date: isoDate, status: z.enum(['menus', 'open', 'closed']), note: safeText(80) }))
+        .max(120),
+    })
+    .superRefine((c, ctx) => {
+      const { start, end } = c.period;
+      if (!!start !== !!end) ctx.addIssue({ code: 'custom', message: 'Indica la fecha de inicio y la de fin de los menús.', path: ['period'] });
+      if (start && end && start > end) ctx.addIssue({ code: 'custom', message: 'La fecha de fin no puede ser anterior a la de inicio.', path: ['period', 'end'] });
+      const seen = new Set<string>();
+      c.days.forEach((d, i) => {
+        if (seen.has(d.date)) ctx.addIssue({ code: 'custom', message: `El día ${d.date} está repetido.`, path: ['days', i, 'date'] });
+        seen.add(d.date);
+      });
+    }),
   /** Parches de datos ya aplicados (evita repetirlos o duplicar contenido). */
   patches: z.array(z.string().max(60)).max(100),
   layout: z

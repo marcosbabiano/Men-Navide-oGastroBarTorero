@@ -1,3 +1,4 @@
+import { PeriodBadge } from './Calendar.tsx';
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { useContent } from '../ContentContext.tsx';
 import { Picture } from '../components/Picture.tsx';
@@ -123,6 +124,7 @@ export function Hero({ play }: { play: boolean }) {
           {h.titleAccent && <span className="hero__title-line hero__title-accent">{t(h.titleAccent)}</span>}
         </h1>
         <p className="hero__subtitle">{t(h.subtitle)}</p>
+        <PeriodBadge className="hero__period" />
         <div className="hero__ctas">
           <a className="btn btn--primary" href="#menus" data-cta="descubrir">
             <span className="btn__label">{h.primaryCta}</span>
