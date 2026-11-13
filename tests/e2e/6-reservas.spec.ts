@@ -286,3 +286,36 @@ test('panel de reservas: resumen, filtros y vista por día en móvil', async ({ 
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
   expect(overflow).toBeLessThanOrEqual(1);
 });
+
+test('calendario mensual: pulsar un día muestra sus reservas; las reservas normales no entran', async ({ page, request }) => {
+  // Fuera del periodo de menús y sin menú de Navidad → reserva normal (no entra).
+  const normal = await (await inbound(request, { TextBody: 'Localizador: QN-1\nNombre: Cliente Normal\nTeléfono: 600111999\nFecha: 15/11/2026\nHora: 13:30\nPersonas: 2\nZona: Barra' })).json();
+  expect(normal.status).toBe('normal');
+  // Dentro del periodo y sin señales → «por clasificar» (decide el restaurante).
+  const dudosa = await (await inbound(request, { TextBody: 'Localizador: QN-2\nNombre: Cliente Dudoso\nTeléfono: 600111888\nFecha: 24/12/2026\nHora: 13:30\nPersonas: 2' })).json();
+  expect(dudosa.status).toBe('processed');
+  await login(page);
+  await page.goto('/admin#/reservas/dia');
+  await expect(page.getByRole('heading', { name: 'Calendario de reservas' })).toBeVisible();
+  // Navegar a diciembre de 2026 y pulsar el 24.
+  for (let i = 0; i < 24 && !(await page.locator('.rcal__month').innerText()).startsWith('Diciembre de 2026'); i++) {
+    const txt = await page.locator('.rcal__month').innerText();
+    await page.getByRole('button', { name: /Mes (siguiente|anterior)/ }).nth(/2027|2028/.test(txt) ? 0 : 1).click();
+  }
+  const day = page.locator('.rcal__day', { has: page.locator('.rcal__n', { hasText: /^24$/ }) });
+  await expect(day).toHaveAttribute('aria-label', /reservas/);
+  await day.click();
+  await expect(page.locator('.rday__date')).toContainText('24 de diciembre de 2026');
+  await expect(page.getByRole('heading', { name: 'CENAS' })).toBeVisible();
+  await expect(page.locator('.rday').first()).not.toContainText('Cliente Normal');
+  await expect(page.locator('.rday').first()).toContainText('Cliente Dudoso');
+  await page.locator('.rday a', { hasText: 'Cliente Dudoso' }).click();
+  await page.getByRole('button', { name: 'Es reserva normal (retirar)' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Es normal' }).click();
+  await expect(page.getByText('Reserva normal (retirada)')).toBeVisible();
+  // En el registro de correos aparece como reserva normal, convertible.
+  await page.goto('/admin#/reservas/correo');
+  const row = page.locator('tr', { hasText: 'Reserva normal (sin menú de Navidad, 2026-11-15)' }).first();
+  await expect(row).toContainText('Reserva normal');
+  await expect(row.getByRole('button', { name: /Convertir en reserva de Navidad/ })).toBeVisible();
+});

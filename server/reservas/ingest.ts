@@ -11,6 +11,7 @@
  *      solo automática si es fiable, única y sin contradicciones; si no, «pendiente de revisar».
  */
 import {
+  christmasSignal,
   type Booking,
   type HistoryEvent,
   type Issue,
@@ -20,7 +21,7 @@ import {
   type ReservasConfig,
   totalPeople,
 } from '../../shared/reservas.ts';
-import { parseEmail, type ParsedEmail, type RawEmail, senderAllowed } from './parse.ts';
+import { htmlToText, parseEmail, type ParsedEmail, type RawEmail, senderAllowed } from './parse.ts';
 import { type MailRecord, randomId, ReservasRepo, sha256 } from './repo.ts';
 
 export interface Candidate {
@@ -132,7 +133,14 @@ export interface IngestResult {
   result: string;
 }
 
-export async function ingestEmail(repo: ReservasRepo, cfg: ReservasConfig, raw: RawEmail, via: MailRecord['via']): Promise<IngestResult> {
+/** Contexto de clasificación: menús publicados y periodo de los menús de Navidad. */
+export interface IngestContext {
+  menuNames: string[];
+  period: { start: string; end: string };
+}
+const NO_CTX: IngestContext = { menuNames: [], period: { start: '', end: '' } };
+
+export async function ingestEmail(repo: ReservasRepo, cfg: ReservasConfig, raw: RawEmail, via: MailRecord['via'], ctx: IngestContext = NO_CTX): Promise<IngestResult> {
   const key = await sha256(raw.messageId?.trim() ? `id:${raw.messageId.trim()}` : `c:${raw.from}|${raw.date}|${raw.subject}|${await sha256(raw.text + raw.html)}`);
   const now = repo.iso();
   const base: MailRecord = { key, messageId: raw.messageId, from: raw.from.slice(0, 200), subject: raw.subject.slice(0, 300), receivedAt: raw.date || now, processedAt: now, via, type: 'unknown', status: 'processing', result: '', bookingId: null, fields: {}, missing: [], errors: [] };
@@ -148,7 +156,9 @@ export async function ingestEmail(repo: ReservasRepo, cfg: ReservasConfig, raw: 
       return { status: 'ignored', bookingId: null, result: rec.result };
     }
     const p = parseEmail(raw);
-    Object.assign(rec, { type: p.type, fields: p.fields, missing: p.missing });
+    const { fields: _f, ...parsedRest } = p;
+    void _f;
+    Object.assign(rec, { type: p.type, fields: p.fields, missing: p.missing, parsed: parsedRest });
     if (!p.date && !p.reservationId && !p.ref) {
       Object.assign(rec, { status: 'error', result: 'No se reconocieron datos de reserva (fecha, localizador o referencia).', errors: ['sin datos de reserva'] });
       await repo.saveMail(rec);
@@ -188,6 +198,27 @@ export async function ingestEmail(repo: ReservasRepo, cfg: ReservasConfig, raw: 
       } else candidates = scored.slice(0, 5).map((c) => ({ id: c.id, score: c.score }));
     }
 
+    // ¿Reserva de Navidad o reserva normal? Si ya está vinculada o coincide con una elección de menús,
+    // es de Navidad. Si no, se buscan señales (menú de Navidad, palabras clave) en el menú, las
+    // observaciones, el asunto y las líneas que hablan del menú. Sin señales: normal (no se añade),
+    // salvo que la fecha caiga en el periodo de menús y la configuración pida revisarla.
+    let category: 'christmas' | 'unclassified' = 'christmas';
+    let signal = '';
+    if (!target && !candidates.length) {
+      const body = `${raw.text}\n${raw.html ? htmlToText(raw.html) : ''}`;
+      const menuLines = body.split('\n').filter((l) => /men[uú]/i.test(l));
+      signal = christmasSignal([p.menu, p.notes, raw.subject, ...menuLines], cfg.email.christmasKeywords, ctx.menuNames) ?? '';
+      if (!signal) {
+        const inPeriod = !!p.date && !!ctx.period.start && !!ctx.period.end && p.date >= ctx.period.start && p.date <= ctx.period.end;
+        if (inPeriod && cfg.email.unknownInPeriod === 'review') category = 'unclassified';
+        else {
+          Object.assign(rec, { status: 'normal', result: `Reserva normal (sin menú de Navidad${p.date ? `, ${p.date}` : ''}): no se añade a Reservas de Navidad.` });
+          await repo.saveMail(rec);
+          return { status: 'normal', bookingId: null, result: rec.result };
+        }
+      }
+    }
+
     let booking: Booking;
     if (target) {
       booking = await repo.update(target.id, (b) => {
@@ -198,6 +229,9 @@ export async function ingestEmail(repo: ReservasRepo, cfg: ReservasConfig, raw: 
     } else {
       const b = repo.blank('email', 'correo') as Booking;
       b.holder = { name: p.name, phone: normalizePhone(p.phone) ?? p.phone, email: p.email };
+      b.category = category;
+      if (signal) b.history.push(ev(receivedAt, 'classified', `Reserva de Navidad (el correo indica «${signal}»)`));
+      if (category === 'unclassified') b.issues.push(issue('classify', '¿Reserva de Navidad o normal? El correo no indica menú de Navidad y la fecha está dentro del periodo de los menús.', receivedAt));
       const created = await repo.create(b);
       booking = await repo.update(created.id, (x) => {
         const out = applyNotification(x, p, receivedAt, null, '');
@@ -257,4 +291,22 @@ export async function mergeBookings(repo: ReservasRepo, emailId: string, targetI
   });
   if (src.qamarero.reservationId) await repo.mapReservationId(src.qamarero.reservationId, targetId);
   return merged;
+}
+
+/** Convierte en reserva de Navidad un correo que se clasificó como reserva normal. */
+export async function promoteMail(repo: ReservasRepo, key: string, who: string): Promise<Booking> {
+  const rec = await repo.getMail(key);
+  if (!rec || rec.status !== 'normal' || !rec.parsed) throw new Error('not_promotable');
+  const p = { ...(rec.parsed as unknown as ParsedEmail), fields: rec.fields };
+  const existing = await repo.byReservationId(p.reservationId);
+  if (existing) throw new Error('exists');
+  const b = repo.blank('email', who) as Booking;
+  b.holder = { name: p.name, phone: normalizePhone(p.phone) ?? p.phone, email: p.email };
+  b.category = 'christmas';
+  b.history.push({ at: repo.iso(), actor: who, source: 'admin', type: 'classified', summary: 'Correo clasificado como reserva normal y convertido en reserva de Navidad por el restaurante' });
+  const created = await repo.create(b);
+  const booking = await repo.update(created.id, (x) => applyNotification(x, p, rec.receivedAt, null, ''));
+  if (p.reservationId) await repo.mapReservationId(p.reservationId, booking.id);
+  await repo.saveMail({ ...rec, status: 'processed', bookingId: booking.id, result: `Convertida en reserva de Navidad (${booking.ref}) por ${who}.` });
+  return booking;
 }

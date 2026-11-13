@@ -151,7 +151,9 @@ Mientras no haya fechas, el calendario no aparece en la web (nunca se muestran f
 
 - **Resumen** y **Reservas**: listado con búsqueda, filtros (fecha, servicio, menú, estados, pendientes de vinculación, modificaciones, canceladas, niños, alergias, zona) y la ficha de cada reserva.
 - **Ficha**: datos, platos de cada comensal, alergias destacadas, incidencias, vinculación con el correo de Qamarero, **enviar enlace por WhatsApp**, historial, imprimir/PDF, cancelar o eliminar.
-- **Por día** y **Cocina e informes**: comidas y cenas por hora, cantidades por plato e informes A4 (servicio, cocina, desglose y cambios pendientes) en impresión, PDF y CSV.
+- **Calendario**: pulsa un día del mes para ver sus reservas (comidas y cenas por hora). Cada día muestra cuántas reservas y personas tiene.
+- **Reservas normales**: los correos de Qamarero sin menú de Navidad no entran; los dudosos dentro del periodo de Navidad aparecen «por clasificar».
+- **Cocina e informes**: comidas y cenas por hora, cantidades por plato e informes A4 (servicio, cocina, desglose y cambios pendientes) en impresión, PDF y CSV.
 - **Revisar con Qamarero**: comprobar reservas que pueden haber cambiado sin aviso e importar un CSV.
 - **Correo**: conectar Gmail o webhook y ver cómo se interpretó cada correo.
 - **Solicitudes** y **Configuración**.

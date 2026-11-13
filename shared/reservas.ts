@@ -169,6 +169,10 @@ export const reservasConfigSchema = z.object({
     gmailQuery: z.string().max(300),
     lunchUntil: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
     autoLinkMinScore: z.number().int().min(40).max(100),
+    /** Palabras que identifican una reserva de Navidad en el menú, observaciones o asunto del correo. */
+    christmasKeywords: z.array(z.string().max(60)).max(30),
+    /** Correo sin señales de Navidad pero con fecha dentro del periodo de menús: revisar o tratar como normal. */
+    unknownInPeriod: z.enum(['review', 'normal']),
   }),
   staleDays: z.number().int().min(1).max(60),
   kitchen: z.object({
@@ -209,7 +213,7 @@ export function defaultReservasConfig(): ReservasConfig {
       deadline: '',
       contactPhone: '',
     },
-    email: { allowedSenders: ['qamarero'], gmailQuery: 'from:(qamarero) newer_than:30d', lunchUntil: '17:00', autoLinkMinScore: 70 },
+    email: { allowedSenders: ['qamarero'], gmailQuery: 'from:(qamarero) newer_than:30d', lunchUntil: '17:00', autoLinkMinScore: 70, christmasKeywords: ['navidad', 'navideño', 'navideña', 'nochebuena', 'nochevieja', 'fin de año', 'menú esencia', 'menú distinción', 'selección gourmet'], unknownInPeriod: 'review' },
     staleDays: 3,
     kitchen: { includeUnverified: true, sharedRules: {} },
     retentionDays: 90,
@@ -406,7 +410,7 @@ export function diffSelections(a: Selection | null, b: Selection): string[] {
 /* ---------------- Reserva (registro principal) ---------------- */
 export interface Issue {
   id: string;
-  type: 'people_mismatch' | 'people_change' | 'match_review' | 'identity_conflict' | 'parse' | 'other';
+  type: 'people_mismatch' | 'people_change' | 'match_review' | 'identity_conflict' | 'parse' | 'classify' | 'other';
   message: string;
   createdAt: string;
   resolvedAt: string | null;
@@ -456,6 +460,22 @@ export interface Booking {
   internalNotes: string;
   history: HistoryEvent[];
   archived: boolean;
+  /**
+   * Tipo de reserva: de Navidad (se gestiona aquí), por clasificar (correo dudoso dentro del periodo
+   * de menús) o normal (descartada tras clasificarla). Ausente en registros antiguos = Navidad.
+   */
+  category?: 'christmas' | 'unclassified' | 'normal';
+}
+
+/** ¿El texto de un correo indica una reserva de Navidad? Devuelve la palabra o menú que lo indica. */
+export function christmasSignal(texts: string[], keywords: string[], menuNames: string[]): string | null {
+  const norm = (s: string) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+  const hay = norm(texts.join(' \n '));
+  for (const k of [...menuNames, ...keywords]) {
+    const n = norm(k.trim());
+    if (n.length >= 4 && hay.includes(n)) return k.trim();
+  }
+  return null;
 }
 
 export function emptyQamarero(): QamareroData {
@@ -510,6 +530,7 @@ export interface BookingRow {
   qStatus: QStatus;
   gStatus: GastroStatus;
   matchStatus: Booking['match']['status'];
+  category: NonNullable<Booking['category']>;
   issues: number;
   allergies: boolean;
   peopleChangePending: boolean;
@@ -542,6 +563,7 @@ export function bookingRow(b: Booking, lunchUntil = '17:00'): BookingRow {
     qStatus: b.qamarero.status,
     gStatus: b.gastroStatus,
     matchStatus: b.match.status,
+    category: b.category ?? 'christmas',
     issues: openIssues(b).length,
     allergies: hasAllergies(s),
     peopleChangePending: b.peopleChange?.status === 'pending',

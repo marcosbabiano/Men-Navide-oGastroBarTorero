@@ -54,6 +54,12 @@ Para servicios como Postmark Inbound, que reenvían cada correo a una URL:
 ### Opción de respaldo · Procesar manualmente
 *Reservas → Correo → Procesar un correo manualmente*: pega el texto o HTML de un correo (por ejemplo reenviado). Sirve también para **probar el intérprete con correos reales** antes de la campaña.
 
+### Reserva de Navidad o reserva normal
+A Qamarero le llegan muchas reservas normales. Cada correo se clasifica antes de tocar nada:
+1. **Es de Navidad** si lleva nuestra referencia `TOR-…`, si su localizador ya está vinculado, si coincide con una elección de menús hecha en `/reservar`, o si el menú, las observaciones, el asunto o las líneas que hablan del menú contienen el nombre de un menú publicado o una palabra clave («Navidad», «Nochebuena», «Nochevieja», «Menú Esencia»… configurable en *Configuración*).
+2. **Por clasificar** si no hay ninguna señal pero la fecha cae dentro del periodo de los menús de Navidad (*Calendario*): aparece con el aviso «¿Reserva de Navidad o normal?» y dos botones en la ficha. Se puede configurar para tratarlas directamente como normales.
+3. **Reserva normal** en el resto de casos: no se añade a Reservas de Navidad (ni cuenta en cocina ni informes). Queda en el registro de correos como «Reserva normal», con el botón **Convertir en reserva de Navidad** por si hiciera falta. Las modificaciones y cancelaciones de reservas normales tampoco entran.
+
 ### Cómo se interpreta un correo
 - **Determinista**, sin IA y sin enviar datos a terceros: busca etiquetas habituales («Localizador», «Nombre», «Teléfono», «Email», «Fecha», «Hora», «Personas/Comensales», «Zona/Sala», «Menú», «Observaciones», «Estado») en HTML o texto, en formato «Etiqueta: valor», tablas o etiqueta y valor en líneas separadas, con patrones de respaldo («para 6 personas», «24 de diciembre», «a las 14:00»…). Tipo de aviso por el asunto/texto: nueva, modificada, cancelada.
 - **No inventa**: lo que no encuentra queda pendiente. El registro de correos muestra, para cada uno, los campos reconocidos y los que faltan (auditoría).
@@ -86,7 +92,7 @@ Qamarero puede cambiar o cancelar sin avisar. *Reservas → Revisar con Qamarero
 - **Cambio de comensales**: se guarda la nueva elección, pero la reserva oficial no cambia: aparece «Cambio de comensales pendiente de confirmar en Qamarero» (solicitados ≠ confirmados) en ficha, día, cocina e informes, hasta que confirmes «Ya está actualizado en Qamarero», corrijas la cantidad o lo marques como rechazado.
 
 ## 6. Panel
-*Resumen* (recibidas por email, vinculadas, preselecciones sin reserva, verificadas, con incidencias, canceladas, solicitudes, platos pendientes, alergias, comensales, menús y última sincronización) · *Reservas* (búsqueda, filtros, orden y paginación) · *Ficha* (datos, elecciones por comensal, alertas, vinculación, enlaces, historial, imprimir/PDF, cancelar, eliminar) · *Por día* (comidas y cenas por hora, agrupables por zona, con resumen) · *Cocina e informes* · *Revisar con Qamarero* · *Correo* · *Solicitudes* · *Configuración*.
+*Calendario* (mes con el número de reservas y personas de cada día, comidas ☀ y cenas ☾, alertas y el periodo de Navidad marcado; al pulsar un día se muestran sus comidas y cenas por hora) · *Resumen* (recibidas por email, vinculadas, preselecciones sin reserva, verificadas, con incidencias, canceladas, solicitudes, platos pendientes, alergias, comensales, menús y última sincronización) · *Reservas* (búsqueda, filtros, orden y paginación) · *Ficha* (datos, elecciones por comensal, alertas, vinculación, enlaces, historial, imprimir/PDF, cancelar, eliminar) · *Por día* (comidas y cenas por hora, agrupables por zona, con resumen) · *Cocina e informes* · *Revisar con Qamarero* · *Correo* · *Solicitudes* · *Configuración*.
 
 Todo cambio importante queda en el **historial** de la reserva con fecha, autor, origen (formulario, correo, enlace, restaurante, importación) y datos anteriores/nuevos.
 

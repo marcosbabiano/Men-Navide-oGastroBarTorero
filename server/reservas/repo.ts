@@ -87,7 +87,9 @@ export interface MailRecord {
   processedAt: string;
   via: 'gmail' | 'webhook' | 'manual';
   type: string;
-  status: 'processing' | 'processed' | 'ignored' | 'error';
+  status: 'processing' | 'processed' | 'ignored' | 'error' | 'normal';
+  /** Datos interpretados (para convertir después una reserva normal en reserva de Navidad). */
+  parsed?: Record<string, unknown>;
   result: string;
   bookingId: string | null;
   fields: Record<string, string>;
@@ -136,7 +138,10 @@ export class ReservasRepo {
   async readConfig(): Promise<{ config: ReservasConfig; revision: number }> {
     const doc = (await this.kv.get('config', STRONG)) as { config: ReservasConfig; revision: number } | null;
     if (doc) {
-      const merged = { ...defaultReservasConfig(), ...doc.config };
+      const def = defaultReservasConfig();
+      // Fusión por apartados: configuraciones guardadas con versiones anteriores reciben los campos nuevos.
+      const c = doc.config as Partial<ReservasConfig>;
+      const merged = { ...def, ...c, messages: { ...def.messages, ...c.messages }, whatsapp: { ...def.whatsapp, ...c.whatsapp }, email: { ...def.email, ...c.email }, kitchen: { ...def.kitchen, ...c.kitchen } };
       const parsed = reservasConfigSchema.safeParse(merged);
       if (parsed.success) return { config: parsed.data, revision: doc.revision };
     }

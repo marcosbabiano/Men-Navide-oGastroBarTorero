@@ -18,7 +18,7 @@ import { EmailView, RequestsView, SettingsView } from './Settings.tsx';
 const TABS = [
   ['resumen', 'Resumen'],
   ['lista', 'Reservas'],
-  ['dia', 'Por día'],
+  ['dia', 'Calendario'],
   ['cocina', 'Cocina e informes'],
   ['revisar', 'Revisar con Qamarero'],
   ['correo', 'Correo'],
@@ -116,6 +116,7 @@ function OverviewView() {
         {stat(d.requests.filter((r) => r.status === 'pending').length, 'solicitudes de modificación', '#/reservas/solicitudes', 'is-warn')}
         {stat(live.filter((r) => r.gStatus === 'pending' && v(r) !== 'cancelled').length, 'con platos pendientes', '#/reservas/lista?f=pending', 'is-warn')}
         {stat(live.filter((r) => r.allergies && v(r) !== 'cancelled').length, 'con alergias', '#/reservas/lista?f=allergies', 'is-danger')}
+        {stat(live.filter((r) => r.category === 'unclassified').length, 'por clasificar (¿Navidad o normal?)', '#/reservas/lista?f=unclassified', 'is-warn')}
       </div>
       <div className="grid-2">
         <Card title="Comensales (reservas no canceladas)">
@@ -212,6 +213,8 @@ function ListView({ query }: { query: URLSearchParams }) {
             return (r.children ?? 0) > 0;
           case 'allergies':
             return r.allergies;
+          case 'unclassified':
+            return r.category === 'unclassified';
           case 'pending':
             return r.gStatus === 'pending' && v !== 'cancelled';
           default:
@@ -292,6 +295,7 @@ function ListView({ query }: { query: URLSearchParams }) {
           ['cancelled', 'Canceladas'],
           ['children', 'Con niños'],
           ['allergies', 'Con alergias'],
+          ['unclassified', 'Por clasificar'],
         ].map(([k, l]) => (
           <button key={k} type="button" className={`chip ${flag === k ? 'is-on' : ''}`} aria-pressed={flag === k} onClick={() => (setFlag(k), setPage(0))}>
             {l}
@@ -347,7 +351,7 @@ function ListView({ query }: { query: URLSearchParams }) {
                     <GBadge s={r.gStatus} />
                   </td>
                   <td>
-                    {v !== 'verified' && v !== 'cancelled' && <VBadge v={v} />} {r.allergies && <Badge tone="danger">Alergias</Badge>} {r.peopleChangePending && <Badge tone="warn">Cambio de comensales</Badge>}
+                    {v !== 'verified' && v !== 'cancelled' && <VBadge v={v} />} {r.category === 'unclassified' && <Badge tone="warn">¿Navidad o normal?</Badge>} {r.allergies && <Badge tone="danger">Alergias</Badge>} {r.peopleChangePending && <Badge tone="warn">Cambio de comensales</Badge>}
                   </td>
                   <td>
                     <button type="button" className="abtn abtn--ghost abtn--small" onClick={() => navigate(`#/reservas/r/${r.id}`)}>

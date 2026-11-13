@@ -2391,3 +2391,29 @@ code {
 .content--wide > * { min-width: 0; }
 .rday, .rday > *, .rkitchen > *, .rdetail > * { min-width: 0; }
 .rday { grid-template-columns: minmax(0, 1fr); }
+.rcal { padding: 0.9rem; border-radius: var(--a-radius); background: #fff; border: 1px solid var(--a-line); }
+.rcal__head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-bottom: 0.7rem; }
+.rcal__month { font: 600 1.2rem/1 var(--font-serif); min-width: 9rem; text-align: center; }
+.rcal__sum { margin-left: auto; font-size: 0.85rem; }
+.rcal__grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.rcal__dow { text-align: center; font-size: 0.75rem; font-weight: 700; color: var(--a-ink-2); padding-bottom: 0.2rem; }
+.rcal__day { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 0.15rem; min-height: 64px; padding: 0.35rem 0.4rem; border-radius: 8px; border: 1px solid var(--a-line); background: #fff; text-align: left; cursor: pointer; font-size: 0.75rem; min-width: 0; }
+.rcal__day:hover { border-color: var(--a-accent); }
+.rcal__day.is-period { background: #fbf3e6; }
+.rcal__day.has-res { border-color: var(--a-line-2); }
+.rcal__day.has-res .rcal__n { color: var(--a-accent); }
+.rcal__day.is-past { opacity: 0.6; }
+.rcal__day.is-today { box-shadow: inset 0 0 0 2px var(--a-gold); }
+.rcal__day.is-selected { background: var(--a-accent); border-color: var(--a-accent); color: #fff; opacity: 1; }
+.rcal__day.is-selected .rcal__n { color: #fff; }
+.rcal__n { font-weight: 700; font-size: 0.9rem; }
+.rcal__info { line-height: 1.25; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.rcal__svc { display: flex; gap: 0.35rem; flex-wrap: wrap; }
+.rcal__alert { position: absolute; top: 4px; right: 5px; width: 16px; height: 16px; border-radius: 50%; background: var(--a-danger); color: #fff; font-size: 0.7rem; font-weight: 800; display: grid; place-items: center; }
+.rcal__legend { margin-top: 0.6rem; font-size: 0.8rem; display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem; }
+.rcal__key { display: inline-block; width: 12px; height: 12px; border-radius: 3px; border: 1px solid var(--a-line-2); }
+.rcal__key.is-period { background: #fbf3e6; }
+.rcal__key.has-res { background: #fff; border-color: var(--a-accent); }
+.rday__date { font: 600 1.3rem/1.2 var(--font-serif); margin-top: 0.4rem; }
+.rday__date::first-letter { text-transform: uppercase; }
+@media (max-width: 640px) { .rcal__info { display: none; } .rcal__day { min-height: 46px; } .rcal__day.has-res::after { content: ''; position: absolute; bottom: 6px; left: 50%; width: 6px; height: 6px; margin-left: -3px; border-radius: 50%; background: var(--a-accent); } .rcal__day.is-selected.has-res::after { background: #fff; } }

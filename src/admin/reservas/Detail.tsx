@@ -95,10 +95,24 @@ export function BookingDetail({ id }: { id: string }) {
       />
       <div className="rbadges">
         <QBadge s={b.qamarero.status} /> <GBadge s={b.gastroStatus} /> <VBadge v={v} />
-        {b.archived && <Badge tone="draft">Fusionada en otra reserva</Badge>}
+        {b.archived && <Badge tone="draft">{b.category === 'normal' ? 'Reserva normal (retirada)' : 'Fusionada en otra reserva'}</Badge>}
+        {b.category === 'unclassified' && <Badge tone="warn">Por clasificar</Badge>}
       </div>
 
-      {(issues.length > 0 || b.peopleChange?.status === 'pending' || b.match.status === 'review') && (
+      {b.category === 'unclassified' && !b.archived && (
+        <Card title="¿Reserva de Navidad o reserva normal?" tone="warn">
+          <p>El correo de Qamarero no indica menú de Navidad, pero la fecha está dentro del periodo de los menús. Decide si se gestiona aquí.</p>
+          <div className="sscene__actions">
+            <button type="button" className="abtn abtn--primary abtn--small" onClick={() => void act('classify-christmas', 'Clasificada como reserva de Navidad')}>
+              Es reserva de Navidad
+            </button>
+            <button type="button" className="abtn abtn--ghost abtn--small" onClick={async () => (await confirm({ title: '¿Es una reserva normal?', text: 'Se retira de Reservas de Navidad (no cuenta en cocina ni informes). Se conserva en el historial.', confirmLabel: 'Es normal' })) && (await act('classify-normal', 'Retirada: reserva normal'))}>
+              Es reserva normal (retirar)
+            </button>
+          </div>
+        </Card>
+      )}
+      {(issues.filter((i) => i.type !== 'classify').length > 0 || b.peopleChange?.status === 'pending' || b.match.status === 'review') && (
         <Card title="Requiere atención" tone="danger">
           {b.peopleChange?.status === 'pending' && (
             <div className="ralert">
@@ -127,7 +141,7 @@ export function BookingDetail({ id }: { id: string }) {
           )}
           {b.match.status === 'review' && <MatchReview d={d} onDone={load} />}
           {issues
-            .filter((i) => i.type !== 'people_change' && i.type !== 'match_review')
+            .filter((i) => i.type !== 'people_change' && i.type !== 'match_review' && i.type !== 'classify')
             .map((i) => (
               <div key={i.id} className="ralert">
                 <p>{i.message}</p>

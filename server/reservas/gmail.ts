@@ -9,7 +9,7 @@
  */
 import type { RawEmail } from './parse.ts';
 import { ReservasRepo, randomToken } from './repo.ts';
-import { ingestEmail } from './ingest.ts';
+import { ingestEmail, type IngestContext } from './ingest.ts';
 import type { ReservasConfig } from '../../shared/reservas.ts';
 
 export const GMAIL_SCOPE = 'https://www.googleapis.com/auth/gmail.readonly';
@@ -109,7 +109,7 @@ export function gmailToRaw(msg: { id: string; internalDate?: string; payload?: G
 }
 
 /** Revisa el buzón y procesa los correos nuevos (máx. 25 por ejecución por el límite de tiempo). */
-export async function syncGmail(repo: ReservasRepo, env: GmailEnv, cfg: ReservasConfig): Promise<{ ok: boolean; processed: number; message: string }> {
+export async function syncGmail(repo: ReservasRepo, env: GmailEnv, cfg: ReservasConfig, ctx?: IngestContext): Promise<{ ok: boolean; processed: number; message: string }> {
   const s = await repo.sync();
   const now = repo.iso();
   const secret = await repo.secret<GmailSecret>('gmail');
@@ -134,8 +134,11 @@ export async function syncGmail(repo: ReservasRepo, env: GmailEnv, cfg: Reservas
         errors++;
         continue;
       }
-      const res = await ingestEmail(repo, cfg, gmailToRaw((await r.json()) as { id: string; payload?: GPart; internalDate?: string }), 'gmail');
+      const res = await ingestEmail(repo, cfg, gmailToRaw((await r.json()) as { id: string; payload?: GPart; internalDate?: string }), 'gmail', ctx);
       if (res.status === 'error') errors++;
+      else if (res.status === 'normal') {
+        /* reserva normal: registrada pero no añadida */
+      }
       else processed++;
       await repo.kv.setJSON(`gmid/${id}`, { at: now });
     }

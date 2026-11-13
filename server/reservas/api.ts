@@ -33,7 +33,7 @@ import {
 } from '../../shared/reservas.ts';
 import { ApiError, errorResponse, json, noStore, readJson } from '../http.ts';
 import type { KV } from '../repo.ts';
-import { ingestEmail, mergeBookings, scoreCandidate } from './ingest.ts';
+import { ingestEmail, type IngestContext, mergeBookings, promoteMail, scoreCandidate } from './ingest.ts';
 import { type RawEmail } from './parse.ts';
 import { ReservasRepo, randomId } from './repo.ts';
 import { authUrl, type GmailEnv, type GmailSecret, gmailConfigured, handleCallback, syncGmail } from './gmail.ts';
@@ -51,6 +51,16 @@ export interface ReservasDeps {
 }
 
 /* ---------------- utilidades ---------------- */
+/** Menús publicados y periodo de Navidad para clasificar los correos (Navidad o reserva normal). */
+async function ingestCtx(deps: Pick<ReservasDeps, 'readContent'>): Promise<IngestContext> {
+  try {
+    const c = await deps.readContent();
+    return { menuNames: c.menus.filter((m) => m.status === 'published').map((m) => m.name), period: c.calendar?.period ?? { start: '', end: '' } };
+  } catch {
+    return { menuNames: [], period: { start: '', end: '' } };
+  }
+}
+
 function madridNowLocal(at: Date): string {
   const p = Object.fromEntries(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Madrid', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(at).map((x) => [x.type, x.value]));
   return `${p.year}-${p.month}-${p.day}T${p.hour}:${p.minute}`;
@@ -222,7 +232,7 @@ export function createReservasPublicHandler(deps: ReservasDeps) {
         html: s('HtmlBody') || s('html'),
       };
       const { config } = await repo.readConfig();
-      const res = await ingestEmail(repo, config, raw, 'webhook');
+      const res = await ingestEmail(repo, config, raw, 'webhook', await ingestCtx(deps));
       const st = await repo.sync();
       await repo.saveSync({ ...st, provider: st.provider === 'gmail' ? 'gmail' : 'webhook', lastRunAt: repo.iso(), lastOkAt: repo.iso(), processed: st.processed + (res.status === 'processed' ? 1 : 0), errors: st.errors + (res.status === 'error' ? 1 : 0) });
       return json(200, { status: res.status, result: res.result }, noStore());
@@ -249,7 +259,7 @@ export function createReservasPublicHandler(deps: ReservasDeps) {
 export async function runScheduledSync(deps: ReservasDeps) {
   const repo = new ReservasRepo(deps.store, deps.now);
   const { config } = await repo.readConfig();
-  return syncGmail(repo, deps.gmail, config);
+  return syncGmail(repo, deps.gmail, config, await ingestCtx(deps));
 }
 
 /* ---------------- administración ---------------- */
@@ -453,6 +463,17 @@ export async function handleReservasAdmin(req: Request, path: string, who: strin
             push('issue_resolved', `Incidencia resuelta: ${i.message}`);
             break;
           }
+          case 'classify-christmas':
+            b.category = 'christmas';
+            b.issues = b.issues.map((i) => (i.type === 'classify' && !i.resolvedAt ? { ...i, resolvedAt: t, resolvedBy: who } : i));
+            push('classified', 'Clasificada como reserva de Navidad');
+            break;
+          case 'classify-normal':
+            b.category = 'normal';
+            b.archived = true;
+            b.issues = b.issues.map((i) => (!i.resolvedAt ? { ...i, resolvedAt: t, resolvedBy: who } : i));
+            push('classified', 'Clasificada como reserva normal: se retira de Reservas de Navidad');
+            break;
           case 'flag-review':
             b.gastroStatus = 'review';
             push('flag_review', 'Marcada como «requiere revisión»');
@@ -535,13 +556,24 @@ export async function handleReservasAdmin(req: Request, path: string, who: strin
     const s = (k: string) => (typeof body[k] === 'string' ? (body[k] as string) : '');
     const { config } = await repo.readConfig();
     const raw: RawEmail = { messageId: s('messageId'), from: s('from') || 'manual', subject: s('subject'), date: s('date') && !Number.isNaN(Date.parse(s('date'))) ? new Date(s('date')).toISOString() : at(), text: s('text'), html: s('html') };
-    const res = await ingestEmail(repo, { ...config, email: { ...config.email, allowedSenders: body.skipSenderCheck === true ? [] : config.email.allowedSenders } }, raw, 'manual');
+    const res = await ingestEmail(repo, { ...config, email: { ...config.email, allowedSenders: body.skipSenderCheck === true ? [] : config.email.allowedSenders } }, raw, 'manual', await ingestCtx(deps));
     return json(200, res, noStore());
   }
   if (path === '/reservas/sync') {
     if (method !== 'POST') throw new ApiError(405, 'method_not_allowed', 'Usa POST.');
     const { config } = await repo.readConfig();
-    return json(200, await syncGmail(repo, deps.gmail, config), noStore());
+    return json(200, await syncGmail(repo, deps.gmail, config, await ingestCtx(deps)), noStore());
+  }
+  if (path === '/reservas/emails/promote') {
+    if (method !== 'POST') throw new ApiError(405, 'method_not_allowed', 'Usa POST.');
+    const body = await readJson<{ key?: unknown }>(req, 2_000);
+    if (typeof body.key !== 'string' || !/^[a-f0-9]{64}$/.test(body.key)) throw new ApiError(400, 'bad_request', 'Correo no válido.');
+    try {
+      return json(200, { booking: await promoteMail(repo, body.key, who) }, noStore());
+    } catch (e) {
+      if ((e as Error).message === 'exists') throw new ApiError(409, 'exists', 'Esa reserva de Qamarero ya está en Reservas de Navidad.');
+      throw new ApiError(400, 'not_promotable', 'Ese correo no se puede convertir (no es una reserva normal registrada).');
+    }
   }
   if (path === '/reservas/gmail/auth-url') {
     if (!gmailConfigured(deps.gmail)) throw new ApiError(503, 'not_configured', 'Faltan GOOGLE_CLIENT_ID y GOOGLE_CLIENT_SECRET en las variables de entorno de Netlify.');

@@ -30,6 +30,7 @@ import {
   buildSelection,
 } from '../../shared/reservas.ts';
 import { gourmetMenu } from '../../shared/menu-data-2026.ts';
+import { christmasSignal } from '../../shared/reservas.ts';
 
 const content = createSeedContent();
 const cfg = defaultReservasConfig();
@@ -115,6 +116,16 @@ describe('selección de menús (reglas)', () => {
   it('CSV con separador «;» y comillas, ida y vuelta', () => {
     const csv = toCsv([['a', 'b;c', 'd"e'], ['1', '', 'x\ny']]);
     expect(parseCsv(csv)).toEqual([['a', 'b;c', 'd"e'], ['1', '', 'x\ny']]);
+  });
+});
+
+describe('señales de Navidad en el correo', () => {
+  it('detecta palabras clave y nombres de menús sin tildes ni mayúsculas', () => {
+    const kw = defaultReservasConfig().email.christmasKeywords;
+    expect(christmasSignal(['MENU ESENCIA'], kw, [])).toBe('menú esencia');
+    expect(christmasSignal(['Cena de Nochebuena'], kw, [])).toBe('nochebuena');
+    expect(christmasSignal(['Menú Tradición'], kw, ['Menú Tradición'])).toBe('Menú Tradición');
+    expect(christmasSignal(['Mesa para 4, terraza'], kw, ['Menú Esencia'])).toBeNull();
   });
 });
 
@@ -209,7 +220,7 @@ const pub = async <T = Record<string, unknown>>(p: string, init: { method?: stri
 };
 const preselect = (s: SelectionInput) => pub<{ ref: string; bookingUrl: string }>('/api/reservas/preselect', { method: 'POST', body: { selection: s, consent: true } });
 const inbound = (body: Record<string, string>) => pub<{ status: string; result: string }>('/api/reservas/inbound', { method: 'POST', body, headers: { 'X-Torero-Inbound-Token': 'secreto-webhook' } });
-type Row = { id: string; ref: string; name: string; qStatus: string; gStatus: string; matchStatus: string; date: string; time: string; issues: number; peopleChangePending: boolean; archived: boolean; confirmed: number | null; requested: number | null };
+type Row = { id: string; ref: string; name: string; category: string; qStatus: string; gStatus: string; matchStatus: string; date: string; time: string; issues: number; peopleChangePending: boolean; archived: boolean; confirmed: number | null; requested: number | null };
 const rows = async () => (await admin<{ rows: Row[] }>('/reservas')).body.rows;
 const full = async (id: string) => (await admin<{ booking: Booking; tokens: { status: string; kind: string }[]; candidates: { id: string; score: number }[] }>(`/reservas/b/${id}`)).body;
 const mail = (over: Partial<Record<string, string>> = {}) => ({
@@ -217,7 +228,7 @@ const mail = (over: Partial<Record<string, string>> = {}) => ({
   From: 'Qamarero <notificaciones@qamarero.com>',
   Subject: 'Nueva reserva',
   Date: '2026-11-10T12:00:00Z',
-  TextBody: 'Localizador: Q-1001\nNombre: Lucía Martín Pérez\nTeléfono: 612345678\nFecha: 24/12/2026\nHora: 21:30\nPersonas: 2\nZona: Salón',
+  TextBody: 'Localizador: Q-1001\nNombre: Lucía Martín Pérez\nTeléfono: 612345678\nFecha: 24/12/2026\nHora: 21:30\nPersonas: 2\nZona: Salón\nMenú: Menú Esencia',
   ...over,
 });
 
@@ -301,6 +312,39 @@ describe('API de reservas', () => {
     expect((await pub('/api/reservas/inbound', { method: 'POST', body: mail() })).status).toBe(401);
   });
 
+  it('clasificación: reserva normal (no se añade y se puede convertir), Navidad por palabra clave y «por clasificar» dentro del periodo', async () => {
+    // Sin señales de Navidad y sin periodo de menús configurado → reserva normal.
+    const normal = await inbound(mail({ MessageID: 'normal-1', TextBody: 'Localizador: N-1\nNombre: Juan Normal\nTeléfono: 600999888\nFecha: 15/11/2026\nHora: 14:00\nPersonas: 4' }));
+    expect(normal.body.status).toBe('normal');
+    expect(await rows()).toHaveLength(0);
+    const log = (await admin<{ emails: { key: string; status: string }[] }>('/reservas/emails')).body.emails;
+    expect(log[0].status).toBe('normal');
+    // Una cancelación de una reserva normal tampoco entra.
+    expect((await inbound(mail({ Subject: 'Reserva cancelada', TextBody: 'Localizador: N-1\nEstado: cancelada\nFecha: 15/11/2026' }))).body.status).toBe('normal');
+    // El restaurante puede convertirla después.
+    const promoted = await admin<{ booking: Booking }>('/reservas/emails/promote', { method: 'POST', body: { key: log[0].key } });
+    expect(promoted.status).toBe(200);
+    expect(promoted.body.booking).toMatchObject({ category: 'christmas', qamarero: { reservationId: 'N-1', date: '2026-11-15' } });
+    // Palabra clave en observaciones o nombre de un menú publicado → Navidad.
+    expect((await inbound(mail({ TextBody: 'Localizador: K-1\nNombre: Ana\nFecha: 20/12/2026\nHora: 21:00\nPersonas: 6\nObservaciones: Cena de empresa de Navidad' }))).body.status).toBe('processed');
+    expect((await inbound(mail({ TextBody: 'Localizador: K-2\nNombre: Bea\nFecha: 20/12/2026\nHora: 14:00\nPersonas: 2\nMenú: Menú Distinción' }))).body.status).toBe('processed');
+    // Con periodo de menús: fecha dentro y sin señales → «por clasificar».
+    const d = deps();
+    const content = createSeedContent();
+    content.calendar.period = { start: '2026-12-01', end: '2027-01-06' };
+    await (d.content as KV).setJSON('content/published', { content, revision: 1, sourceRevision: 1, updatedAt: '', updatedBy: '', publishedAt: '2026-11-10T00:00:00Z', publishedBy: 'x' });
+    const dudosa = await inbound(mail({ TextBody: 'Localizador: U-1\nNombre: Carlos Duda\nTeléfono: 622000111\nFecha: 26/12/2026\nHora: 14:00\nPersonas: 3' }));
+    expect(dudosa.body.status).toBe('processed');
+    const u = (await rows()).find((r) => r.name === 'Carlos Duda')!;
+    expect(u.category).toBe('unclassified');
+    expect(u.issues).toBe(1);
+    // Fuera del periodo sigue siendo normal.
+    expect((await inbound(mail({ TextBody: 'Localizador: U-2\nNombre: Otro\nFecha: 20/01/2027\nHora: 14:00\nPersonas: 2' }))).body.status).toBe('normal');
+    // El restaurante decide: reserva normal → se retira.
+    const cls = await admin<{ booking: Booking }>(`/reservas/b/${u.id}/action`, { method: 'POST', body: { action: 'classify-normal' } });
+    expect(cls.body.booking).toMatchObject({ category: 'normal', archived: true });
+  });
+
   it('enlace de modificación: un solo uso, cambios de comensales pendientes, sin consumirse al abrirlo', async () => {
     const { body } = await preselect(sel(8));
     await inbound(mail({ TextBody: `Localizador: Q-3003\nNombre: Lucía Martín Pérez\nTeléfono: 612345678\nFecha: 24/12/2026\nHora: 21:30\nPersonas: 8\nObservaciones: ${body.ref}` }));
@@ -352,7 +396,7 @@ describe('API de reservas', () => {
   });
 
   it('reserva directa en Qamarero: enlace para completar la elección (sin volver a reservar)', async () => {
-    await inbound(mail({ TextBody: 'Localizador: Q-4004\nNombre: Marta Sanz\nTeléfono: 655000111\nFecha: 31/12/2026\nHora: 14:00\nPersonas: 3' }));
+    await inbound(mail({ TextBody: 'Localizador: Q-4004\nNombre: Marta Sanz\nTeléfono: 655000111\nFecha: 31/12/2026\nHora: 14:00\nPersonas: 3\nMenú: Menú de Navidad' }));
     const [row] = await rows();
     expect(row.gStatus).toBe('pending');
     const t = (await admin<{ link: string }>(`/reservas/b/${row.id}/link`, { method: 'POST', body: { kind: 'complete' } })).body.link.split('/').pop()!;
@@ -388,7 +432,7 @@ describe('API de reservas', () => {
       calls.push(u);
       if (u.includes('oauth2.googleapis.com/token')) return Response.json({ access_token: 'at' });
       if (u.includes('/messages?')) return Response.json({ messages: [{ id: 'g1' }] });
-      if (u.includes('/messages/g1')) return Response.json({ id: 'g1', internalDate: '1797000000000', payload: { headers: [{ name: 'From', value: 'avisos@qamarero.com' }, { name: 'Subject', value: 'Nueva reserva' }], mimeType: 'text/plain', body: { data: enc('Localizador: G-1\nNombre: Eva\nFecha: 24/12/2026\nHora: 14:00\nPersonas: 2') } } });
+      if (u.includes('/messages/g1')) return Response.json({ id: 'g1', internalDate: '1797000000000', payload: { headers: [{ name: 'From', value: 'avisos@qamarero.com' }, { name: 'Subject', value: 'Nueva reserva' }], mimeType: 'text/plain', body: { data: enc('Localizador: G-1\nNombre: Eva\nFecha: 24/12/2026\nHora: 14:00\nPersonas: 2\nObservaciones: comida de Navidad') } } });
       return new Response('{}', { status: 404 });
     }) as typeof fetch;
     const d = reservasDepsOf(deps())!;

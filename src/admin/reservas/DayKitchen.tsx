@@ -2,7 +2,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type Booking, isCancelled, kitchenReport, openIssues, SERVICE_LABEL, serviceOf, type Service, totalPeople, verification } from '../../../shared/reservas.ts';
 import { Badge, Card, PageHeader } from '../ui.tsx';
-import { fmtDT, GBadge, QBadge, todayMadrid, VBadge } from './common.tsx';
+import { useStore } from '../store.tsx';
+import { fmtDT, GBadge, QBadge, rowVerification, todayMadrid, VBadge } from './common.tsx';
 import { rapi, useReservas } from './state.tsx';
 import { csvBookings, csvDiners, download, inScope, printReport, reportBreakdown, reportKitchen, reportPdf, reportPending, reportService, type ReportDoc, type Scope, type ServiceFilter } from './reports.ts';
 import { toCsv } from '../../../shared/reservas.ts';
@@ -44,7 +45,9 @@ export function DayView() {
   const cfg = data!.config;
   return (
     <>
-      <PageHeader title="Reservas por día" intro="Comidas y cenas ordenadas por hora. Las canceladas no se suman." />
+      <PageHeader title="Calendario de reservas" intro="Elige un día en el calendario para ver sus comidas y cenas, ordenadas por hora. Las canceladas no se suman." />
+      <MonthCalendar selected={date} onSelect={setDate} />
+      <h2 className="rday__date">{new Date(`${date}T12:00:00Z`).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })}</h2>
       <div className="rfilters">
         <label>
           Fecha <input className="input" type="date" value={date} onChange={(e) => e.target.value && setDate(e.target.value)} />
@@ -111,7 +114,7 @@ function ServiceBlock({ svc, list, byZone }: { svc: Service; list: Booking[]; by
         </div>
       </div>
       {!active.length && <p className="muted">Sin reservas.</p>}
-      {groups.map(([zone, rows]) => (
+      {active.length > 0 && groups.map(([zone, rows]) => (
         <div key={zone}>
           {zone && <h3 className="rday__zone">{zone}</h3>}
           <div className="rtable-wrap">
@@ -380,5 +383,100 @@ export function KitchenView() {
         </>
       )}
     </>
+  );
+}
+
+/* ====================== Calendario mensual ====================== */
+const WEEK = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+const iso = (d: Date) => d.toISOString().slice(0, 10);
+
+/** Mes con el número de reservas y personas de cada día; al pulsar un día se muestra su listado. */
+export function MonthCalendar({ selected, onSelect }: { selected: string; onSelect: (d: string) => void }) {
+  const { data } = useReservas();
+  const { content } = useStore();
+  const [month, setMonth] = useState(selected.slice(0, 7));
+  useEffect(() => setMonth(selected.slice(0, 7)), [selected]);
+  const cfg = data!.config;
+  const period = content.calendar?.period ?? { start: '', end: '' };
+  const today = todayMadrid();
+  const byDay = useMemo(() => {
+    const m = new Map<string, { n: number; people: number; lunch: number; dinner: number; alerts: number; cancelled: number }>();
+    for (const r of data!.rows) {
+      if (r.archived || !r.date || r.category === 'normal') continue;
+      const cur = m.get(r.date) ?? { n: 0, people: 0, lunch: 0, dinner: 0, alerts: 0, cancelled: 0 };
+      const v = rowVerification(r, cfg.staleDays);
+      if (v === 'cancelled') cur.cancelled++;
+      else {
+        cur.n++;
+        cur.people += r.confirmed ?? r.requested ?? 0;
+        if (r.service === 'lunch') cur.lunch++;
+        if (r.service === 'dinner') cur.dinner++;
+        if (v === 'incident' || r.allergies || r.category === 'unclassified') cur.alerts++;
+      }
+      m.set(r.date, cur);
+    }
+    return m;
+  }, [data, cfg.staleDays]);
+  const first = new Date(`${month}-01T12:00:00Z`);
+  const offset = (first.getUTCDay() + 6) % 7;
+  const days: string[] = [];
+  for (const d = new Date(first); iso(d).slice(0, 7) === month; d.setUTCDate(d.getUTCDate() + 1)) days.push(iso(d));
+  const shift = (k: number) => {
+    const d = new Date(first);
+    d.setUTCMonth(d.getUTCMonth() + k);
+    setMonth(iso(d).slice(0, 7));
+  };
+  const label = first.toLocaleDateString('es-ES', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+  const monthTotal = days.reduce((n, d) => n + (byDay.get(d)?.n ?? 0), 0);
+  return (
+    <div className="rcal" aria-label="Calendario de reservas">
+      <div className="rcal__head">
+        <button type="button" className="abtn abtn--ghost abtn--small" onClick={() => shift(-1)} aria-label="Mes anterior">
+          ←
+        </button>
+        <strong className="rcal__month">{label.charAt(0).toUpperCase() + label.slice(1)}</strong>
+        <button type="button" className="abtn abtn--ghost abtn--small" onClick={() => shift(1)} aria-label="Mes siguiente">
+          →
+        </button>
+        <span className="muted rcal__sum">{monthTotal} reservas este mes</span>
+        <button type="button" className="abtn abtn--text abtn--small" onClick={() => onSelect(today)}>
+          Hoy
+        </button>
+      </div>
+      <div className="rcal__grid">
+        {WEEK.map((w) => (
+          <span key={w} className="rcal__dow" aria-hidden="true">
+            {w}
+          </span>
+        ))}
+        {Array.from({ length: offset }, (_, i) => (
+          <span key={`e${i}`} />
+        ))}
+        {days.map((d) => {
+          const c = byDay.get(d);
+          const inPeriod = !!period.start && !!period.end && d >= period.start && d <= period.end;
+          const cls = ['rcal__day', d === selected ? 'is-selected' : '', d === today ? 'is-today' : '', inPeriod ? 'is-period' : '', c?.n ? 'has-res' : '', d < today ? 'is-past' : ''].join(' ');
+          const aria = `${Number(d.slice(8))}: ${c?.n ? `${c.n} reservas, ${c.people} personas` : 'sin reservas'}${c?.alerts ? `, ${c.alerts} con alertas` : ''}`;
+          return (
+            <button key={d} type="button" className={cls} aria-pressed={d === selected} aria-label={aria} onClick={() => onSelect(d)}>
+              <span className="rcal__n">{Number(d.slice(8))}</span>
+              {c?.n ? (
+                <span className="rcal__info">
+                  <strong>{c.n}</strong> res. · {c.people} pers.
+                  <span className="rcal__svc">
+                    {c.lunch > 0 && <span title="Comidas">☀ {c.lunch}</span>}
+                    {c.dinner > 0 && <span title="Cenas">☾ {c.dinner}</span>}
+                  </span>
+                </span>
+              ) : null}
+              {c?.alerts ? <span className="rcal__alert" title="Con alertas o alergias" aria-hidden="true">!</span> : null}
+            </button>
+          );
+        })}
+      </div>
+      <p className="rcal__legend muted">
+        <span className="rcal__key is-period" /> Periodo de menús de Navidad · <span className="rcal__key has-res" /> Con reservas · <strong>!</strong> Alertas, alergias o por clasificar
+      </p>
+    </div>
   );
 }

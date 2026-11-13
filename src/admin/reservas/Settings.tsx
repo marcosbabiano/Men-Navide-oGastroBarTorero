@@ -156,7 +156,20 @@ export function EmailView({ query }: { query: URLSearchParams }) {
                       <td>{m.subject || '—'}</td>
                       <td>{m.type}</td>
                       <td>
-                        <Badge tone={m.status === 'processed' ? 'ok' : m.status === 'ignored' ? 'draft' : 'danger'}>{m.status}</Badge> {m.result} {m.bookingId && <a href={`#/reservas/r/${m.bookingId}`}>Ver reserva</a>}
+                        <Badge tone={m.status === 'processed' ? 'ok' : m.status === 'normal' || m.status === 'ignored' ? 'draft' : 'danger'}>{m.status === 'normal' ? 'Reserva normal' : m.status === 'processed' ? 'Navidad' : m.status === 'ignored' ? 'Ignorado' : 'Error'}</Badge> {m.result} {m.bookingId && <a href={`#/reservas/r/${m.bookingId}`}>Ver reserva</a>}
+                        {m.status === 'normal' && (
+                          <button
+                            type="button"
+                            className="linkbtn"
+                            onClick={async () => {
+                              const r = await run(() => rapi.promote(m.key), 'Convertida en reserva de Navidad');
+                              if (r) await load();
+                            }}
+                          >
+                            {' '}
+                            Convertir en reserva de Navidad
+                          </button>
+                        )}
                       </td>
                       <td>
                         <button type="button" className="linkbtn" onClick={() => setOpen(open === m.key ? null : m.key)}>
@@ -317,11 +330,24 @@ export function SettingsView() {
       </Card>
       <Card title="Sincronización de correo y conciliación">
         <TextField label="Remitentes autorizados (separados por comas; fragmentos)" value={cfg.email.allowedSenders.join(', ')} onChange={(v) => set((c) => void (c.email.allowedSenders = v.split(',').map((x) => x.trim()).filter(Boolean)))} hint="Solo se procesan correos cuyo remitente contenga alguno de estos textos (p. ej. «qamarero»)." />
+        <TextField
+          label="Palabras que identifican una reserva de Navidad (separadas por comas)"
+          value={cfg.email.christmasKeywords.join(', ')}
+          onChange={(v) => set((c) => void (c.email.christmasKeywords = v.split(',').map((x) => x.trim()).filter(Boolean)))}
+          hint="Se buscan en el menú, las observaciones y el asunto del correo, además de los nombres de los menús publicados. Un correo con nuestra referencia TOR-… o que coincide con una elección de menús siempre es de Navidad. El resto se registra como reserva normal y no se añade."
+        />
         <TextField label="Búsqueda en Gmail" value={cfg.email.gmailQuery} max={300} onChange={(v) => set((c) => void (c.email.gmailQuery = v))} />
         <div className="grid-3">
           <label className="field">
             <span className="field__label">Las comidas son hasta las</span>
             <input className="input" type="time" value={cfg.email.lunchUntil} onChange={(e) => set((c) => void (c.email.lunchUntil = e.target.value || '17:00'))} />
+          </label>
+          <label className="field">
+            <span className="field__label">Correo sin señales de Navidad con fecha dentro del periodo de menús</span>
+            <select className="input input--select" value={cfg.email.unknownInPeriod} onChange={(e) => set((c) => void (c.email.unknownInPeriod = e.target.value as 'review' | 'normal'))}>
+              <option value="review">Añadir como «por clasificar» (decido yo)</option>
+              <option value="normal">Tratar como reserva normal</option>
+            </select>
           </label>
           <label className="field">
             <span className="field__label">Puntuación mínima de vinculación automática</span>

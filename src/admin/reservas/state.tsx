@@ -42,6 +42,7 @@ export const rapi = {
   full: (from: string, to: string) => call<{ bookings: Booking[] }>(`/reservas/full?from=${from}&to=${to}`),
   emails: () => call<{ emails: { key: string; messageId: string; from: string; subject: string; receivedAt: string; via: string; type: string; status: string; result: string; bookingId: string | null; fields: Record<string, string>; missing: string[]; errors: string[] }[] }>('/reservas/emails'),
   ingest: (body: Record<string, unknown>) => call<{ status: string; result: string; bookingId: string | null }>('/reservas/emails/ingest', { method: 'POST', body: JSON.stringify(body) }),
+  promote: (key: string) => call<{ booking: Booking }>('/reservas/emails/promote', { method: 'POST', body: JSON.stringify({ key }) }),
   sync: () => call<{ ok: boolean; processed: number; message: string }>('/reservas/sync', { method: 'POST', body: '{}' }),
   gmailAuth: () => call<{ url: string }>('/reservas/gmail/auth-url'),
   gmailDisconnect: () => call<{ ok: boolean }>('/reservas/gmail/disconnect', { method: 'POST', body: '{}' }),
